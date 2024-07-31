@@ -50,6 +50,11 @@ void ExampleProcessor::init()
 	int testVariable = 1;
 	int test2 = 10;
 	printParameters();
+	_xHist = new TH1D("_xHist","X Distribution",30, -0.5, 29.5);
+	_yHist = new TH1D("_yHist","Y Distribution",30, -0.5, 29.5);
+	_zHist = new TH1D("_zHist","Z Distribution",30, -0.5, 29.5);
+	
+	_xyHist = new TH2D("_xyHist","XY view all events",30,-0.5,29.5,30, -0.5, 29.5);
 
 }
 
@@ -100,13 +105,16 @@ void ExampleProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
       streamlog_out(MESSAGE) << " y_in_IJK_coordinates=" << y_in_IJK_coordinates;
       streamlog_out(MESSAGE) << " z_in_IJK_coordinates=" << z_in_IJK_coordinates;
       streamlog_out(MESSAGE) << " energy=" << ecalhit->getEnergy();
-		//_testHist->Fill(_coordinateZ);
+		
+		
+		_xHist->Fill(x_in_IJK_coordinates);
+		_yHist->Fill(y_in_IJK_coordinates);
+		_zHist->Fill(z_in_IJK_coordinates);
+
+		_xyHist->Fill(x_in_IJK_coordinates,y_in_IJK_coordinates);
 
     }
 	AIDAProcessor::tree(this);
-	_coordinateZ = 15;
-	_testHist = new TH1D("_testHist","histogram with z coordintae for test",30, -0.5, 29.5);
-		_testHist->Fill(_coordinateZ);
 
 }
 

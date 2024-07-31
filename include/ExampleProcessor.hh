@@ -67,9 +67,13 @@ public:
   virtual void check(LCEvent *evt);
 
   virtual void end();
-  int _coordinateZ;
-  TH1* _testHist;
+
+  // Histogram definitions for ECALHit class
   
+  TH1* _xHist;
+  TH1* _yHist;
+  TH1* _zHist;
+  TH2* _xyHist;
 
 //private:
 
