@@ -71,7 +71,7 @@ public:
   TH1* _testHist;
   
 
-private:
+//private:
 
   virtual void ShowMCInfo(LCCollection *col);
   virtual void ShowECALInfo(LCCollection *col);

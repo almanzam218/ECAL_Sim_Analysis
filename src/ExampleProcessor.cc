@@ -50,10 +50,6 @@ void ExampleProcessor::init()
 	int testVariable = 1;
 	int test2 = 10;
 	printParameters();
-	AIDAProcessor::tree(this);
-	_coordinateZ = 15;
-	_testHist = new TH1D("_testHist","histogram with z coordintae for test",30, -0.5, 29.5);
-		_testHist->Fill(_coordinateZ);
 
 }
 
@@ -107,6 +103,10 @@ void ExampleProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
 		//_testHist->Fill(_coordinateZ);
 
     }
+	AIDAProcessor::tree(this);
+	_coordinateZ = 15;
+	_testHist = new TH1D("_testHist","histogram with z coordintae for test",30, -0.5, 29.5);
+		_testHist->Fill(_coordinateZ);
 
 }
 
