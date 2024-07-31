@@ -18,6 +18,7 @@ Simple processor that reads LCIO files with SimCalorimeterHit and writes in scre
 > make -j3
 > 
 > make install
+>changes to readme
 
 # Run: 
 scripts_condor are copied from other example, not usable for us unless few modifications are done.
