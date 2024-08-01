@@ -74,6 +74,8 @@ public:
   TH1* _yHist;
   TH1* _zHist;
   TH2* _xyHist;
+  TH1* _cellEnergyHist;
+  TH1* _evEnergyHist;
 
 //private:
 

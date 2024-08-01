@@ -53,6 +53,8 @@ void ExampleProcessor::init()
 	_xHist = new TH1D("_xHist","X Distribution",30, -0.5, 29.5);
 	_yHist = new TH1D("_yHist","Y Distribution",30, -0.5, 29.5);
 	_zHist = new TH1D("_zHist","Z Distribution",30, -0.5, 29.5);
+	_cellEnergyHist = new TH1F("_cellEnergyHist","Energy deposited in cells Distribution",100, 0, 0.01);
+	_evEnergyHist = new TH1F("_evEnergyHist","Energy of shower Distribution",100, 0, 10);
 	
 	_xyHist = new TH2D("_xyHist","XY view all events",30,-0.5,29.5,30, -0.5, 29.5);
 
@@ -89,12 +91,12 @@ void ExampleProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
 {
   int number = myCollection->getNumberOfElements();
   CellIDDecoder<EVENT::SimCalorimeterHit> cd(myCollection);
+	double totalEnergy = 0;
 
   for (int i = 0; i < number; i++)
     {
 
       SimCalorimeterHit *ecalhit = dynamic_cast<SimCalorimeterHit *>(myCollection->getElementAt(i));
-
       int x_in_IJK_coordinates = cd(ecalhit)["x"];
       int y_in_IJK_coordinates = cd(ecalhit)["y"];
       int z_in_IJK_coordinates = cd(ecalhit)["layer"];
@@ -105,15 +107,27 @@ void ExampleProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
       streamlog_out(MESSAGE) << " y_in_IJK_coordinates=" << y_in_IJK_coordinates;
       streamlog_out(MESSAGE) << " z_in_IJK_coordinates=" << z_in_IJK_coordinates;
       streamlog_out(MESSAGE) << " energy=" << ecalhit->getEnergy();
+		if (z_in_IJK_coordinates<9)
+		{
+		totalEnergy=totalEnergy+(ecalhit->getEnergy()*47.894);		
+      	streamlog_out(MESSAGE) << " LESSSSSSSSSSSSSSSSSSSSSSSSSSSSS";
+		}
+		else
+		{
+		totalEnergy=totalEnergy+(ecalhit->getEnergy()*47.894*4/3);		
+      	streamlog_out(MESSAGE) << " MOREEEEEEEEEEEEEEEEEEEEEEEEEEEEEE";
+		}
+      streamlog_out(MESSAGE) << " energy TUNGSTEN=" << totalEnergy;
 		
 		
 		_xHist->Fill(x_in_IJK_coordinates);
 		_yHist->Fill(y_in_IJK_coordinates);
 		_zHist->Fill(z_in_IJK_coordinates);
-
+		_cellEnergyHist->Fill(ecalhit->getEnergy());
 		_xyHist->Fill(x_in_IJK_coordinates,y_in_IJK_coordinates);
 
     }
+	_evEnergyHist->Fill(totalEnergy);
 	AIDAProcessor::tree(this);
 
 }
