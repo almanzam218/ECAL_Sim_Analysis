@@ -109,12 +109,12 @@ void ExampleProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
       streamlog_out(MESSAGE) << " energy=" << ecalhit->getEnergy();
 		if (z_in_IJK_coordinates<9)
 		{
-		totalEnergy=totalEnergy+(ecalhit->getEnergy()*47.894);		
+		totalEnergy=totalEnergy+(ecalhit->getEnergy()*(1+47.894));		
       	streamlog_out(MESSAGE) << " LESSSSSSSSSSSSSSSSSSSSSSSSSSSSS";
 		}
 		else
 		{
-		totalEnergy=totalEnergy+(ecalhit->getEnergy()*47.894*4/3);		
+		totalEnergy=totalEnergy+(ecalhit->getEnergy()*(1+(47.894*4/3)));		
       	streamlog_out(MESSAGE) << " MOREEEEEEEEEEEEEEEEEEEEEEEEEEEEEE";
 		}
       streamlog_out(MESSAGE) << " energy TUNGSTEN=" << totalEnergy;
