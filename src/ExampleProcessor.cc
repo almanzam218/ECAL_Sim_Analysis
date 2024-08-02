@@ -1,4 +1,5 @@
 #include "ExampleProcessor.hh"
+#include "langaus.C"
 
 // ROOT
 #include "TStyle.h"
@@ -169,7 +170,7 @@ void ExampleProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
 		}
 		
 	}
-	
+
 	totalEnergy=0;
 
 }
@@ -208,4 +209,35 @@ void ExampleProcessor::processEvent(LCEvent *evt)
 
 	void ExampleProcessor::end()
 	{
+		for (int i = 0; i < 15; i++)
+		{
+				// Fitting SNR histo
+			printf("Fitting...\n");
+			
+			// Setting fit range and start values
+			double fr[2];
+			double sv[4], pllo[4], plhi[4], fp[4], fpe[4];
+			fr[0]=0.3*_energyInLayerSi[i]->GetMean();
+			fr[1]=3.0*_energyInLayerSi[i]->GetMean();
+			
+			pllo[0]=0.5; pllo[1]=5.0; pllo[2]=1.0; pllo[3]=0.4;
+			plhi[0]=5.0; plhi[1]=50.0; plhi[2]=100000000.0; plhi[3]=5.0;
+			sv[0]=1.8; sv[1]=20.0; sv[2]=50000.0; sv[3]=3.0;
+			
+			double chisqr;
+			int    ndf;
+			TF1 *fitsnr = langaufit(_energyInLayerSi[i],fr,sv,pllo,plhi,fp,fpe,&chisqr,&ndf);
+/*			
+			sv[0]=fp[0]; sv[1]=fp[1]; sv[2]=fp[2]; sv[3]=fp[3];
+			
+			fr[0]=fp[1]-5*fp[0];
+			fr[1]=fp[1]+10*fp[0];
+
+			TF1 *fitsnr1 = langaufit(hAmplitudeArea[i],fr,sv,pllo,plhi,fp,fpe,&chisqr,&ndf);
+*/
+			double SNRPeak, SNRFWHM;
+			langaupro(fp,SNRPeak,SNRFWHM);
+			
+			printf("Fitting done\nPlotting results...\n");
+		}
 	}
