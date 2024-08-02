@@ -20,6 +20,7 @@
 #include <cmath>
 #include <string>
 #include <vector>
+#include <array>
 
 #include "TH1.h"
 #include "TH2.h"
@@ -69,13 +70,15 @@ public:
   virtual void end();
 
   // Histogram definitions for ECALHit class
-  
+
+  TObjArray* _energyInLayerSiHists; 
   TH1* _xHist;
   TH1* _yHist;
   TH1* _zHist;
   TH2* _xyHist;
   TH1* _cellEnergyHist;
   TH1* _evEnergyHist;
+  TH1* _energyInLayerSi[15];
 
 //private:
 

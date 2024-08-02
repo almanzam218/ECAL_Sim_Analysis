@@ -1,6 +1,14 @@
 #include "ExampleProcessor.hh"
 
 // ROOT
+#include "TStyle.h"
+#include "TDirectory.h"
+#include "TObjArray.h"
+#include "TMath.h"
+
+#include <math.h>
+#include <iostream>
+#include <fstream>
 
 // ----- include for verbosity dependent logging ---------
 // #include "marlin/VerbosityLevels.h"
@@ -54,10 +62,20 @@ void ExampleProcessor::init()
 	_yHist = new TH1D("_yHist","Y Distribution",30, -0.5, 29.5);
 	_zHist = new TH1D("_zHist","Z Distribution",30, -0.5, 29.5);
 	_cellEnergyHist = new TH1F("_cellEnergyHist","Energy deposited in cells Distribution",100, 0, 0.01);
-	_evEnergyHist = new TH1F("_evEnergyHist","Energy of shower Distribution",100, 0, 10);
+	_evEnergyHist = new TH1F("_evEnergyHist","Energy of shower Distribution",100, 0, 25);
 	
 	_xyHist = new TH2D("_xyHist","XY view all events",30,-0.5,29.5,30, -0.5, 29.5);
+	
+	_energyInLayerSiHists = new TObjArray(15);
 
+	for (int i = 0; i < 15; i++)
+	{
+		_energyInLayerSi[i] = new TH1F(Form("_energyInLayerSi_%d",i+1),"Energy deposited in layer ",100, 0, 0.01);
+		_energyInLayerSi[i]->SetTitle(Form("Total energy in layer %d",i+1));
+		//_energyInLayerSiHists->Add(_energyInLayerSi[i]);
+	}
+	AIDAProcessor::tree(this);
+	
 }
 
 
@@ -92,6 +110,7 @@ void ExampleProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
   int number = myCollection->getNumberOfElements();
   CellIDDecoder<EVENT::SimCalorimeterHit> cd(myCollection);
 	double totalEnergy = 0;
+	double totalEnergyLayerSi[15] = {0};
 
   for (int i = 0; i < number; i++)
     {
@@ -130,9 +149,9 @@ void ExampleProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
 				totalEnergy=totalEnergy+(ecalhit->getEnergy()*(1+47.894*5.6/0.320));		
 			}
 		}
-      streamlog_out(MESSAGE) << " energy TUNGSTEN=" << totalEnergy;
 		
-		
+		totalEnergyLayerSi[z_in_IJK_coordinates-1]=totalEnergyLayerSi[z_in_IJK_coordinates-1]+ecalhit->getEnergy();
+
 		_xHist->Fill(x_in_IJK_coordinates);
 		_yHist->Fill(y_in_IJK_coordinates);
 		_zHist->Fill(z_in_IJK_coordinates);
@@ -140,8 +159,15 @@ void ExampleProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
 		_xyHist->Fill(x_in_IJK_coordinates,y_in_IJK_coordinates);
 
     }
+    streamlog_out(MESSAGE) << " energy TUNGSTEN=" << totalEnergy;
 	_evEnergyHist->Fill(totalEnergy);
-	AIDAProcessor::tree(this);
+	for (int i = 0; i < 15; i++)
+	{
+		_energyInLayerSi[i]->Fill(totalEnergyLayerSi[i]);
+		totalEnergyLayerSi[i]=0;
+	}
+	
+	totalEnergy=0;
 
 }
 
