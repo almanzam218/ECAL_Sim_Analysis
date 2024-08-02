@@ -109,13 +109,26 @@ void ExampleProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
       streamlog_out(MESSAGE) << " energy=" << ecalhit->getEnergy();
 		if (z_in_IJK_coordinates<9)
 		{
-		totalEnergy=totalEnergy+(ecalhit->getEnergy()*(1+47.894));		
-      	streamlog_out(MESSAGE) << " LESSSSSSSSSSSSSSSSSSSSSSSSSSSSS";
+			if (z_in_IJK_coordinates<5)
+			{
+				totalEnergy=totalEnergy+(ecalhit->getEnergy()*(1+47.894*4.2/0.650));		
+			}
+			else
+			{
+				totalEnergy=totalEnergy+(ecalhit->getEnergy()*(1+47.894*4.2/0.500));		
+			}
+			
 		}
 		else
 		{
-		totalEnergy=totalEnergy+(ecalhit->getEnergy()*(1+(47.894*4/3)));		
-      	streamlog_out(MESSAGE) << " MOREEEEEEEEEEEEEEEEEEEEEEEEEEEEEE";
+			if (z_in_IJK_coordinates<11)
+			{
+				totalEnergy=totalEnergy+(ecalhit->getEnergy()*(1+(47.894*5.6/500)));		
+			}
+			else
+			{
+				totalEnergy=totalEnergy+(ecalhit->getEnergy()*(1+47.894*5.6/0.320));		
+			}
 		}
       streamlog_out(MESSAGE) << " energy TUNGSTEN=" << totalEnergy;
 		
