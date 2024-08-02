@@ -71,7 +71,6 @@ public:
 
   // Histogram definitions for ECALHit class
 
-  TObjArray* _energyInLayerSiHists; 
   TH1* _xHist;
   TH1* _yHist;
   TH1* _zHist;
