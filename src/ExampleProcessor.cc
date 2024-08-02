@@ -124,6 +124,7 @@ void ExampleProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
       streamlog_out(MESSAGE) << " y_in_IJK_coordinates=" << y_in_IJK_coordinates;
       streamlog_out(MESSAGE) << " z_in_IJK_coordinates=" << z_in_IJK_coordinates;
       streamlog_out(MESSAGE) << " energy=" << ecalhit->getEnergy();
+      streamlog_out(MESSAGE) << " NUMBER=" << number;
 		if (z_in_IJK_coordinates<9)
 		{
 			if (z_in_IJK_coordinates<5)
