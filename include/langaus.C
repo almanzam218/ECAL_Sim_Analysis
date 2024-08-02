@@ -3,7 +3,7 @@
 #include "TROOT.h"
 #include "TStyle.h"
 #include "TMath.h"
- 
+//from root examples 
 double langaufun(double *x, double *par) {
  
    //Fit parameters:
