@@ -78,6 +78,7 @@ public:
   TH1* _cellEnergyHist;
   TH1* _evEnergyHist;
   TH1F* _energyInLayerSi[15];
+	double _layerFitParams[15][6] = {0};
 
 //private:
 

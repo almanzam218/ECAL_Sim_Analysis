@@ -59,9 +59,9 @@ void ExampleProcessor::init()
 	int testVariable = 1;
 	int test2 = 10;
 	printParameters();
-	_xHist = new TH1D("_xHist","X Distribution",30, -0.5, 29.5);
-	_yHist = new TH1D("_yHist","Y Distribution",30, -0.5, 29.5);
-	_zHist = new TH1D("_zHist","Z Distribution",30, -0.5, 29.5);
+	_xHist = new TH1D("_xHist","X Distribution",32, -0.5, 31.5);
+	_yHist = new TH1D("_yHist","Y Distribution",32, -0.5, 31.5);
+	_zHist = new TH1D("_zHist","Z Distribution",15, -0.5, 14.5);
 	_cellEnergyHist = new TH1F("_cellEnergyHist","Energy deposited in cells Distribution",200, 0, 0.002);
 	_evEnergyHist = new TH1F("_evEnergyHist","Energy of shower Distribution",100, 0, 25);
 	
@@ -239,5 +239,20 @@ void ExampleProcessor::processEvent(LCEvent *evt)
 			langaupro(fp,SNRPeak,SNRFWHM);
 			
 			printf("Fitting done\nPlotting results...\n");
+			for (int j = 0; j < 4; j++)
+			{
+				_layerFitParams[i][j] = fp[j];
+			}
+			_layerFitParams[i][4] = chisqr;
+			_layerFitParams[i][5] = ndf;
+			
 		}
+		for (int j = 0; j < 15; j++)
+		{
+			for (int h = 0; h < 6; h++)
+			{
+				streamlog_out(MESSAGE) << "\n fit param :" << _layerFitParams[j][h];
+			
+			}
+		}	
 	}
