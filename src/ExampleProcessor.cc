@@ -119,13 +119,14 @@ void ExampleProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
       int y_in_IJK_coordinates = cd(ecalhit)["y"];
       int z_in_IJK_coordinates = cd(ecalhit)["layer"];
 		//_coordinateZ=z_in_IJK_coordinates;
-      streamlog_out(MESSAGE) << "\n SimCalorimeterHit, :" << i;
+ /*     streamlog_out(MESSAGE) << "\n SimCalorimeterHit, :" << i;
       streamlog_out(MESSAGE) << " cellID-encoded=" << ecalhit->getCellID0();
       streamlog_out(MESSAGE) << " x_in_IJK_coordinates=" << x_in_IJK_coordinates;
       streamlog_out(MESSAGE) << " y_in_IJK_coordinates=" << y_in_IJK_coordinates;
       streamlog_out(MESSAGE) << " z_in_IJK_coordinates=" << z_in_IJK_coordinates;
       streamlog_out(MESSAGE) << " energy=" << ecalhit->getEnergy();
       streamlog_out(MESSAGE) << " NUMBER=" << number;
+*/		
 		if (z_in_IJK_coordinates<9)
 		{
 			if (z_in_IJK_coordinates<5)
@@ -214,44 +215,22 @@ void ExampleProcessor::processEvent(LCEvent *evt)
 				// Fitting SNR histo
 			printf("Fitting...\n");
 			
-			// Setting fit range and start values
-			double fr[2];
-			double sv[4], pllo[4], plhi[4], fp[4], fpe[4];
-			fr[0]=0.3*_energyInLayerSi[i]->GetMean();
-			fr[1]=3.0*_energyInLayerSi[i]->GetMean();
-			
-			pllo[0]=1e-6; pllo[1]=0.1e-3; pllo[2]=0.0001; pllo[3]=0.4e-6;
-			plhi[0]=3e-4; plhi[1]=0.3e-3; plhi[2]=0.01; plhi[3]=0.4e-3;
-			sv[0]=8e-5; sv[1]=0.2e-3; sv[2]=0.001; sv[3]=0.4e-5;
-			
-			double chisqr;
-			int    ndf;
-			TF1 *fitsnr = langaufit(_energyInLayerSi[i],fr,sv,pllo,plhi,fp,fpe,&chisqr,&ndf);
-/*			
-			sv[0]=fp[0]; sv[1]=fp[1]; sv[2]=fp[2]; sv[3]=fp[3];
-			
-			fr[0]=fp[1]-5*fp[0];
-			fr[1]=fp[1]+10*fp[0];
-
-			TF1 *fitsnr1 = langaufit(hAmplitudeArea[i],fr,sv,pllo,plhi,fp,fpe,&chisqr,&ndf);
-*/
-			double SNRPeak, SNRFWHM;
-			langaupro(fp,SNRPeak,SNRFWHM);
-			
+			_energyInLayerSi[i]->Fit("landau");	
+			TF1 *fit = (TF1*)_energyInLayerSi[i]->GetListOfFunctions()->FindObject("landau");
+			gStyle->SetOptFit(1111);
 			printf("Fitting done\nPlotting results...\n");
-			for (int j = 0; j < 4; j++)
+			for (int j = 0; j < 3; j++)
 			{
-				_layerFitParams[i][j] = fp[j];
+				_layerFitParams[i][j] = fit->GetParameter(j);
 			}
-			_layerFitParams[i][4] = chisqr;
-			_layerFitParams[i][5] = ndf;
-			fitsnr->Draw();	
+			
 		}
 		for (int j = 0; j < 15; j++)
 		{
-			for (int h = 0; h < 6; h++)
+			streamlog_out(MESSAGE) << "\n Fit PARAMS for layer " << j;
+			for (int h = 0; h < 3; h++)
 			{
-				streamlog_out(MESSAGE) << "\n fit param :" << _layerFitParams[j][h];
+				streamlog_out(MESSAGE) << "\n par["<< h <<"] = "<< _layerFitParams[j][h];
 			
 			}
 		}	
