@@ -77,7 +77,7 @@ public:
   TH2* _xyHist;
   TH1* _cellEnergyHist;
   TH1* _evEnergyHist;
-  TH1* _energyInLayerSi[15];
+  TH1F* _energyInLayerSi[15];
 
 //private:
 
@@ -88,6 +88,6 @@ public:
   std::string _ECALColName;
 
 
-};
+}
 
 #endif

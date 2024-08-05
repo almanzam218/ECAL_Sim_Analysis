@@ -74,6 +74,7 @@ void ExampleProcessor::init()
 		_energyInLayerSi[i]->SetTitle(Form("Total energy in layer %d",i+1));
 	}
 	AIDAProcessor::tree(this);
+	//AIDAProcessor::histogramFactory(this);
 	
 }
 
@@ -235,9 +236,9 @@ void ExampleProcessor::processEvent(LCEvent *evt)
 
 			TF1 *fitsnr1 = langaufit(hAmplitudeArea[i],fr,sv,pllo,plhi,fp,fpe,&chisqr,&ndf);
 */
-			double SNRPeak, SNRFWHM;
-			langaupro(fp,SNRPeak,SNRFWHM);
+			//double SNRPeak, SNRFWHM;
+			//langaupro(fp,SNRPeak,SNRFWHM);
 			
-			printf("Fitting done\nPlotting results...\n");
+			//printf("Fitting done\nPlotting results...\n");
 		}
 	}
