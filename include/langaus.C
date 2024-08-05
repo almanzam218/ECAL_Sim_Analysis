@@ -82,7 +82,7 @@ TF1 *langaufit(TH1F *his, double *fitrange, double *startvalues, double *parlimi
    int i;
    char FunName[100];
  
-   //sprintf(FunName,"Fitfcn_%s",his->GetName());
+   sprintf(FunName,"Fitfcn_%s",his->GetName());
  
    TF1 *ffitold = (TF1*)gROOT->GetListOfFunctions()->FindObject(FunName);
    if (ffitold) delete ffitold;

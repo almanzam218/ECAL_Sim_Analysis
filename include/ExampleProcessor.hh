@@ -88,6 +88,6 @@ public:
   std::string _ECALColName;
 
 
-}
+};
 
 #endif
