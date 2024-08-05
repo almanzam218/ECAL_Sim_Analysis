@@ -220,9 +220,9 @@ void ExampleProcessor::processEvent(LCEvent *evt)
 			fr[0]=0.3*_energyInLayerSi[i]->GetMean();
 			fr[1]=3.0*_energyInLayerSi[i]->GetMean();
 			
-			pllo[0]=0.5; pllo[1]=5.0; pllo[2]=1.0; pllo[3]=0.4;
-			plhi[0]=5.0; plhi[1]=50.0; plhi[2]=100000000.0; plhi[3]=5.0;
-			sv[0]=1.8; sv[1]=20.0; sv[2]=50000.0; sv[3]=3.0;
+			pllo[0]=1e-6; pllo[1]=0.1e-3; pllo[2]=0.0001; pllo[3]=0.4e-6;
+			plhi[0]=3e-4; plhi[1]=0.3e-3; plhi[2]=0.01; plhi[3]=0.4e-3;
+			sv[0]=8e-5; sv[1]=0.2e-3; sv[2]=0.001; sv[3]=0.4e-5;
 			
 			double chisqr;
 			int    ndf;
@@ -245,7 +245,7 @@ void ExampleProcessor::processEvent(LCEvent *evt)
 			}
 			_layerFitParams[i][4] = chisqr;
 			_layerFitParams[i][5] = ndf;
-			
+			fitsnr->Draw();	
 		}
 		for (int j = 0; j < 15; j++)
 		{
