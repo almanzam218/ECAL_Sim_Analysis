@@ -214,7 +214,7 @@ void GetEnergyResolutionProcessor::processEvent(LCEvent *evt)
 		{
 			// Fitting SNR histo
 			printf("Fitting...\n");
-			
+		/*	
 			_energyInLayerSi[i]->Fit("landau");	
 			TF1 *fit = (TF1*)_energyInLayerSi[i]->GetListOfFunctions()->FindObject("landau");
 			gStyle->SetOptFit(1111);
@@ -223,7 +223,7 @@ void GetEnergyResolutionProcessor::processEvent(LCEvent *evt)
 			{
 				_layerFitParams[i][j] = fit->GetParameter(j);
 			}
-			
+			*/
 		}
 		for (int j = 0; j < 15; j++)
 		{
