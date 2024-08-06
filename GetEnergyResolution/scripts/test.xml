@@ -4,7 +4,7 @@
 
 <constants>
     <!-- Output files constants -->
-    <constant name="OutputBaseName" value="/lhome/ific/a/almanzam/testsSim/ExampleProcessor/GetEnergyResolution/scripts/testAIDA_electron" />
+    <constant name="OutputBaseName" value="/lhome/ific/a/almanzam/testsSim/ExampleProcessor/GetEnergyResolution/scripts/testAIDA_muon_1" />
     <constant name="AIDAFileName" value="${OutputBaseName}" />
   </constants>
   
@@ -20,7 +20,7 @@
   <!--########  Global  ######################################## -->
   <global>
     <parameter name="LCIOInputFiles">
-    /lhome/ific/a/almanzam/testsSim/Simplified_ECAL_PID/generation/run_scripts/ECALe_tests/data/ECALe_luxe_v0_QGSP_BERT_e-_4GeV_1.slcio
+    /lhome/ific/a/almanzam/testsSim/Simplified_ECAL_PID/generation/run_scripts/ECALe_tests/data/ECALe_luxe_v0_QGSP_BERT_mu-_10GeV_1.slcio
     </parameter>
     <!--parameter name="AllowToModifyEvent" value="true" /-->  
     <parameter name="MaxRecordNumber" value="101"/>  

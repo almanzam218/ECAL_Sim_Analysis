@@ -77,6 +77,8 @@ public:
   TH2* _xyHist;
   TH1* _cellEnergyHist;
   TH1* _evEnergyHist;
+  TH1F* _energyInLayerSi[15];
+  double _layerFitParams[15][4] = {0};
 //private:
 
   virtual void ShowMCInfo(LCCollection *col);
