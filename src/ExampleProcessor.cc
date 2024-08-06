@@ -143,7 +143,7 @@ void ExampleProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
 		{
 			if (z_in_IJK_coordinates<11)
 			{
-				totalEnergy=totalEnergy+(ecalhit->getEnergy()*(1+(47.894*5.6/500)));		
+				totalEnergy=totalEnergy+(ecalhit->getEnergy()*(1+(47.894*5.6/0.500)));		
 			}
 			else
 			{
