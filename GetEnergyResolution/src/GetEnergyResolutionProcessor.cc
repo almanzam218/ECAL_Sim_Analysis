@@ -131,11 +131,11 @@ void GetEnergyResolutionProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
 		{
 			if (z_in_IJK_coordinates<5)
 			{
-				totalEnergy=totalEnergy+(ecalhit->getEnergy()*(1+47.894*4.2/0.650));		
+				totalEnergy=totalEnergy+(ecalhit->getEnergy()*(1+(9.37/0.3504)*4.2/0.650));		
 			}
 			else
 			{
-				totalEnergy=totalEnergy+(ecalhit->getEnergy()*(1+47.894*4.2/0.500));		
+				totalEnergy=totalEnergy+(ecalhit->getEnergy()*(1+(9.37/0.3504)*4.2/0.500));		
 			}
 			
 		}
@@ -143,11 +143,11 @@ void GetEnergyResolutionProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
 		{
 			if (z_in_IJK_coordinates<11)
 			{
-				totalEnergy=totalEnergy+(ecalhit->getEnergy()*(1+(47.894*5.6/500)));		
+				totalEnergy=totalEnergy+(ecalhit->getEnergy()*(1+(9.37/0.3504)*5.6/0.500));		
 			}
 			else
 			{
-				totalEnergy=totalEnergy+(ecalhit->getEnergy()*(1+47.894*5.6/0.320));		
+				totalEnergy=totalEnergy+(ecalhit->getEnergy()*(1+(9.37/0.3504)*5.6/0.320));		
 			}
 		}
 		
