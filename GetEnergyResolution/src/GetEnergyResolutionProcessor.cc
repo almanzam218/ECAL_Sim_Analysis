@@ -212,7 +212,7 @@ void GetEnergyResolutionProcessor::processEvent(LCEvent *evt)
 	{
 		for (int i = 0; i < 15; i++)
 		{
-				// Fitting SNR histo
+			// Fitting SNR histo
 			printf("Fitting...\n");
 			
 			_energyInLayerSi[i]->Fit("landau");	
