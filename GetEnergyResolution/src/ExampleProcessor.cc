@@ -68,7 +68,11 @@ void ExampleProcessor::init()
 	_xyHist = new TH2D("_xyHist","XY view all events",30,-0.5,29.5,30, -0.5, 29.5);
 	
 
-	
+	for (int i = 0; i < 15; i++)
+	{
+		_energyInLayerSi[i] = new TH1F(Form("_energyInLayerSi_%d",i+1),"Energy deposited in layer ",200, 0, 0.002);
+		_energyInLayerSi[i]->SetTitle(Form("Total energy in layer %d",i+1));
+	}
 	AIDAProcessor::tree(this);
 	
 }
@@ -139,7 +143,7 @@ void ExampleProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
 		{
 			if (z_in_IJK_coordinates<11)
 			{
-				totalEnergy=totalEnergy+(ecalhit->getEnergy()*(1+(47.894*5.6/0.500)));		
+				totalEnergy=totalEnergy+(ecalhit->getEnergy()*(1+(47.894*5.6/500)));		
 			}
 			else
 			{
@@ -206,4 +210,28 @@ void ExampleProcessor::processEvent(LCEvent *evt)
 
 	void ExampleProcessor::end()
 	{
+		for (int i = 0; i < 15; i++)
+		{
+				// Fitting SNR histo
+			printf("Fitting...\n");
+			
+			_energyInLayerSi[i]->Fit("landau");	
+			TF1 *fit = (TF1*)_energyInLayerSi[i]->GetListOfFunctions()->FindObject("landau");
+			gStyle->SetOptFit(1111);
+			printf("Fitting done\nPlotting results...\n");
+			for (int j = 0; j < 3; j++)
+			{
+				_layerFitParams[i][j] = fit->GetParameter(j);
+			}
+			
+		}
+		for (int j = 0; j < 15; j++)
+		{
+			streamlog_out(MESSAGE) << "\n Fit PARAMS for layer " << j;
+			for (int h = 0; h < 3; h++)
+			{
+				streamlog_out(MESSAGE) << "\n par["<< h <<"] = "<< _layerFitParams[j][h];
+			
+			}
+		}	
 	}

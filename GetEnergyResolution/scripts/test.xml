@@ -4,7 +4,7 @@
 
 <constants>
     <!-- Output files constants -->
-    <constant name="OutputBaseName" value="/lhome/ific/a/almanzam/testsSim/ExampleProcessor/scripts/testAIDA_electronenergy" />
+    <constant name="OutputBaseName" value="/lhome/ific/a/almanzam/testsSim/ExampleProcessor/GetMIP/scripts/testAIDA_muon" />
     <constant name="AIDAFileName" value="${OutputBaseName}" />
   </constants>
   
@@ -23,7 +23,7 @@
     /lhome/ific/a/almanzam/testsSim/Simplified_ECAL_PID/generation/run_scripts/ECALe_tests/data/ECALe_luxe_v0_QGSP_BERT_mu-_10GeV_1.slcio
     </parameter>
     <!--parameter name="AllowToModifyEvent" value="true" /-->  
-    <parameter name="MaxRecordNumber" value="10"/>  
+    <parameter name="MaxRecordNumber" value="101"/>  
     <parameter name="SkipNEvents" value="0"/>
     <parameter name="SupressCheck" value="false"/>
     <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> DEBUG </parameter>
