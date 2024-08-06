@@ -68,11 +68,6 @@ void GetEnergyResolutionProcessor::init()
 	_xyHist = new TH2D("_xyHist","XY view all events",30,-0.5,29.5,30, -0.5, 29.5);
 	
 
-	for (int i = 0; i < 15; i++)
-	{
-		_energyInLayerSi[i] = new TH1F(Form("_energyInLayerSi_%d",i+1),"Energy deposited in layer ",200, 0, 0.002);
-		_energyInLayerSi[i]->SetTitle(Form("Total energy in layer %d",i+1));
-	}
 	AIDAProcessor::tree(this);
 	
 }
@@ -109,8 +104,6 @@ void GetEnergyResolutionProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
   int number = myCollection->getNumberOfElements();
   CellIDDecoder<EVENT::SimCalorimeterHit> cd(myCollection);
 	double totalEnergy = 0;
-	double totalEnergyLayerSi[15] = {0};
-	int hitsInLayer[15] = {0};
   for (int i = 0; i < number; i++)
     {
 
@@ -151,8 +144,6 @@ void GetEnergyResolutionProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
 			}
 		}
 		
-		totalEnergyLayerSi[z_in_IJK_coordinates]=totalEnergyLayerSi[z_in_IJK_coordinates]+ecalhit->getEnergy();
-		hitsInLayer[z_in_IJK_coordinates] = hitsInLayer[z_in_IJK_coordinates] + 1;
 		_xHist->Fill(x_in_IJK_coordinates);
 		_yHist->Fill(y_in_IJK_coordinates);
 		_zHist->Fill(z_in_IJK_coordinates);
@@ -162,15 +153,6 @@ void GetEnergyResolutionProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
     }
     streamlog_out(MESSAGE) << " energy TUNGSTEN=" << totalEnergy;
 	_evEnergyHist->Fill(totalEnergy);
-	for (int i = 0; i < 15; i++)
-	{
-		if (hitsInLayer[i]==1)
-		{
-			_energyInLayerSi[i]->Fill(totalEnergyLayerSi[i]);
-			totalEnergyLayerSi[i]=0;
-		}
-		
-	}
 
 	totalEnergy=0;
 
@@ -210,28 +192,4 @@ void GetEnergyResolutionProcessor::processEvent(LCEvent *evt)
 
 	void GetEnergyResolutionProcessor::end()
 	{
-		for (int i = 0; i < 15; i++)
-		{
-				// Fitting SNR histo
-			printf("Fitting...\n");
-			
-			_energyInLayerSi[i]->Fit("landau");	
-			TF1 *fit = (TF1*)_energyInLayerSi[i]->GetListOfFunctions()->FindObject("landau");
-			gStyle->SetOptFit(1111);
-			printf("Fitting done\nPlotting results...\n");
-			for (int j = 0; j < 3; j++)
-			{
-				_layerFitParams[i][j] = fit->GetParameter(j);
-			}
-			
-		}
-		for (int j = 0; j < 15; j++)
-		{
-			streamlog_out(MESSAGE) << "\n Fit PARAMS for layer " << j;
-			for (int h = 0; h < 3; h++)
-			{
-				streamlog_out(MESSAGE) << "\n par["<< h <<"] = "<< _layerFitParams[j][h];
-			
-			}
-		}	
 	}
