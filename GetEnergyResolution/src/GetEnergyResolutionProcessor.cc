@@ -1,4 +1,4 @@
-#include "ExampleProcessor.hh"
+#include "GetEnergyResolutionProcessor.hh"
 #include "langaus.C"
 
 // ROOT
@@ -32,9 +32,9 @@ using std::string;
 using std::vector;
 using UTIL::LCRelationNavigator;
 
-ExampleProcessor aExampleProcessor;
+GetEnergyResolutionProcessor aGetEnergyResolutionProcessor;
 
-ExampleProcessor::ExampleProcessor() : Processor("ExampleProcessor")
+GetEnergyResolutionProcessor::GetEnergyResolutionProcessor() : Processor("GetEnergyResolutionProcessor")
 {
 
 	// modify processor description
@@ -52,9 +52,9 @@ ExampleProcessor::ExampleProcessor() : Processor("ExampleProcessor")
 							std::string("SiEcalCollection"));
 }
 
-ExampleProcessor::~ExampleProcessor() {}
+GetEnergyResolutionProcessor::~GetEnergyResolutionProcessor() {}
 
-void ExampleProcessor::init()
+void GetEnergyResolutionProcessor::init()
 {
 	int testVariable = 1;
 	int test2 = 10;
@@ -78,7 +78,7 @@ void ExampleProcessor::init()
 }
 
 
-void ExampleProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
+void GetEnergyResolutionProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
 {
   int number = myCollection->getNumberOfElements();
   
@@ -104,7 +104,7 @@ void ExampleProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
 
 }
 
- void ExampleProcessor::ShowECALInfo(EVENT::LCCollection *myCollection)
+ void GetEnergyResolutionProcessor::ShowECALInfo(EVENT::LCCollection *myCollection)
 {
   int number = myCollection->getNumberOfElements();
   CellIDDecoder<EVENT::SimCalorimeterHit> cd(myCollection);
@@ -177,11 +177,11 @@ void ExampleProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
 }
 
 
-void ExampleProcessor::processRunHeader(LCRunHeader *run)
+void GetEnergyResolutionProcessor::processRunHeader(LCRunHeader *run)
 {
 }
 
-void ExampleProcessor::processEvent(LCEvent *evt)
+void GetEnergyResolutionProcessor::processEvent(LCEvent *evt)
 {
 
 	try
@@ -203,12 +203,12 @@ void ExampleProcessor::processEvent(LCEvent *evt)
 
 }
 
-	void ExampleProcessor::check(LCEvent * evt)
+	void GetEnergyResolutionProcessor::check(LCEvent * evt)
 	{
 		// nothing to check here - could be used to fill checkplots in reconstruction processor
 	}
 
-	void ExampleProcessor::end()
+	void GetEnergyResolutionProcessor::end()
 	{
 		for (int i = 0; i < 15; i++)
 		{

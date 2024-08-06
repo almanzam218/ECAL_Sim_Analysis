@@ -1,5 +1,5 @@
-#ifndef ExampleProcessor_h
-#define ExampleProcessor_h 1
+#ifndef GetEnergyResolutionProcessor_h
+#define GetEnergyResolutionProcessor_h 1
 #include <iomanip>
 #include <EVENT/LCRelation.h>
 #include "marlin/Processor.h"
@@ -44,14 +44,14 @@
 using namespace lcio;
 using namespace marlin;
 
-class ExampleProcessor : public Processor
+class GetEnergyResolutionProcessor : public Processor
 {
 
 public:
-  virtual Processor *newProcessor() { return new ExampleProcessor; }
+  virtual Processor *newProcessor() { return new GetEnergyResolutionProcessor; }
 
-  ExampleProcessor();
-  virtual ~ExampleProcessor();
+  GetEnergyResolutionProcessor();
+  virtual ~GetEnergyResolutionProcessor();
 
   /** Called at the begin of the job before anything is read.
    */
