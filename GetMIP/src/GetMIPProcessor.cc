@@ -63,7 +63,6 @@ void GetMIPProcessor::init()
 	_yHist = new TH1D("_yHist","Y Distribution",32, -0.5, 31.5);
 	_zHist = new TH1D("_zHist","Z Distribution",15, -0.5, 14.5);
 	_cellEnergyHist = new TH1F("_cellEnergyHist","Energy deposited in cells Distribution",200, 0, 0.002);
-	_evEnergyHist = new TH1F("_evEnergyHist","Energy of shower Distribution",100, 0, 25);
 	
 	_xyHist = new TH2D("_xyHist","XY view all events",30,-0.5,29.5,30, -0.5, 29.5);
 	
@@ -108,7 +107,7 @@ void GetMIPProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
 {
   int number = myCollection->getNumberOfElements();
   CellIDDecoder<EVENT::SimCalorimeterHit> cd(myCollection);
-	double totalEnergy = 0;
+
 	double totalEnergyLayerSi[15] = {0};
 	int hitsInLayer[15] = {0};
   for (int i = 0; i < number; i++)
@@ -127,32 +126,9 @@ void GetMIPProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
       streamlog_out(MESSAGE) << " energy=" << ecalhit->getEnergy();
       streamlog_out(MESSAGE) << " NUMBER=" << number;
 */		
-		if (z_in_IJK_coordinates<9)
-		{
-			if (z_in_IJK_coordinates<5)
-			{
-				totalEnergy=totalEnergy+(ecalhit->getEnergy()*(1+47.894*4.2/0.650));		
-			}
-			else
-			{
-				totalEnergy=totalEnergy+(ecalhit->getEnergy()*(1+47.894*4.2/0.500));		
-			}
-			
-		}
-		else
-		{
-			if (z_in_IJK_coordinates<11)
-			{
-				totalEnergy=totalEnergy+(ecalhit->getEnergy()*(1+(47.894*5.6/500)));		
-			}
-			else
-			{
-				totalEnergy=totalEnergy+(ecalhit->getEnergy()*(1+47.894*5.6/0.320));		
-			}
-		}
 		
 		totalEnergyLayerSi[z_in_IJK_coordinates]=totalEnergyLayerSi[z_in_IJK_coordinates]+ecalhit->getEnergy();
-		hitsInLayer[z_in_IJK_coordinates] = hitsInLayer[z_in_IJK_coordinates] + 1;
+		hitsInLayer[z_in_IJK_coordinates]++;
 		_xHist->Fill(x_in_IJK_coordinates);
 		_yHist->Fill(y_in_IJK_coordinates);
 		_zHist->Fill(z_in_IJK_coordinates);
@@ -160,8 +136,8 @@ void GetMIPProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
 		_xyHist->Fill(x_in_IJK_coordinates,y_in_IJK_coordinates);
 
     }
-    streamlog_out(MESSAGE) << " energy TUNGSTEN=" << totalEnergy;
-	_evEnergyHist->Fill(totalEnergy);
+
+
 	for (int i = 0; i < 15; i++)
 	{
 		if (hitsInLayer[i]==1)
@@ -172,7 +148,7 @@ void GetMIPProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
 		
 	}
 
-	totalEnergy=0;
+	
 
 }
 
