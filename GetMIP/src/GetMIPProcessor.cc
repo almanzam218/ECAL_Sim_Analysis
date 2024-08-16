@@ -1,4 +1,4 @@
-#include "ExampleProcessor.hh"
+#include "GetMIPProcessor.hh"
 #include "langaus.C"
 
 // ROOT
@@ -32,9 +32,9 @@ using std::string;
 using std::vector;
 using UTIL::LCRelationNavigator;
 
-ExampleProcessor aExampleProcessor;
+GetMIPProcessor aGetMIPProcessor;
 
-ExampleProcessor::ExampleProcessor() : Processor("ExampleProcessor")
+GetMIPProcessor::GetMIPProcessor() : Processor("GetMIPProcessor")
 {
 
 	// modify processor description
@@ -52,9 +52,9 @@ ExampleProcessor::ExampleProcessor() : Processor("ExampleProcessor")
 							std::string("SiEcalCollection"));
 }
 
-ExampleProcessor::~ExampleProcessor() {}
+GetMIPProcessor::~GetMIPProcessor() {}
 
-void ExampleProcessor::init()
+void GetMIPProcessor::init()
 {
 	int testVariable = 1;
 	int test2 = 10;
@@ -78,7 +78,7 @@ void ExampleProcessor::init()
 }
 
 
-void ExampleProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
+void GetMIPProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
 {
   int number = myCollection->getNumberOfElements();
   
@@ -104,7 +104,7 @@ void ExampleProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
 
 }
 
- void ExampleProcessor::ShowECALInfo(EVENT::LCCollection *myCollection)
+ void GetMIPProcessor::ShowECALInfo(EVENT::LCCollection *myCollection)
 {
   int number = myCollection->getNumberOfElements();
   CellIDDecoder<EVENT::SimCalorimeterHit> cd(myCollection);
@@ -177,11 +177,11 @@ void ExampleProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
 }
 
 
-void ExampleProcessor::processRunHeader(LCRunHeader *run)
+void GetMIPProcessor::processRunHeader(LCRunHeader *run)
 {
 }
 
-void ExampleProcessor::processEvent(LCEvent *evt)
+void GetMIPProcessor::processEvent(LCEvent *evt)
 {
 
 	try
@@ -203,12 +203,12 @@ void ExampleProcessor::processEvent(LCEvent *evt)
 
 }
 
-	void ExampleProcessor::check(LCEvent * evt)
+	void GetMIPProcessor::check(LCEvent * evt)
 	{
 		// nothing to check here - could be used to fill checkplots in reconstruction processor
 	}
 
-	void ExampleProcessor::end()
+	void GetMIPProcessor::end()
 	{
 		for (int i = 0; i < 15; i++)
 		{

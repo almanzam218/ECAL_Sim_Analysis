@@ -4,7 +4,7 @@
 
 <constants>
     <!-- Output files constants -->
-    <constant name="OutputBaseName" value="/lhome/ific/a/almanzam/testsSim/ExampleProcessor/GetMIP/scripts/testAIDA_muon_20240816" />
+    <constant name="OutputBaseName" value="/lhome/ific/a/almanzam/testsSim/ExampleProcessor/GetMIP/scripts/testAIDA_muon_20240816_" />
     <constant name="AIDAFileName" value="${OutputBaseName}" />
   </constants>
   
@@ -13,7 +13,7 @@
   <execute>
     <processor name="MyAIDAProcessor" />
     <!--processor name="InitDD4hep"/-->
-    <processor name="MyExampleProcessor"/>
+    <processor name="MyGetMIPProcessor"/>
     <!--processor name="DSTOutput"/-->
   </execute>
 
@@ -41,7 +41,7 @@
     <parameter name="FileType" type="string" value="root "/>
   </processor>
 
-  <processor name="MyExampleProcessor" type="ExampleProcessor">  
+  <processor name="MyGetMIPProcessor" type="GetMIPProcessor">  
     <parameter name="ECALCollectionName" type="string"> SiEcalCollection </parameter>
     <parameter name="MCCollectionName" type="string"> MCParticle </parameter>
   </processor>
