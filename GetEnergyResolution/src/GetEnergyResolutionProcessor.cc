@@ -49,7 +49,7 @@ GetEnergyResolutionProcessor::GetEnergyResolutionProcessor() : Processor("GetEne
 							"ECALCollection",
 							"Name of the Sim ECAL Collection",
 							_ECALColName,
-							std::string("SiEcalCollection"));
+							std::string("PixelSiEcalCollection"));
 }
 
 GetEnergyResolutionProcessor::~GetEnergyResolutionProcessor() {}
@@ -59,13 +59,13 @@ void GetEnergyResolutionProcessor::init()
 	int testVariable = 1;
 	int test2 = 10;
 	printParameters();
-	_xHist = new TH1F("_xHist","X Distribution",32, -0.5, 31.5);
+	_xHist = new TH1F("_xHist","X Distribution",64, -0.5, 63.5);
 	_yHist = new TH1F("_yHist","Y Distribution",32, -0.5, 31.5);
 	_zHist = new TH1D("_zHist","Z Distribution",15, -0.5, 14.5);
 	_cellEnergyHist = new TH1F("_cellEnergyHist","Energy deposited in cells Distribution",200, 0, 0.002);
 	_evEnergyHist = new TH1F("_evEnergyHist","Energy of shower Distribution",100, 0, 0.01);
 	
-	_xyHist = new TH2D("_xyHist","XY view all events",30,-0.5,29.5,30, -0.5, 29.5);
+	_xyHist = new TH2D("_xyHist","XY view all events",64,-0.5,63.5,32, -0.5, 31.5);
 	
 
 	for (int i = 0; i < 15; i++)
@@ -115,10 +115,9 @@ void GetEnergyResolutionProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
     {
 
       SimCalorimeterHit *ecalhit = dynamic_cast<SimCalorimeterHit *>(myCollection->getElementAt(i));
-    double x_in_IJK_coordinates = ecalhit->getPosition()[0];//cd(ecalhit)["I"];
-    double y_in_IJK_coordinates = ecalhit->getPosition()[1];//cd(ecalhit)["I"];
-//      double y_in_IJK_coordinates = cd(ecalhit)["y"];
-      int z_in_IJK_coordinates = cd(ecalhit)["layer"];
+    int x_in_IJK_coordinates = cd(ecalhit)["I"];
+    int y_in_IJK_coordinates = cd(ecalhit)["J"];
+      int z_in_IJK_coordinates = cd(ecalhit)["K"];
 		//_coordinateZ=z_in_IJK_coordinates;
       streamlog_out(MESSAGE) << "\n SimCalorimeterHit, :" << i;
       streamlog_out(MESSAGE) << " cellID-encoded=" << ecalhit->getCellID0();
