@@ -4,7 +4,7 @@
 
 <constants>
     <!-- Output files constants -->
-    <constant name="OutputBaseName" value="/lhome/ific/a/almanzam/testsSim/ExampleProcessor/GetEnergyResolution/scripts/testAIDA_electron" />
+    <constant name="OutputBaseName" value="/lhome/ific/a/almanzam/testsSim/ExampleProcessor/GetEnergyResolution/scripts/gamma_20240820_1" />
     <constant name="AIDAFileName" value="${OutputBaseName}" />
   </constants>
   
@@ -20,10 +20,10 @@
   <!--########  Global  ######################################## -->
   <global>
     <parameter name="LCIOInputFiles">
-    /lhome/ific/a/almanzam/testsSim/Simplified_ECAL_PID/generation/run_scripts/ECALe_tests/data/ECALe_luxe_v0_QGSP_BERT_e-_4GeV_1.slcio
+    /lhome/ific/a/almanzam/testsSim/ECALe-lcio/generation/run_scripts/data/ECALe_luxe_v0_QGSP_BERT_gamma_10GeV_1.slcio
     </parameter>
     <!--parameter name="AllowToModifyEvent" value="true" /-->  
-    <parameter name="MaxRecordNumber" value="101"/>  
+    <parameter name="MaxRecordNumber" value="1000"/>  
     <parameter name="SkipNEvents" value="0"/>
     <parameter name="SupressCheck" value="false"/>
     <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> DEBUG </parameter>
@@ -42,7 +42,7 @@
   </processor>
 
   <processor name="MyGetEnergyResolutionProcessor" type="GetEnergyResolutionProcessor">  
-    <parameter name="ECALCollectionName" type="string"> SiEcalCollection </parameter>
+    <parameter name="ECALCollectionName" type="string"> PixelSiEcalCollection </parameter>
     <parameter name="MCCollectionName" type="string"> MCParticle </parameter>
   </processor>
 

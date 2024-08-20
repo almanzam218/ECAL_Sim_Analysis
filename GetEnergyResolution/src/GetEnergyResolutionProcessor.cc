@@ -59,11 +59,11 @@ void GetEnergyResolutionProcessor::init()
 	int testVariable = 1;
 	int test2 = 10;
 	printParameters();
-	_xHist = new TH1D("_xHist","X Distribution",32, -0.5, 31.5);
-	_yHist = new TH1D("_yHist","Y Distribution",32, -0.5, 31.5);
+	_xHist = new TH1F("_xHist","X Distribution",32, -0.5, 31.5);
+	_yHist = new TH1F("_yHist","Y Distribution",32, -0.5, 31.5);
 	_zHist = new TH1D("_zHist","Z Distribution",15, -0.5, 14.5);
 	_cellEnergyHist = new TH1F("_cellEnergyHist","Energy deposited in cells Distribution",200, 0, 0.002);
-	_evEnergyHist = new TH1F("_evEnergyHist","Energy of shower Distribution",100, 0, 25);
+	_evEnergyHist = new TH1F("_evEnergyHist","Energy of shower Distribution",100, 0, 0.01);
 	
 	_xyHist = new TH2D("_xyHist","XY view all events",30,-0.5,29.5,30, -0.5, 29.5);
 	
@@ -115,41 +115,20 @@ void GetEnergyResolutionProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
     {
 
       SimCalorimeterHit *ecalhit = dynamic_cast<SimCalorimeterHit *>(myCollection->getElementAt(i));
-      int x_in_IJK_coordinates = cd(ecalhit)["x"];
-      int y_in_IJK_coordinates = cd(ecalhit)["y"];
+    double x_in_IJK_coordinates = ecalhit->getPosition()[0];//cd(ecalhit)["I"];
+    double y_in_IJK_coordinates = ecalhit->getPosition()[1];//cd(ecalhit)["I"];
+//      double y_in_IJK_coordinates = cd(ecalhit)["y"];
       int z_in_IJK_coordinates = cd(ecalhit)["layer"];
 		//_coordinateZ=z_in_IJK_coordinates;
- /*     streamlog_out(MESSAGE) << "\n SimCalorimeterHit, :" << i;
+      streamlog_out(MESSAGE) << "\n SimCalorimeterHit, :" << i;
       streamlog_out(MESSAGE) << " cellID-encoded=" << ecalhit->getCellID0();
       streamlog_out(MESSAGE) << " x_in_IJK_coordinates=" << x_in_IJK_coordinates;
       streamlog_out(MESSAGE) << " y_in_IJK_coordinates=" << y_in_IJK_coordinates;
       streamlog_out(MESSAGE) << " z_in_IJK_coordinates=" << z_in_IJK_coordinates;
       streamlog_out(MESSAGE) << " energy=" << ecalhit->getEnergy();
       streamlog_out(MESSAGE) << " NUMBER=" << number;
-*/		
-		if (z_in_IJK_coordinates<9)
-		{
-			if (z_in_IJK_coordinates<5)
-			{
-				totalEnergy=totalEnergy+(ecalhit->getEnergy()*(1+(9.37/0.3504)*4.2/0.650));		
-			}
-			else
-			{
-				totalEnergy=totalEnergy+(ecalhit->getEnergy()*(1+(9.37/0.3504)*4.2/0.500));		
-			}
-			
-		}
-		else
-		{
-			if (z_in_IJK_coordinates<11)
-			{
-				totalEnergy=totalEnergy+(ecalhit->getEnergy()*(1+(9.37/0.3504)*5.6/0.500));		
-			}
-			else
-			{
-				totalEnergy=totalEnergy+(ecalhit->getEnergy()*(1+(9.37/0.3504)*5.6/0.320));		
-			}
-		}
+		
+		totalEnergy=totalEnergy+ecalhit->getEnergy();
 		
 		totalEnergyLayerSi[z_in_IJK_coordinates]=totalEnergyLayerSi[z_in_IJK_coordinates]+ecalhit->getEnergy();
 		hitsInLayer[z_in_IJK_coordinates] = hitsInLayer[z_in_IJK_coordinates] + 1;
@@ -164,7 +143,7 @@ void GetEnergyResolutionProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
 	_evEnergyHist->Fill(totalEnergy);
 	for (int i = 0; i < 15; i++)
 	{
-		if (hitsInLayer[i]==1)
+		if (hitsInLayer[i]>0)
 		{
 			_energyInLayerSi[i]->Fill(totalEnergyLayerSi[i]);
 			totalEnergyLayerSi[i]=0;
