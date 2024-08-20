@@ -59,12 +59,12 @@ void GetMIPProcessor::init()
 	int testVariable = 1;
 	int test2 = 10;
 	printParameters();
-	_xHist = new TH1D("_xHist","X Distribution",32, -0.5, 31.5);
-	_yHist = new TH1D("_yHist","Y Distribution",32, -0.5, 31.5);
-	_zHist = new TH1D("_zHist","Z Distribution",15, -0.5, 14.5);
+	_xHist = new TH1D("_xHist","X Distribution",64, 0.5, 64.5);
+	_yHist = new TH1D("_yHist","Y Distribution",32, 0.5, 32.5);
+	_zHist = new TH1D("_zHist","Z Distribution",15, 0.5, 15.5);
 	_cellEnergyHist = new TH1F("_cellEnergyHist","Energy deposited in cells Distribution",200, 0, 0.002);
 	
-	_xyHist = new TH2D("_xyHist","XY view all events",30,-0.5,29.5,30, -0.5, 29.5);
+	_xyHist = new TH2D("_xyHist","XY view all events",64,0.5,64.5,32, 0.5, 32.5);
 	
 
 	for (int i = 0; i < 15; i++)
@@ -116,7 +116,7 @@ void GetMIPProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
       SimCalorimeterHit *ecalhit = dynamic_cast<SimCalorimeterHit *>(myCollection->getElementAt(i));
 		int x_in_IJK_coordinates = cd(ecalhit)["I"];
     	int y_in_IJK_coordinates = cd(ecalhit)["J"];
-        int z_in_IJK_coordinates = cd(ecalhit)["K"]-1;
+        int z_in_IJK_coordinates = cd(ecalhit)["K"];
 		//_coordinateZ=z_in_IJK_coordinates;
  /*     streamlog_out(MESSAGE) << "\n SimCalorimeterHit, :" << i;
       streamlog_out(MESSAGE) << " cellID-encoded=" << ecalhit->getCellID0();
@@ -127,8 +127,8 @@ void GetMIPProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
       streamlog_out(MESSAGE) << " NUMBER=" << number;
 */		
 		
-		totalEnergyLayerSi[z_in_IJK_coordinates]=totalEnergyLayerSi[z_in_IJK_coordinates]+ecalhit->getEnergy();
-		hitsInLayer[z_in_IJK_coordinates]++;
+		totalEnergyLayerSi[z_in_IJK_coordinates-1]=totalEnergyLayerSi[z_in_IJK_coordinates-1]+ecalhit->getEnergy();
+		hitsInLayer[z_in_IJK_coordinates-1]++;
 		_xHist->Fill(x_in_IJK_coordinates);
 		_yHist->Fill(y_in_IJK_coordinates);
 		_zHist->Fill(z_in_IJK_coordinates);
