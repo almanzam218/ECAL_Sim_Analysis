@@ -49,7 +49,7 @@ GetMIPProcessor::GetMIPProcessor() : Processor("GetMIPProcessor")
 							"ECALCollection",
 							"Name of the Sim ECAL Collection",
 							_ECALColName,
-							std::string("SiEcalCollection"));
+							std::string("PixelSiEcalCollection"));
 }
 
 GetMIPProcessor::~GetMIPProcessor() {}
@@ -114,9 +114,9 @@ void GetMIPProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
     {
 
       SimCalorimeterHit *ecalhit = dynamic_cast<SimCalorimeterHit *>(myCollection->getElementAt(i));
-      int x_in_IJK_coordinates = cd(ecalhit)["x"];
-      int y_in_IJK_coordinates = cd(ecalhit)["y"];
-      int z_in_IJK_coordinates = cd(ecalhit)["layer"];
+		int x_in_IJK_coordinates = cd(ecalhit)["I"];
+    	int y_in_IJK_coordinates = cd(ecalhit)["J"];
+        int z_in_IJK_coordinates = cd(ecalhit)["K"]-1;
 		//_coordinateZ=z_in_IJK_coordinates;
  /*     streamlog_out(MESSAGE) << "\n SimCalorimeterHit, :" << i;
       streamlog_out(MESSAGE) << " cellID-encoded=" << ecalhit->getCellID0();
