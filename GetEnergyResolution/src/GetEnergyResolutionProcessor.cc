@@ -59,18 +59,18 @@ void GetEnergyResolutionProcessor::init()
 	int testVariable = 1;
 	int test2 = 10;
 	printParameters();
-	_xHist = new TH1F("_xHist","X Distribution",64, -0.5, 63.5);
-	_yHist = new TH1F("_yHist","Y Distribution",32, -0.5, 31.5);
-	_zHist = new TH1D("_zHist","Z Distribution",15, -0.5, 14.5);
-	_cellEnergyHist = new TH1F("_cellEnergyHist","Energy deposited in cells Distribution",200, 0, 0.002);
-	_evEnergyHist = new TH1F("_evEnergyHist","Energy of shower Distribution",100, 0, 0.01);
+	_xHist = new TH1F("_xHist","X Distribution",64, 0.5, 64.5);
+	_yHist = new TH1F("_yHist","Y Distribution",32, 0.5, 32.5);
+	_zHist = new TH1D("_zHist","Z Distribution",15, 0.5, 15.5);
+	_cellEnergyHist = new TH1F("_cellEnergyHist","Energy deposited in cells Distribution",100, 0, 0.05);
+	_evEnergyHist = new TH1F("_evEnergyHist","Energy of shower Distribution",100, 0, 0.2);
 	
-	_xyHist = new TH2D("_xyHist","XY view all events",64,-0.5,63.5,32, -0.5, 31.5);
+	_xyHist = new TH2D("_xyHist","XY view all events",64,0.5,64.5,32, 0.5, 32.5);
 	
 
 	for (int i = 0; i < 15; i++)
 	{
-		_energyInLayerSi[i] = new TH1F(Form("_energyInLayerSi_%d",i+1),"Energy deposited in layer ",200, 0, 0.002);
+		_energyInLayerSi[i] = new TH1F(Form("_energyInLayerSi_%d",i+1),"Energy deposited in layer ",100, 0, 0.05);
 		_energyInLayerSi[i]->SetTitle(Form("Total energy in layer %d",i+1));
 	}
 	AIDAProcessor::tree(this);
@@ -129,8 +129,8 @@ void GetEnergyResolutionProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
 		
 		totalEnergy=totalEnergy+ecalhit->getEnergy();
 		
-		totalEnergyLayerSi[z_in_IJK_coordinates]=totalEnergyLayerSi[z_in_IJK_coordinates]+ecalhit->getEnergy();
-		hitsInLayer[z_in_IJK_coordinates] = hitsInLayer[z_in_IJK_coordinates] + 1;
+		totalEnergyLayerSi[z_in_IJK_coordinates-1]=totalEnergyLayerSi[z_in_IJK_coordinates-1]+ecalhit->getEnergy();
+		hitsInLayer[z_in_IJK_coordinates-1] = hitsInLayer[z_in_IJK_coordinates-1] + 1;
 		_xHist->Fill(x_in_IJK_coordinates);
 		_yHist->Fill(y_in_IJK_coordinates);
 		_zHist->Fill(z_in_IJK_coordinates);
@@ -140,17 +140,17 @@ void GetEnergyResolutionProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
     }
     streamlog_out(MESSAGE) << " energy TUNGSTEN=" << totalEnergy;
 	_evEnergyHist->Fill(totalEnergy);
+	totalEnergy=0;
 	for (int i = 0; i < 15; i++)
 	{
 		if (hitsInLayer[i]>0)
 		{
 			_energyInLayerSi[i]->Fill(totalEnergyLayerSi[i]);
-			totalEnergyLayerSi[i]=0;
 		}
+		totalEnergyLayerSi[i]=0;
 		
 	}
 
-	totalEnergy=0;
 
 }
 
