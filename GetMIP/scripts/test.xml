@@ -20,7 +20,7 @@
   <!--########  Global  ######################################## -->
   <global>
     <parameter name="LCIOInputFiles">
-    /lhome/ific/a/almanzam/testsSim/ECALe-lcio/PixelizationProcessor/scripts/new_ECALe_luxe_v0_QGSP_BERT_pi-_20GeV_1.slcio
+    /lhome/ific/a/almanzam/testsSim/ECALe-lcio/PixelizationProcessor/scripts/new_ECALe_luxe_v0_QGSP_BERT_mu-_100GeV_1.slcio
     </parameter>
     <!--parameter name="AllowToModifyEvent" value="true" /-->  
     <parameter name="MaxRecordNumber" value="101"/>  
@@ -42,7 +42,7 @@
   </processor>
 
   <processor name="MyGetMIPProcessor" type="GetMIPProcessor">  
-    <parameter name="ECALCollectionName" type="string"> SiEcalCollection </parameter>
+    <parameter name="ECALCollectionName" type="string"> PixelSiEcalCollection </parameter>
     <parameter name="MCCollectionName" type="string"> MCParticle </parameter>
   </processor>
 
