@@ -71,7 +71,7 @@ void GetMIPProcessor::init()
 		_energyInLayerSi[i] = new TH1F(Form("_energyInLayerSi_%d",i+1),"Energy deposited in layer ",200, 0, 0.002);//Histogram for the energy deposited in a layer for each event
 		_energyInLayerSi[i]->SetTitle(Form("Total energy in layer %d",i+1));
 	}
-	
+
 }
 
 
@@ -183,6 +183,7 @@ void GetMIPProcessor::processEvent(LCEvent *evt)
 
 	void GetMIPProcessor::end()//Using this function to fit the energy in layer histograms after all the events have been processed 
 	{
+		std::vector<float> MIP;
 		for (int i = 0; i < 15; i++)//For each layer
 		{
 				// Fitting SNR histo
@@ -204,7 +205,14 @@ void GetMIPProcessor::processEvent(LCEvent *evt)
 			for (int h = 0; h < 3; h++)
 			{
 				streamlog_out(MESSAGE) << "\n par["<< h <<"] = "<< _layerFitParams[j][h];
-			
 			}
+				MIP.push_back(_layerFitParams[j][1]);
 		}	
+    std::cout << '\n';
+	
+	// Print out the vector
+    for (float n : MIP)
+        std::cout << n << ' ';
+    std::cout << '\n';
+
 	}
