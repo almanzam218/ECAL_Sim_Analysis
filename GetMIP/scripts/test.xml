@@ -4,7 +4,7 @@
 
 <constants>
     <!-- Output files constants -->
-    <constant name="OutputBaseName" value="/lhome/ific/a/almanzam/testsSim/ExampleProcessor/GetMIP/scripts/muon_20240820_2" />
+    <constant name="OutputBaseName" value="/lhome/ific/a/almanzam/testsSim/ExampleProcessor/GetMIP/scripts/muon_20240821_1" />
     <constant name="AIDAFileName" value="${OutputBaseName}" />
   </constants>
   

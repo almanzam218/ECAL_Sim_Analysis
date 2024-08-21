@@ -49,30 +49,28 @@ GetMIPProcessor::GetMIPProcessor() : Processor("GetMIPProcessor")
 							"ECALCollection",
 							"Name of the Sim ECAL Collection",
 							_ECALColName,
-							std::string("PixelSiEcalCollection"));
+							std::string("PixelSiEcalCollection"));//Name of collection after using the Pixelization Processor, giving coordinates of hit in I,J,K starting from 1
 }
 
 GetMIPProcessor::~GetMIPProcessor() {}
 
 void GetMIPProcessor::init()
 {
-	int testVariable = 1;
-	int test2 = 10;
 	printParameters();
-	_xHist = new TH1D("_xHist","X Distribution",64, 0.5, 64.5);
-	_yHist = new TH1D("_yHist","Y Distribution",32, 0.5, 32.5);
-	_zHist = new TH1D("_zHist","Z Distribution",15, 0.5, 15.5);
-	_cellEnergyHist = new TH1F("_cellEnergyHist","Energy deposited in cells Distribution",200, 0, 0.002);
+	AIDAProcessor::tree(this);//Using the AIDAProcessor to save the histograms created in init() in a root file
+	_xHist = new TH1D("_xHist","X Distribution",64, 0.5, 64.5);//Histogram of X distribution of hits in ECAL pixel coordinates
+	_yHist = new TH1D("_yHist","Y Distribution",32, 0.5, 32.5);//Histogram of Y distribution of hits
+	_zHist = new TH1D("_zHist","Z Distribution",15, 0.5, 15.5);//Histogram of Z (Layer) distribution of hits
+	_cellEnergyHist = new TH1F("_cellEnergyHist","Energy deposited in cells Distribution",200, 0, 0.002);//Histogram of the energy deposition in all cell for all events
 	
-	_xyHist = new TH2D("_xyHist","XY view all events",64,0.5,64.5,32, 0.5, 32.5);
+	_xyHist = new TH2D("_xyHist","XY view all events",64,0.5,64.5,32, 0.5, 32.5);//Front view of the ECAL, XY distribution of hits
 	
 
 	for (int i = 0; i < 15; i++)
 	{
-		_energyInLayerSi[i] = new TH1F(Form("_energyInLayerSi_%d",i+1),"Energy deposited in layer ",200, 0, 0.002);
+		_energyInLayerSi[i] = new TH1F(Form("_energyInLayerSi_%d",i+1),"Energy deposited in layer ",200, 0, 0.002);//Histogram for the energy deposited in a layer for each event
 		_energyInLayerSi[i]->SetTitle(Form("Total energy in layer %d",i+1));
 	}
-	AIDAProcessor::tree(this);
 	
 }
 
@@ -81,7 +79,7 @@ void GetMIPProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
 {
   int number = myCollection->getNumberOfElements();
   
-    for (int i = 0; i < number; i++)
+    for (int i = 0; i < number; i++)//Loop through the MC Particle collection for one event
     {
 
       MCParticle *particle = dynamic_cast<MCParticle *>(myCollection->getElementAt(i));
@@ -110,11 +108,11 @@ void GetMIPProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
 
 	double totalEnergyLayerSi[15] = {0};
 	int hitsInLayer[15] = {0};
-  for (int i = 0; i < number; i++)
+  for (int i = 0; i < number; i++)//Loop through the ECAL Hits in one event (after pixelization)
     {
 
       SimCalorimeterHit *ecalhit = dynamic_cast<SimCalorimeterHit *>(myCollection->getElementAt(i));
-		int x_in_IJK_coordinates = cd(ecalhit)["I"];
+		int x_in_IJK_coordinates = cd(ecalhit)["I"];//Reading the x, y and layer coordinate of one hit in the collection
     	int y_in_IJK_coordinates = cd(ecalhit)["J"];
         int z_in_IJK_coordinates = cd(ecalhit)["K"];
 		//_coordinateZ=z_in_IJK_coordinates;
@@ -127,9 +125,9 @@ void GetMIPProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
       streamlog_out(MESSAGE) << " NUMBER=" << number;
 */		
 		
-		totalEnergyLayerSi[z_in_IJK_coordinates-1]=totalEnergyLayerSi[z_in_IJK_coordinates-1]+ecalhit->getEnergy();
-		hitsInLayer[z_in_IJK_coordinates-1]++;
-		_xHist->Fill(x_in_IJK_coordinates);
+		totalEnergyLayerSi[z_in_IJK_coordinates-1]=totalEnergyLayerSi[z_in_IJK_coordinates-1]+ecalhit->getEnergy();//Adding the energy of the event separated by layers
+		hitsInLayer[z_in_IJK_coordinates-1]++;//Counting the hits per layer in one event
+		_xHist->Fill(x_in_IJK_coordinates);//Fill the x, y, z and energy distribution histograms
 		_yHist->Fill(y_in_IJK_coordinates);
 		_zHist->Fill(z_in_IJK_coordinates);
 		_cellEnergyHist->Fill(ecalhit->getEnergy());
@@ -140,7 +138,7 @@ void GetMIPProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
 
 	for (int i = 0; i < 15; i++)
 	{
-		if (hitsInLayer[i]==1)
+		if (hitsInLayer[i]==1)//Filling energy in layer histograms only with events with one hit per layer (muon) to calculate the MIP
 		{
 			_energyInLayerSi[i]->Fill(totalEnergyLayerSi[i]);
 			totalEnergyLayerSi[i]=0;
@@ -150,7 +148,7 @@ void GetMIPProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
 
 	
 
-}
+}//By this point all histograms are filled for one event, this is repeated for all the events in the collection
 
 
 void GetMIPProcessor::processRunHeader(LCRunHeader *run)
@@ -175,7 +173,6 @@ void GetMIPProcessor::processEvent(LCEvent *evt)
 		streamlog_out(DEBUG) << "Whoops!....\n";
 		streamlog_out(DEBUG) << e.what();
 	}
-	//AIDAProcessor::tree(this);
 
 }
 
@@ -184,18 +181,18 @@ void GetMIPProcessor::processEvent(LCEvent *evt)
 		// nothing to check here - could be used to fill checkplots in reconstruction processor
 	}
 
-	void GetMIPProcessor::end()
+	void GetMIPProcessor::end()//Using this function to fit the energy in layer histograms after all the events have been processed 
 	{
-		for (int i = 0; i < 15; i++)
+		for (int i = 0; i < 15; i++)//For each layer
 		{
 				// Fitting SNR histo
 			printf("Fitting...\n");
 			
-			_energyInLayerSi[i]->Fit("landau");	
+			_energyInLayerSi[i]->Fit("landau");	//Fit a landau to the distribution
 			TF1 *fit = (TF1*)_energyInLayerSi[i]->GetListOfFunctions()->FindObject("landau");
-			gStyle->SetOptFit(1111);
+			gStyle->SetOptFit(1111);//Set to 1 to show and save the fit with the histogram in the root file generated by the AIDAProcessor
 			printf("Fitting done\nPlotting results...\n");
-			for (int j = 0; j < 3; j++)
+			for (int j = 0; j < 3; j++)//Save all fit parameters in the array
 			{
 				_layerFitParams[i][j] = fit->GetParameter(j);
 			}
@@ -203,7 +200,7 @@ void GetMIPProcessor::processEvent(LCEvent *evt)
 		}
 		for (int j = 0; j < 15; j++)
 		{
-			streamlog_out(MESSAGE) << "\n Fit PARAMS for layer " << j;
+			streamlog_out(MESSAGE) << "\n Fit PARAMS for layer " << j;//Printing all fit parameters for each layer
 			for (int h = 0; h < 3; h++)
 			{
 				streamlog_out(MESSAGE) << "\n par["<< h <<"] = "<< _layerFitParams[j][h];
