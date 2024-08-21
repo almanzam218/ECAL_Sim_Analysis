@@ -23,7 +23,7 @@
     /lhome/ific/a/almanzam/testsSim/ECALe-lcio/PixelizationProcessor/scripts/new_ECALe_luxe_v0_QGSP_BERT_gamma_10GeV_1.slcio
     </parameter>
     <!--parameter name="AllowToModifyEvent" value="true" /-->  
-    <parameter name="MaxRecordNumber" value="1000"/>  
+    <parameter name="MaxRecordNumber" value="1001"/>  
     <parameter name="SkipNEvents" value="0"/>
     <parameter name="SupressCheck" value="false"/>
     <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> DEBUG </parameter>
