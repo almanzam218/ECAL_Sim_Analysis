@@ -56,8 +56,7 @@ GetEnergyResolutionProcessor::~GetEnergyResolutionProcessor() {}
 
 void GetEnergyResolutionProcessor::init()
 {
-	int testVariable = 1;
-	int test2 = 10;
+	AIDAProcessor::tree(this);
 	printParameters();
 	_xHist = new TH1F("_xHist","X Distribution",64, 0.5, 64.5);
 	_yHist = new TH1F("_yHist","Y Distribution",32, 0.5, 32.5);
@@ -75,7 +74,6 @@ void GetEnergyResolutionProcessor::init()
 		_energyInLayerSi[i] = new TH1F(Form("_energyInLayerSi_%d",i+1),"Energy deposited in layer ",100, 0, 0.05);
 		_energyInLayerSi[i]->SetTitle(Form("Total energy in layer %d",i+1));
 	}
-	AIDAProcessor::tree(this);
 	
 }
 
