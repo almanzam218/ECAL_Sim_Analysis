@@ -6,7 +6,7 @@
     <!-- Output files constants -->
     <constant name="OutputBaseName" value="/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/electron/EnergyResolution/ECALe_luxe_v0_QGSP_BERT_e-_3000MeV" />
     <constant name="AIDAFileName" value="${OutputBaseName}" />
-  </constants>
+</constants>
   
   <!--########  Execute  ######################################## -->
   
@@ -20,7 +20,7 @@
   <!--########  Global  ######################################## -->
   <global>
     <parameter name="LCIOInputFiles">
-    /lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/electron/PixelizationLCIO/new_ECALe_luxe_v0_QGSP_BERT_e-_3000MeV_0.slcio
+    /lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/electron/PixelizationLCIO/new_ECALe_luxe_v0_QGSP_BERT_e-_2500MeV_0.slcio
     </parameter>
     <!--parameter name="AllowToModifyEvent" value="true" /-->  
     <parameter name="MaxRecordNumber" value="10001"/>  
