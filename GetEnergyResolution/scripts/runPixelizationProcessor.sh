@@ -8,7 +8,7 @@ export MARLIN_DLL="$MARLIN_DLL:$PWD/../lib/libGetEnergyResolutionProcessor.so"
 
 declare -i numberEvents=4
 
-for energy in 1500 
+for energy in 1500 2000 
 do
     AIDAFilePath="/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/electron/EnergyResolution/"
     AIDAFileName="test1ECALe_luxe_v0_QGSP_BERT_e-_${energy}"
