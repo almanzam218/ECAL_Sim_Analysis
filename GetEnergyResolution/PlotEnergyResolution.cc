@@ -15,7 +15,7 @@ double GetFitParamsHits(int beamEnergyMeV,int param){
     TH1F *hitsHist = (TH1F*)f.Get("MyGetEnergyResolutionProcessor/_evHitsHist");
     hitsHist->Fit("gaus");
     TF1 *fit = hitsHist->GetFunction("gaus");
-    hitsHist->Fit("gaus","","",fit->GetParameter(1)-fit->GetParameter(2)*1,fit->GetParameter(1)+fit->GetParameter(2)*1);
+    hitsHist->Fit("gaus","","",fit->GetParameter(1)-fit->GetParameter(2)*2,fit->GetParameter(1)+fit->GetParameter(2)*2);
     TF1 *fit1 = hitsHist->GetFunction("gaus");
 
     double fitParams[3] = {fit1->GetParameter(0),fit1->GetParameter(1),fit1->GetParameter(2)};
@@ -28,7 +28,7 @@ double GetFitParamsEnergy(int beamEnergyMeV,int param){
     TH1F *energyHist = (TH1F*)f.Get("MyGetEnergyResolutionProcessor/_evEnergyHist");
     energyHist->Fit("gaus");
     TF1 *fit = energyHist->GetFunction("gaus");
-    energyHist->Fit("gaus","","",fit->GetParameter(1)-fit->GetParameter(2)*1,fit->GetParameter(1)+fit->GetParameter(2)*1);
+    energyHist->Fit("gaus","","",fit->GetParameter(1)-fit->GetParameter(2)*2,fit->GetParameter(1)+fit->GetParameter(2)*2);
     TF1 *fit1 = energyHist->GetFunction("gaus");
 
     double fitParams[3] = {fit1->GetParameter(0),fit1->GetParameter(1),fit1->GetParameter(2)};
