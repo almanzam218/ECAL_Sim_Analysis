@@ -46,8 +46,11 @@ void PlotEnergyResolution(){
 
     c1->cd();
     gEnergyRes->Draw("AC*");
-    TF1 *f1 = new TF1("f1","sqrt([0]/x+[1]/(x*x)+[2])",1500,13500);
-    gEnergyRes->Fit(f1);
+    TF1 *f1 = new TF1("f1","sqrt(([0]^2/x)+([1]/x)^2+[2]^2)",1500,13500);
+    f1->SetParameters(1,1,0);
+    f1->SetParNames ("a","b","c");
+    gEnergyRes->Fit(f1,"","",1500,13500);
+    gStyle->SetOptFit(1);
 
     c1->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/electron/EnergyResolution/EnergyResolutionPlot_20240821.png");
 
