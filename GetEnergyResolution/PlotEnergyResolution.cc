@@ -35,7 +35,7 @@ void PlotEnergyResolution(){
     for (int i = 0; i < 7; i++)
     {
         Resolution[h] = GetFitParams(1500+2000*i);
-        beamEnergy[h] = (1500+2000*i);// in GeV
+        beamEnergy[h] = (1500+2000*i)/1000;// in GeV
         h++;
     }
     auto gEnergyRes = new TGraph(7,beamEnergy,Resolution);
@@ -46,7 +46,7 @@ void PlotEnergyResolution(){
 
     c1->cd();
     gEnergyRes->Draw("AC*");
-    TF1 *f1 = new TF1("f1","sqrt(([0]^2/x)+([1]/x)^2+[2]^2)",1500,13500);
+    TF1 *f1 = new TF1("f1","sqrt(([0]^2/x)+([1]/x)^2+[2]^2)",1.500,13.500);
     f1->SetParameters(1,1,0);
     f1->SetParNames ("a","b","c");
     gEnergyRes->Fit(f1,"","",1500,13500);
