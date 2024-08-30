@@ -46,6 +46,10 @@ using namespace marlin;
 
 class GetMIPProcessor : public Processor
 {
+private:
+    int NUMBER_OF_LAYER = 15;
+    int NUMBER_OF_CELLX = 64;
+    int NUMBER_OF_CELLY = 32;
 
 public:
   virtual Processor *newProcessor() { return new GetMIPProcessor; }
@@ -76,16 +80,19 @@ public:
   TH1* _zHist;
   TH2* _xyHist;
   TH1* _cellEnergyHist;
-  TH1F* _energyInLayerSi[15];
-  double _layerFitParams[15][4] = {0};
-//private:
+  TH1F* _energyInLayerSi[NUMBER_OF_LAYER];
+  TH1F* _energyInPixelLayerSi[NUMBER_OF_LAYER];
+  double _layerFitParams[NUMBER_OF_LAYER][4];
+  double _pixelLayerFitParams[NUMBER_OF_LAYER][4];
 
+private:
   virtual void ShowMCInfo(LCCollection *col);
   virtual void ShowECALInfo(LCCollection *col);
+    virtual void ShowPixelECALInfo(LCCollection *col);
 
   std::string _MCColName;
   std::string _ECALColName;
-
+    std::string _pECALColName;
 
 };
 
