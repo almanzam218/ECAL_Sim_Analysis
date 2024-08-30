@@ -17,8 +17,8 @@
 // #define SLM streamlog_out(MESSAGE)
 
 // using namespace std;
-using namespace lcio ;
-using namespace marlin ;
+// using namespace lcio ;
+// using namespace marlin ;
 using EVENT::LCCollection;
 using EVENT::MCParticle;
 using EVENT::ReconstructedParticle;
@@ -61,19 +61,23 @@ void GetMIPProcessor::init()
 {
 	printParameters();
 	AIDAProcessor::tree(this);//Using the AIDAProcessor to save the histograms created in init() in a root file
-    _xHist = new TH1D("_xHist","X Distribution", NUMBER_OF_CELLX, 0.5, NUMBER_OF_CELLX +.5);//Histogram of X distribution of hits in ECAL pixel coordinates
-    _yHist = new TH1D("_yHist","Y Distribution", NUMBER_OF_CELLY, 0.5, NUMBER_OF_CELLY +.5);//Histogram of Y distribution of hits
-    _zHist = new TH1D("_zHist","Z Distribution", NUMBER_OF_LAYER, 0.5, NUMBER_OF_LAYER +.5);//Histogram of Z (Layer) distribution of hits
-	_cellEnergyHist = new TH1F("_cellEnergyHist","Energy deposited in cells Distribution",200, 0, 0.002);//Histogram of the energy deposition in all cell for all events
+    _xHist = new TH1D("xHist","X Distribution", NUMBER_OF_CELLX, 0.5, NUMBER_OF_CELLX +.5);//Histogram of X distribution of hits in ECAL pixel coordinates
+    _yHist = new TH1D("yHist","Y Distribution", NUMBER_OF_CELLY, 0.5, NUMBER_OF_CELLY +.5);//Histogram of Y distribution of hits
+    _zHist = new TH1D("zHist","Z Distribution", NUMBER_OF_LAYER, 0.5, NUMBER_OF_LAYER +.5);//Histogram of Z (Layer) distribution of hits
+    _cellEnergyHist = new TH1F("cellEnergyHist","Energy deposited in cells Distribution", 200, FIT_RANGE_MIN, FIT_RANGE_MAX);//Histogram of the energy deposition in all cell for all events
 	
-    _xyHist = new TH2D("_xyHist","XY view all events", NUMBER_OF_CELLX, 0.5, NUMBER_OF_CELLX +.5, NUMBER_OF_CELLY, 0.5, NUMBER_OF_CELLY +.5);//Front view of the ECAL, XY distribution of hits
+    _xyHist = new TH2D("xyHist","XY view all events", NUMBER_OF_CELLX, 0.5, NUMBER_OF_CELLX +.5, NUMBER_OF_CELLY, 0.5, NUMBER_OF_CELLY +.5);//Front view of the ECAL, XY distribution of hits
 	
 
-    for (int i = 0; i < NUMBER_OF_LAYER; i++)
-	{
-		_energyInLayerSi[i] = new TH1F(Form("_energyInLayerSi_%d",i+1),"Energy deposited in layer ",200, 0, 0.002);//Histogram for the energy deposited in a layer for each event
-		_energyInLayerSi[i]->SetTitle(Form("Total energy in layer %d",i+1));
+    for (int i = 0; i < NUMBER_OF_LAYER; i++) {
+        _energyInLayerSi[i] = new TH1F(Form("energyInLayerSi_%d",i+1),"Energy deposited in layer ", 200, FIT_RANGE_MIN, FIT_RANGE_MAX);//Histogram for the energy deposited in a layer for each event
+        _energyInLayerSi[i]->SetTitle(Form("Total energy in layer %d",i+1));
+        _energyInPixelLayerSi[i] = new TH1F(Form("energyInPixelLayerSi_%d",i+1),"Energy deposited in pixelised layer ", 200, FIT_RANGE_MIN, FIT_RANGE_MAX);//Histogram for the energy deposited in a layer for each event
+        _energyInPixelLayerSi[i]->SetTitle(Form("Total energy in pixelised layer %d",i+1));
 	}
+    _fittedMIP = new TH1D("fitMIP", "Fitted MIP based on hits per layer", NUMBER_OF_LAYER, 0.5, NUMBER_OF_LAYER +.5);
+    _fittedPixelMIP = new TH1D("fitPixelMIP", "Fitted MIP based on hits per pixel", NUMBER_OF_LAYER, 0.5, NUMBER_OF_LAYER +.5);
+
 
 }
 
@@ -85,18 +89,18 @@ void GetMIPProcessor::ShowMCInfo(EVENT::LCCollection *myCollection) {
         MCParticle *particle = dynamic_cast<MCParticle *>(myCollection->getElementAt(i));
         vector<MCParticle *> daughters = particle->getDaughters();
     
-        streamlog_out(MESSAGE) << "\n MCCollection, particle:" << i;
-        streamlog_out(MESSAGE) << " pdg = " << particle->getPDG() <<",";
-        streamlog_out(MESSAGE) << " status = " << particle->getGeneratorStatus() <<",";
-        streamlog_out(MESSAGE) << " N_daughters = " << daughters.size() <<",";
-        streamlog_out(MESSAGE) << " E = " << particle->getEnergy() <<" GeV,";
-        streamlog_out(MESSAGE) << " px = " << particle->getMomentum()[0] <<" GeV,";
-        streamlog_out(MESSAGE) << " py = " << particle->getMomentum()[1] <<" GeV,";
-        streamlog_out(MESSAGE) << " pz = " << particle->getMomentum()[2] <<" GeV,";
-        streamlog_out(MESSAGE) << " m = " << particle->getMass() <<" GeV,";
-        streamlog_out(MESSAGE) << " charge = " << particle->getCharge() <<".";
+        streamlog_out(DEBUG) << "\n MCCollection, particle:" << i;
+        streamlog_out(DEBUG) << " pdg = " << particle->getPDG() <<",";
+        streamlog_out(DEBUG) << " status = " << particle->getGeneratorStatus() <<",";
+        streamlog_out(DEBUG) << " N_daughters = " << daughters.size() <<",";
+        streamlog_out(DEBUG) << " E = " << particle->getEnergy() <<" GeV,";
+        streamlog_out(DEBUG) << " px = " << particle->getMomentum()[0] <<" GeV,";
+        streamlog_out(DEBUG) << " py = " << particle->getMomentum()[1] <<" GeV,";
+        streamlog_out(DEBUG) << " pz = " << particle->getMomentum()[2] <<" GeV,";
+        streamlog_out(DEBUG) << " m = " << particle->getMass() <<" GeV,";
+        streamlog_out(DEBUG) << " charge = " << particle->getCharge() <<".";
     }
-  	streamlog_out(MESSAGE) << std::endl;
+  	streamlog_out(DEBUG) << std::endl;
 }
 
 void GetMIPProcessor::ShowECALInfo(EVENT::LCCollection *myCollection) {
@@ -105,8 +109,8 @@ void GetMIPProcessor::ShowECALInfo(EVENT::LCCollection *myCollection) {
     
     float totalEnergyLayerSi[NUMBER_OF_LAYER];
     int hitsInLayer[NUMBER_OF_LAYER];
-    std::fill(std::start(totalEnergyLayerSi), std::end(totalEnergyLayerSi), 0.0)
-    std::fill(std::start(hitsInLayer), std::end(hitsInLayer), 0.0)
+    std::fill(std::begin(totalEnergyLayerSi), std::end(totalEnergyLayerSi), 0.0);
+    std::fill(std::begin(hitsInLayer), std::end(hitsInLayer), 0.0);
 
     for (int i = 0; i < number; i++) {
         SimCalorimeterHit *ecalhit = dynamic_cast<SimCalorimeterHit *>(myCollection->getElementAt(i));
@@ -114,15 +118,16 @@ void GetMIPProcessor::ShowECALInfo(EVENT::LCCollection *myCollection) {
         int xyz_x = cd(ecalhit)["x"];
         int xyz_y = cd(ecalhit)["y"];
         int xyz_z = cd(ecalhit)["layer"];
-        float hit_energy = ecalhit->getEnergy()
+        float hit_energy = ecalhit->getEnergy();
 
-        streamlog_out(MESSAGE) << "\n SimCalorimeterHit, :" << i;
-        streamlog_out(MESSAGE) << " cellID-encoded=" << ecalhit->getCellID0();
-        // streamlog_out(MESSAGE) << " x = " << xyz_x <<" mm,";
-        // streamlog_out(MESSAGE) << " y = " << xyz_y <<" mm,";
-        streamlog_out(MESSAGE) << " z = " << xyz_z <<" layer,";
-        streamlog_out(MESSAGE) << " energy = " << hit_energy <<"GeV.\n";
+        streamlog_out(DEBUG) << "\n SimCalorimeterHit, :" << i;
+        streamlog_out(DEBUG) << " cellID-encoded=" << ecalhit->getCellID0();
+        streamlog_out(DEBUG) << " x = " << xyz_x <<" mm,";
+        streamlog_out(DEBUG) << " y = " << xyz_y <<" mm,";
+        streamlog_out(DEBUG) << " z = " << xyz_z <<" layer,";
+        streamlog_out(DEBUG) << " energy = " << hit_energy <<"GeV.\n";
         totalEnergyLayerSi[xyz_z] += hit_energy;
+        hitsInLayer[xyz_z]++;
     }
     // return totalEnergyLayerSi;
     for (int i = 0; i < NUMBER_OF_LAYER; i++) {
@@ -137,7 +142,9 @@ void GetMIPProcessor::ShowPixelECALInfo(EVENT::LCCollection *myCollection) {
     CellIDDecoder<EVENT::SimCalorimeterHit> cd(myCollection);
 
     float totalEnergyLayerSi[NUMBER_OF_LAYER];
-    std::fill(std::start(totalEnergyLayerSi), std::end(totalEnergyLayerSi), 0.0)
+    int hitsInLayer[NUMBER_OF_LAYER];
+    std::fill(std::begin(totalEnergyLayerSi), std::end(totalEnergyLayerSi), 0.0);
+    std::fill(std::begin(hitsInLayer), std::end(hitsInLayer), 0.0);
 
     for (int i = 0; i < number; i++) {
         SimCalorimeterHit *ecalhit = dynamic_cast<SimCalorimeterHit *>(myCollection->getElementAt(i));
@@ -145,19 +152,20 @@ void GetMIPProcessor::ShowPixelECALInfo(EVENT::LCCollection *myCollection) {
         int IJK_I = cd(ecalhit)["I"];
         int IJK_J = cd(ecalhit)["J"];
         int IJK_K = cd(ecalhit)["K"];
-        float hit_energy = ecalhit->getEnergy()
+        float hit_energy = ecalhit->getEnergy();
 
-        // streamlog_out(MESSAGE) << "\n SimCalorimeterHit, :" << i;
-        // streamlog_out(MESSAGE) << " cellID-encoded=" << ecalhit->getCellID0();
-        // streamlog_out(MESSAGE) << " I = " << IJK_I <<" mm,";
-        // streamlog_out(MESSAGE) << " J = " << IJK_J <<" mm,";
-        // streamlog_out(MESSAGE) << " K = " << IJK_K <<" layer,";
-        // streamlog_out(MESSAGE) << " energy = " << hit_energy <<" GeV.\n";
+        streamlog_out(DEBUG) << "\n SimCalorimeterHit, :" << i;
+        streamlog_out(DEBUG) << " cellID-encoded=" << ecalhit->getCellID0();
+        streamlog_out(DEBUG) << " I = " << IJK_I <<" mm,";
+        streamlog_out(DEBUG) << " J = " << IJK_J <<" mm,";
+        streamlog_out(DEBUG) << " K = " << IJK_K <<" layer,";
+        streamlog_out(DEBUG) << " energy = " << hit_energy <<" GeV.\n";
         totalEnergyLayerSi[IJK_K-1] += hit_energy;
+        hitsInLayer[IJK_K-1]++;
         _xHist->Fill(IJK_I);//Fill the x, y, z and energy distribution histograms
         _yHist->Fill(IJK_J);
         _zHist->Fill(IJK_K);
-        _cellEnergyHist->Fill(ecalhit->getEnergy());
+        _cellEnergyHist->Fill(hit_energy);
         _xyHist->Fill(IJK_I, IJK_J);
     }
     // return totalEnergyLayerSi;
@@ -176,7 +184,7 @@ void GetMIPProcessor::processEvent(LCEvent *evt)
 {
 
 	try {
-	    streamlog_out(MESSAGE) << "\n ----------------------------------------- ";
+	    streamlog_out(DEBUG) << "\n ----------------------------------------- ";
 	    LCCollection *mccol = evt->getCollection(_MCColName);
 	    ShowMCInfo(mccol);
 	    LCCollection *ecal = evt->getCollection(_ECALColName);
@@ -196,26 +204,36 @@ void GetMIPProcessor::check(LCEvent * evt) {
 
 void GetMIPProcessor::end() {//Using this function to fit the energy in layer histograms after all the events have been processed 
     std::vector<float> MIP;
+    std::vector<float> pMIP;
+
+    landauFunc->SetParLimits(0, 0, FIT_INIT_AMP*10.);
+    landauFunc->SetParLimits(1, 0, FIT_INIT_MPV*10.);
+    // landauFunc->SetParLimits(2, FIT_INIT_SIG/2., FIT_INIT_SIG*2.);
     for (int i = 0; i < NUMBER_OF_LAYER; i++) {//For each layer
         // Fitting SNR histo
-        printf("Fitting...\n");
+        streamlog_out(MESSAGE) << "Fitting 1..." <<std::endl;
+        streamlog_out(MESSAGE) << "Items inside the histogram " << _energyInLayerSi[i]->GetEntries() <<std::endl;
+
+        landauFunc->SetParameters(FIT_INIT_AMP, FIT_INIT_MPV, FIT_INIT_SIG);
+        _energyInLayerSi[i]->Fit("fitLandauFunc");	//Fit a landau to the distribution
+        TF1 *landaufit = (TF1*)_energyInLayerSi[i]->GetListOfFunctions()->FindObject("fitLandauFunc");
+        gStyle->SetOptFit(1111);//Set to 1 to show and save the fit with the histogram in the root file generated by the AIDAProcessor
+        streamlog_out(MESSAGE) << "Fitting done" <<std::endl << "Plotting results..." <<std::endl;
+        for (int j = 0; j < 3; j++) {//Save all fit parameters in the array
+            _layerFitParams[i][j] = landaufit->GetParameter(j);
+        }
         
-        _energyInLayerSi[i]->Fit("landau");	//Fit a landau to the distribution
-        TF1 *fit = (TF1*)_energyInLayerSi[i]->GetListOfFunctions()->FindObject("landau");
-        gStyle->SetOptFit(1111);//Set to 1 to show and save the fit with the histogram in the root file generated by the AIDAProcessor
-        printf("Fitting done\nPlotting results...\n");
-        for (int j = 0; j < 3; j++) {//Save all fit parameters in the array
-            _layerFitParams[i][j] = fit->GetParameter(j);
-        }
+        streamlog_out(MESSAGE) << "Fitting 2..." <<std::endl;
+        streamlog_out(MESSAGE) << "Items inside the histogram " << _energyInPixelLayerSi[i]->GetEntries() <<std::endl;
 
-        _energyInPixelLayerSi[i]->Fit("landau");	//Fit a landau to the distribution
-        TF1 *fit = (TF1*)_energyInPixelLayerSi[i]->GetListOfFunctions()->FindObject("landau");
+        landauFunc->SetParameters(FIT_INIT_AMP, FIT_INIT_MPV, FIT_INIT_SIG);
+        _energyInPixelLayerSi[i]->Fit("fitLandauFunc");	//Fit a landau to the distribution
+        TF1 *landaufit2 = (TF1*)_energyInPixelLayerSi[i]->GetListOfFunctions()->FindObject("fitLandauFunc");
         gStyle->SetOptFit(1111);//Set to 1 to show and save the fit with the histogram in the root file generated by the AIDAProcessor
-        printf("Fitting done\nPlotting results...\n");
+        streamlog_out(MESSAGE) << "Fitting done" <<std::endl << "Plotting results..." <<std::endl;
         for (int j = 0; j < 3; j++) {//Save all fit parameters in the array
-            _pixelLayerFitParams[i][j] = fit->GetParameter(j);
+            _pixelLayerFitParams[i][j] = landaufit2->GetParameter(j);
         }
-
     }
 
     for (int i = 0; i < NUMBER_OF_LAYER; i++) {
@@ -223,11 +241,19 @@ void GetMIPProcessor::end() {//Using this function to fit the energy in layer hi
         for (int j = 0; j < 3; j++) {
             streamlog_out(MESSAGE) << "\n par["<< j <<"] = "<< _layerFitParams[i][j];
         }
+        for (int j = 0; j < 3; j++) {
+            streamlog_out(MESSAGE) << "\n par["<< j <<"] = "<< _pixelLayerFitParams[i][j];
+        }
         MIP.push_back(_layerFitParams[i][1]);
+        _fittedMIP->SetBinContent(i+1, _layerFitParams[i][1]); // bin number counts from 1
+        pMIP.push_back(_pixelLayerFitParams[i][1]);
+        _fittedPixelMIP->SetBinContent(i+1, _pixelLayerFitParams[i][1]);
     }
     std::cout << '\n';
 
     // Print out the vector
     for (float n : MIP) std::cout << n << ' ';
+    std::cout << '\n';
+    for (float n : pMIP) std::cout << n << ' ';
     std::cout << '\n';
 }
