@@ -1,5 +1,5 @@
 #include "GetEnergyResolutionProcessor.hh"
-#include "langaus.C"
+// #include "langaus.C"
 
 // ROOT
 #include "TStyle.h"
@@ -34,133 +34,256 @@ using UTIL::LCRelationNavigator;
 
 GetEnergyResolutionProcessor aGetEnergyResolutionProcessor;
 
-GetEnergyResolutionProcessor::GetEnergyResolutionProcessor() : Processor("GetEnergyResolutionProcessor")
-{
+GetEnergyResolutionProcessor::GetEnergyResolutionProcessor() : Processor("GetEnergyResolutionProcessor") {
 
 	// modify processor description
 	_description = "";
 
 	// input collections
 	registerInputCollection(LCIO::MCPARTICLE,"MCCollectionName",
-				"Name of the MC collection",
+                            "Name of the MC collection",
 							_MCColName,
-							std::string("MCParticles"));
-	registerInputCollection(LCIO::SIMCALORIMETERHIT,
-							"ECALCollection",
-							"Name of the Sim ECAL Collection",
+							std::string("Not configured in xml file"));
+	registerInputCollection(LCIO::SIMCALORIMETERHIT, "ECALCollectionName",
+							"Monolithic ECAL Hits Collection",
 							_ECALColName,
-							std::string("PixelSiEcalCollection"));
+							std::string("Not configured in xml file"));
+	registerInputCollection(LCIO::SIMCALORIMETERHIT, "PixelisedECALCollectionName",
+							"Pixelised ECAL Hits Collection",
+							_pECALColName,
+							std::string("Not configured in xml file"));
+	registerInputCollection(LCIO::CALORIMETERHIT, "DigitisedECALCollectionName",
+							"Digitised ECAL Hits Collection",
+							_dECALColName,
+							std::string("Not configured in xml file"));
+    if (_MCColName!="Not configured in xml file") {_flagMcCol = true;}
+    if (_ECALColName!="Not configured in xml file") {_flagEcalCol = true;}
+    if (_pECALColName!="Not configured in xml file") {_flagPixelEcalCol = true;}
+    if (_dECALColName!="Not configured in xml file") {_flagDigitEcalCol = true;}
 }
 
 GetEnergyResolutionProcessor::~GetEnergyResolutionProcessor() {}
 
-void GetEnergyResolutionProcessor::init()
-{
+void GetEnergyResolutionProcessor::init() {
 	AIDAProcessor::tree(this);
 	printParameters();
-	_xHist = new TH1F("_xHist","X Distribution",64, 0.5, 64.5);
-	_yHist = new TH1F("_yHist","Y Distribution",32, 0.5, 32.5);
-	_zHist = new TH1D("_zHist","Z Distribution",15, 0.5, 15.5);
-	_cellEnergyHist = new TH1F("_cellEnergyHist","Energy deposited in cells Distribution",100, 0, 0.05);
-	_evEnergyHist = new TH1F("_evEnergyHist","Energy of shower Distribution",100, 0, 0.2);
-	_evHitsHist = new TH1D("_evHitsHist","Number of hits Distribution", 62, -5, 305);
+    // MC particle
+    _runEnergy = new TH1F("_runInfo", "Run Information", 1, 0, 1); // Bin 1: Beam energy
+
+    // Monolithic calorimeter hits
+    _zMonoHist = new TH1D("mono_zHist","Z Distribution; z [layer]; Number of hit", NUMBER_OF_LAYER, 0.5, NUMBER_OF_LAYER +.5);//Histogram of Z (Layer) distribution of hits
+    _evMonoEnergyHist = new TH1D("mono_evEnergyHist","Energy of shower Distribution; E_{dep} [GeV]", evHistBins, 0, evHistBins);
+
+    // Pixelised calorimeter hits
+    _xHist = new TH1D("pixel_xHist","X Distribution; x [cell]; Number of hit", NUMBER_OF_CELLX, 0.5, NUMBER_OF_CELLX +.5);//Histogram of X distribution of hits in ECAL pixel coordinates
+    _yHist = new TH1D("pixel_yHist","Y Distribution; y [cell]; Number of hit", NUMBER_OF_CELLY, 0.5, NUMBER_OF_CELLY +.5);//Histogram of Y distribution of hits
+    _zHist = new TH1D("pixel_zHist","Z Distribution; z [layer]; Number of hit", NUMBER_OF_LAYER, 0.5, NUMBER_OF_LAYER +.5);//Histogram of Z (Layer) distribution of hits
+    _xyHist = new TH2F("pixel_xyHist","XY view all events", NUMBER_OF_CELLX, 0.5, NUMBER_OF_CELLX +.5, NUMBER_OF_CELLY, 0.5, NUMBER_OF_CELLY +.5);
+    _zxHist = new TH2F("pixel_zxHist","ZX view all events", NUMBER_OF_LAYER, 0.5, NUMBER_OF_LAYER +.5, NUMBER_OF_CELLX, 0.5, NUMBER_OF_CELLX +.5);
+    _zyHist = new TH2F("pixel_zyHist","ZY view all events", NUMBER_OF_LAYER, 0.5, NUMBER_OF_LAYER +.5, NUMBER_OF_CELLY, 0.5, NUMBER_OF_CELLY +.5);
+    _cellEnergyHist = new TH1F("pixel_cellEnergyHist","Energy deposited in cells Distribution; E_{dep} [GeV]; Number of hit", 200, E_RANGE_MIN, E_RANGE_MAX);//Histogram of the energy deposition in all cell for all events
+    // The histogram will instead be declared and filled at the ending stage
+    // Bin ranges will be changed at the final stage
+    _evEnergyHist = new TH1D("pixel_evEnergyHist","Energy of shower Distribution; E_{dep} [GeV]", evHistBins, 0, evHistBins);
+    _evHitsHist = new TH1D("pixel_evHitsHist","Number of hits Distribution; Hit", evHistBins, 0, evHistBins);
 	
-	_xyHist = new TH2D("_xyHist","XY view all events",64,0.5,64.5,32, 0.5, 32.5);
-	_zxHist = new TH2D("_zxHist","ZX view all events",15,0.5,15.5,64, 0.5, 64.5);
-	_zyHist = new TH2D("_zyHist","ZY view all events",15,0.5,15.5,32, 0.5, 32.5);
+    // Digitised calorimeter hits
+    _xDigitHist = new TH1D("digit_xHist","X Distribution; x [cell]; Number of hit", NUMBER_OF_CELLX, 0.5, NUMBER_OF_CELLX +.5);//Histogram of X distribution of hits in ECAL pixel coordinates
+    _yDigitHist = new TH1D("digit_yHist","Y Distribution; y [cell]; Number of hit", NUMBER_OF_CELLY, 0.5, NUMBER_OF_CELLY +.5);//Histogram of Y distribution of hits
+    _zDigitHist = new TH1D("digit_zHist","Z Distribution; z [layer]; Number of hit", NUMBER_OF_LAYER, 0.5, NUMBER_OF_LAYER +.5);//Histogram of Z (Layer) distribution of hits
+    _xyDigitHist = new TH2F("digit_xyHist","XY view all events", NUMBER_OF_CELLX, 0.5, NUMBER_OF_CELLX +.5, NUMBER_OF_CELLY, 0.5, NUMBER_OF_CELLY +.5);
+    _zxDigitHist = new TH2F("digit_zxHist","ZX view all events", NUMBER_OF_LAYER, 0.5, NUMBER_OF_LAYER +.5, NUMBER_OF_CELLX, 0.5, NUMBER_OF_CELLX +.5);
+    _zyDigitHist = new TH2F("digit_zyHist","ZY view all events", NUMBER_OF_LAYER, 0.5, NUMBER_OF_LAYER +.5, NUMBER_OF_CELLY, 0.5, NUMBER_OF_CELLY +.5);
+    _cellDigitEnergyHist = new TH1F("digit_cellEnergyHist","Energy deposited in cells Distribution; E_{dep} [GeV]; Number of hit", 200, E_RANGE_MIN, E_RANGE_MAX);//Histogram of the energy deposition in all cell for all events
+    // The histogram will instead be declared and filled at the ending stage
+    // Bin ranges will be changed at the final stage
+    _evDigitEnergyHist = new TH1D("digit_evEnergyHist","Energy of shower Distribution; E_{dep} [GeV]", evHistBins, 0, evHistBins);
+    _evDigitHitsHist = new TH1D("digit_evHitsHist","Number of hits Distribution; Hit", evHistBins, 0, evHistBins);
+
 	
-
-	for (int i = 0; i < 15; i++)
-	{
-		_energyInLayerSi[i] = new TH1F(Form("_energyInLayerSi_%d",i+1),"Energy deposited in layer ",100, 0, 0.05);
-		_energyInLayerSi[i]->SetTitle(Form("Total energy in layer %d",i+1));
-		
-		_hitsInLayer[i] = new TH1D(Form("_HitsInLayer_%d",i+1),"Hits in layer ",22, -5, 105);
-		_hitsInLayer[i]->SetTitle(Form("Total hits in layer %d",i+1));
-	}
-	
-}
-
-
-void GetEnergyResolutionProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
-{
-  int number = myCollection->getNumberOfElements();
-  
-    for (int i = 0; i < number; i++)
-    {
-
-      MCParticle *particle = dynamic_cast<MCParticle *>(myCollection->getElementAt(i));
-      vector<MCParticle *> daughters = particle->getDaughters();
-
-      streamlog_out(MESSAGE) << "\n MCCollection, particle:"  ;
-      streamlog_out(MESSAGE) << " pdg=" << particle->getPDG();
-      streamlog_out(MESSAGE) << " satus=" << particle->getGeneratorStatus();
-      streamlog_out(MESSAGE) << " Ndaughters=" << daughters.size();
-      streamlog_out(MESSAGE) << " E=" << particle->getEnergy();
-      streamlog_out(MESSAGE) << " px=" << particle->getMomentum()[0];
-      streamlog_out(MESSAGE) << " py=" << particle->getMomentum()[1];
-      streamlog_out(MESSAGE) << " pz=" << particle->getMomentum()[2];
-      streamlog_out(MESSAGE) << " m=" << particle->getMass();
-      streamlog_out(MESSAGE) << " charge=" << particle->getCharge();
-
+    for (int i = 0; i < NUMBER_OF_LAYER; i++) {
+        // Monolithic calorimeter hits
+        _energyInMonoLayerSi[i] = new TH1F(Form("mono_energyInLayerSi_%d",i+1),"Energy deposited in monolithic layer; E_{dep} [GeV];",100, 0, 0.05);
+        
+        // Pixelised calorimeter hits
+        _energyInLayerSi[i] = new TH1F(Form("pixel_energyInLayerSi_%d",i+1),"Energy deposited in layer; E_{dep} [GeV];",100, 0, 0.05);
+        _energyInLayerSi[i]->SetTitle(Form("Total energy in layer %d",i+1));
+        _hitsInLayer[i] = new TH1F(Form("pixel_HitsInLayer_%d",i+1),"Hits in layer; Hit;",100, -0.5, 99.5);
+        _hitsInLayer[i]->SetTitle(Form("Total hits in layer %d",i+1));
+        
+        // Digitised calorimeter hits
+        _energyInDigitLayerSi[i] = new TH1F(Form("digit_energyInLayerSi_%d",i+1),"Energy deposited in layer; E_{dep} [GeV];",100, 0, 0.05);
+        _energyInDigitLayerSi[i]->SetTitle(Form("Total energy in layer %d",i+1));
+        _hitsInDigitLayer[i] = new TH1F(Form("digit_HitsInLayer_%d",i+1),"Hits in layer; Hit;",100, -0.5, 99.5);
+        _hitsInDigitLayer[i]->SetTitle(Form("Total hits in layer %d",i+1));
     }
-  	//streamlog_out(MESSAGE) << "this treeed" << std::endl;
-
 }
 
- void GetEnergyResolutionProcessor::ShowECALInfo(EVENT::LCCollection *myCollection)
-{
-  int number = myCollection->getNumberOfElements();
-  CellIDDecoder<EVENT::SimCalorimeterHit> cd(myCollection);
+
+void GetEnergyResolutionProcessor::ShowMCInfo(EVENT::LCCollection *myCollection) {
+    int number = myCollection->getNumberOfElements();
+    
+    if (runEnergy==-1) {
+        for (int i = 0; i < number; i++) {//Loop through the MC Particle collection for one event
+            MCParticle *particle = dynamic_cast<MCParticle *>(myCollection->getElementAt(i));
+            vector<MCParticle *> daughters = particle->getDaughters();
+            runEnergy = particle->getEnergy();
+            
+            streamlog_out(DEBUG) << "\n MCCollection, particle:" << i;
+            streamlog_out(DEBUG) << " pdg = " << particle->getPDG() <<",";
+            streamlog_out(DEBUG) << " status = " << particle->getGeneratorStatus() <<",";
+            streamlog_out(DEBUG) << " N_daughters = " << daughters.size() <<",";
+            streamlog_out(DEBUG) << " E = " << particle->getEnergy() <<" GeV,";
+            streamlog_out(DEBUG) << " px = " << particle->getMomentum()[0] <<" GeV,";
+            streamlog_out(DEBUG) << " py = " << particle->getMomentum()[1] <<" GeV,";
+            streamlog_out(DEBUG) << " pz = " << particle->getMomentum()[2] <<" GeV,";
+            streamlog_out(DEBUG) << " m = " << particle->getMass() <<" GeV,";
+            streamlog_out(DEBUG) << " charge = " << particle->getCharge() <<".";
+        }
+        streamlog_out(DEBUG) << std::endl;
+    }
+}
+
+void GetEnergyResolutionProcessor::ShowECALInfo(EVENT::LCCollection *myCollection) {
+    int number = myCollection->getNumberOfElements();
+    CellIDDecoder<EVENT::SimCalorimeterHit> cd(myCollection);
+    
 	double totalEnergy = 0;
-	double totalEnergyLayerSi[15] = {0};
-	int hitsInLayer[15] = {0};
-  for (int i = 0; i < number; i++)
-    {
+    float totalEnergyLayerSi[NUMBER_OF_LAYER];
+    int hitsInLayer[NUMBER_OF_LAYER];
+    std::fill(std::begin(totalEnergyLayerSi), std::end(totalEnergyLayerSi), 0.0);
+    std::fill(std::begin(hitsInLayer), std::end(hitsInLayer), 0.0);
 
-      SimCalorimeterHit *ecalhit = dynamic_cast<SimCalorimeterHit *>(myCollection->getElementAt(i));
-    int x_in_IJK_coordinates = cd(ecalhit)["I"];
-    int y_in_IJK_coordinates = cd(ecalhit)["J"];
-      int z_in_IJK_coordinates = cd(ecalhit)["K"];
-		//_coordinateZ=z_in_IJK_coordinates;
-      streamlog_out(MESSAGE) << "\n SimCalorimeterHit, :" << i;
-      streamlog_out(MESSAGE) << " cellID-encoded=" << ecalhit->getCellID0();
-      streamlog_out(MESSAGE) << " x_in_IJK_coordinates=" << x_in_IJK_coordinates;
-      streamlog_out(MESSAGE) << " y_in_IJK_coordinates=" << y_in_IJK_coordinates;
-      streamlog_out(MESSAGE) << " z_in_IJK_coordinates=" << z_in_IJK_coordinates;
-      streamlog_out(MESSAGE) << " energy=" << ecalhit->getEnergy();
-      streamlog_out(MESSAGE) << " NUMBER=" << number;
-		
-		totalEnergy=totalEnergy+ecalhit->getEnergy();
-		noHits++;
-		totalEnergyLayerSi[z_in_IJK_coordinates-1]=totalEnergyLayerSi[z_in_IJK_coordinates-1]+ecalhit->getEnergy();
-		hitsInLayer[z_in_IJK_coordinates-1] = hitsInLayer[z_in_IJK_coordinates-1] + 1;
-		_xHist->Fill(x_in_IJK_coordinates);
-		_yHist->Fill(y_in_IJK_coordinates);
-		_zHist->Fill(z_in_IJK_coordinates);
-		_cellEnergyHist->Fill(ecalhit->getEnergy());
-		_xyHist->Fill(x_in_IJK_coordinates,y_in_IJK_coordinates);
-		_zxHist->Fill(z_in_IJK_coordinates,x_in_IJK_coordinates);
-		_zyHist->Fill(z_in_IJK_coordinates,y_in_IJK_coordinates);
+    for (int i = 0; i < number; i++) {
+        SimCalorimeterHit *ecalhit = dynamic_cast<SimCalorimeterHit *>(myCollection->getElementAt(i));
 
+        int xyz_x = cd(ecalhit)["x"];
+        int xyz_y = cd(ecalhit)["y"];
+        int xyz_z = cd(ecalhit)["layer"];
+        float hit_energy = ecalhit->getEnergy();
+
+        streamlog_out(DEBUG) << "\n SimCalorimeterHit, :" << i;
+        streamlog_out(DEBUG) << " cellID-encoded=" << ecalhit->getCellID0();
+        streamlog_out(DEBUG) << " x = " << xyz_x <<" mm,";
+        streamlog_out(DEBUG) << " y = " << xyz_y <<" mm,";
+        streamlog_out(DEBUG) << " z = " << xyz_z <<" layer,";
+        streamlog_out(DEBUG) << " energy = " << hit_energy <<"GeV.\n";
+        totalEnergyLayerSi[xyz_z] += hit_energy;
+        hitsInLayer[xyz_z]++;
+        _zMonoHist->Fill(xyz_z+1);
     }
-    streamlog_out(MESSAGE) << " energy TUNGSTEN=" << totalEnergy;
-	_evEnergyHist->Fill(totalEnergy);
-	_evHitsHist->Fill(noHits);
-	noHits=0;
-	totalEnergy=0;
-	for (int i = 0; i < 15; i++)
-	{
-		if (hitsInLayer[i]>0)
-		{
+    // return totalEnergyLayerSi;
+    _evMonoEnergyVec.push_back(totalEnergy);
+	for (int i = 0; i < NUMBER_OF_LAYER; i++) {
+		if (hitsInLayer[i]>0) {
+			_energyInMonoLayerSi[i]->Fill(totalEnergyLayerSi[i]);
+		}
+	}
+}//By this point all histograms are filled for one event, this is repeated for all the events in the collection
+
+void GetEnergyResolutionProcessor::ShowPixelECALInfo(EVENT::LCCollection *myCollection) {
+    int number = myCollection->getNumberOfElements();
+    streamlog_out(MESSAGE) << "TOTAL NUMBER OF HITS: " << number <<endl;
+    CellIDDecoder<EVENT::SimCalorimeterHit> cd(myCollection);
+    
+	double totalEnergy = 0;
+    int totalHits = 0;
+	double totalEnergyLayerSi[NUMBER_OF_LAYER];
+	int hitsInLayer[NUMBER_OF_LAYER];
+    std::fill(std::begin(totalEnergyLayerSi), std::end(totalEnergyLayerSi), 0.0);
+    std::fill(std::begin(hitsInLayer), std::end(hitsInLayer), 0);
+    
+    for (int i = 0; i < number; i++) {
+        SimCalorimeterHit *ecalhit = dynamic_cast<SimCalorimeterHit *>(myCollection->getElementAt(i));
+        
+        int IJK_I = cd(ecalhit)["I"];
+        int IJK_J = cd(ecalhit)["J"];
+        int IJK_K = cd(ecalhit)["K"];
+        float hit_energy = ecalhit->getEnergy();
+
+        streamlog_out(DEBUG) << "\n SimCalorimeterHit, :" << i;
+        streamlog_out(DEBUG) << " cellID-encoded=" << ecalhit->getCellID0();
+        streamlog_out(DEBUG) << " I = " << IJK_I <<" mm,";
+        streamlog_out(DEBUG) << " J = " << IJK_J <<" mm,";
+        streamlog_out(DEBUG) << " K = " << IJK_K <<" layer,";
+        streamlog_out(DEBUG) << " energy = " << hit_energy <<" GeV.\n";
+		totalEnergy += hit_energy;
+        totalEnergyLayerSi[IJK_K-1] += hit_energy;
+        totalHits++;
+        hitsInLayer[IJK_K-1]++;
+        _xHist->Fill(IJK_I);
+        _yHist->Fill(IJK_J);
+        _zHist->Fill(IJK_K);
+		_cellEnergyHist->Fill(hit_energy);
+		_xyHist->Fill(IJK_I,IJK_J);
+		_zxHist->Fill(IJK_K,IJK_I);
+		_zyHist->Fill(IJK_K,IJK_J);
+    }
+    streamlog_out(MESSAGE) << "Total energy deposit: " << totalEnergy << " GeV" <<endl;
+    // Instead of filling the histograms now, we store the numbers in vectors first, then decide the binsize later
+	// _evEnergyHist->Fill(totalEnergy);
+	// _evHitsHist->Fill(totalHits);
+    _evEnergyVec.push_back(totalEnergy);
+    _evHitsVec.push_back(totalHits);
+	for (int i = 0; i < NUMBER_OF_LAYER; i++) {
+		if (hitsInLayer[i]>0) {
 			_energyInLayerSi[i]->Fill(totalEnergyLayerSi[i]);
 		}
 		_hitsInLayer[i]->Fill(hitsInLayer[i]);
-		totalEnergyLayerSi[i]=0;
-		
 	}
+}
 
+void GetEnergyResolutionProcessor::ShowDigitECALInfo(EVENT::LCCollection *myCollection) {
+    int number = myCollection->getNumberOfElements();
+    streamlog_out(MESSAGE) << "TOTAL NUMBER OF HITS: " << number <<endl;
+    CellIDDecoder<EVENT::SimCalorimeterHit> cd(myCollection);
+    
+	double totalEnergy = 0;
+    int totalHits = 0;
+	double totalEnergyLayerSi[NUMBER_OF_LAYER];
+	int hitsInLayer[NUMBER_OF_LAYER];
+    std::fill(std::begin(totalEnergyLayerSi), std::end(totalEnergyLayerSi), 0.0);
+    std::fill(std::begin(hitsInLayer), std::end(hitsInLayer), 0);
+    
+    for (int i = 0; i < number; i++) {
+        SimCalorimeterHit *ecalhit = dynamic_cast<SimCalorimeterHit *>(myCollection->getElementAt(i));
+        
+        int IJK_I = cd(ecalhit)["I"];
+        int IJK_J = cd(ecalhit)["J"];
+        int IJK_K = cd(ecalhit)["K"];
+        float hit_energy = ecalhit->getEnergy();
 
+        streamlog_out(DEBUG) << "\n SimCalorimeterHit, :" << i;
+        streamlog_out(DEBUG) << " cellID-encoded=" << ecalhit->getCellID0();
+        streamlog_out(DEBUG) << " I = " << IJK_I <<" mm,";
+        streamlog_out(DEBUG) << " J = " << IJK_J <<" mm,";
+        streamlog_out(DEBUG) << " K = " << IJK_K <<" layer,";
+        streamlog_out(DEBUG) << " energy = " << hit_energy <<" GeV.\n";
+		totalEnergy += hit_energy;
+        totalEnergyLayerSi[IJK_K-1] += hit_energy;
+        totalHits++;
+        hitsInLayer[IJK_K-1]++;
+        _xDigitHist->Fill(IJK_I);
+        _yDigitHist->Fill(IJK_J);
+        _zDigitHist->Fill(IJK_K);
+		_cellDigitEnergyHist->Fill(hit_energy);
+		_xyDigitHist->Fill(IJK_I,IJK_J);
+		_zxDigitHist->Fill(IJK_K,IJK_I);
+		_zyDigitHist->Fill(IJK_K,IJK_J);
+    }
+    streamlog_out(MESSAGE) << "Total energy deposit: " << totalEnergy << " GeV" <<endl;
+    // Instead of filling the histograms now, we store the numbers in vectors first, then decide the binsize later
+	// _evEnergyHist->Fill(totalEnergy);
+	// _evHitsHist->Fill(totalHits);
+    _evDigitEnergyVec.push_back(totalEnergy);
+    _evDigitHitsVec.push_back(totalHits);
+	for (int i = 0; i < NUMBER_OF_LAYER; i++) {
+		if (hitsInLayer[i]>0) {
+			_energyInDigitLayerSi[i]->Fill(totalEnergyLayerSi[i]);
+		}
+		_hitsInDigitLayer[i]->Fill(hitsInLayer[i]);
+		totalEnergyLayerSi[i]=0;
+	}
 }
 
 
@@ -168,62 +291,132 @@ void GetEnergyResolutionProcessor::processRunHeader(LCRunHeader *run)
 {
 }
 
-void GetEnergyResolutionProcessor::processEvent(LCEvent *evt)
-{
-
-	try
-	  {
-	    streamlog_out(MESSAGE) << "\n ----------------------------------------- ";
-	    LCCollection *mccol = evt->getCollection(_MCColName);
-	    ShowMCInfo(mccol);
-	    
-	    LCCollection *ecal = evt->getCollection(_ECALColName);
-	    ShowECALInfo(ecal);
-
-	
-	}catch (DataNotAvailableException &e)
-	{
-		streamlog_out(DEBUG) << "Whoops!....\n";
-		streamlog_out(DEBUG) << e.what();
-	}
-	//AIDAProcessor::tree(this);
-
+void GetEnergyResolutionProcessor::processEvent(LCEvent *evt) {
+    try {
+        streamlog_out(MESSAGE) << "\n ----------------------------------------- ";
+        if (_flagMcCol) {
+            LCCollection *mccol = evt->getCollection(_MCColName);
+            ShowMCInfo(mccol);
+        }
+        if (_flagEcalCol) {
+            LCCollection *ecal = evt->getCollection(_ECALColName);
+            ShowPixelECALInfo(ecal);
+        }
+        if (_flagPixelEcalCol) {
+            LCCollection *pecal = evt->getCollection(_pECALColName);
+            ShowPixelECALInfo(pecal);
+        }
+        if (_flagDigitEcalCol) {
+            LCCollection *decal = evt->getCollection(_dECALColName);
+            ShowPixelECALInfo(decal);
+        }
+    } catch (DataNotAvailableException &e) {
+        streamlog_out(DEBUG) << "Whoops!....\n";
+        streamlog_out(DEBUG) << e.what();
+    }
 }
 
-	void GetEnergyResolutionProcessor::check(LCEvent * evt)
-	{
-		// nothing to check here - could be used to fill checkplots in reconstruction processor
-	}
+void GetEnergyResolutionProcessor::check(LCEvent * evt)
+{
+    // nothing to check here - could be used to fill checkplots in reconstruction processor
+}
 
-	void GetEnergyResolutionProcessor::end()
-	{
-			_evHitsHist->Fit("gaus");	//Fit a gaussian to the distribution
-			TF1 *fit1 = (TF1*)_evHitsHist->GetListOfFunctions()->FindObject("gaus");
-			gStyle->SetOptFit(1111);//Set to 1 to show and save the fit with the histogram in the root file generated by the AIDAProcessor
-			_evHitsHist->Fit("gaus","","",fit1->GetParameter(1)-fit1->GetParameter(2),fit1->GetParameter(1)+fit1->GetParameter(2));	//Fit a gaussian to the distribution
-			TF1 *fit2 = (TF1*)_evHitsHist->GetListOfFunctions()->FindObject("gaus");
-			gStyle->SetOptFit(1111);//Set to 1 to show and save the fit with the histogram in the root file generated by the AIDAProcessor
+void GetEnergyResolutionProcessor::end() {
+    if (_flagMcCol) {
+        _runEnergy->SetBinContent(1, runEnergy);
+    }
+    
+    if (_flagEcalCol) {
+        // Using the full statistical information to determine the binsize
+        float meanMonoEnergy = TMath::Mean(_evMonoEnergyVec.begin(), _evMonoEnergyVec.end());
+        float sigmaMonoEnergy = TMath::RMS(_evMonoEnergyVec.begin(), _evMonoEnergyVec.end());
+        // Now declaring the histograms
+        float minMonoEnergy = meanMonoEnergy - radiusOverSigma*sigmaMonoEnergy;
+        float maxMonoEnergy = meanMonoEnergy + radiusOverSigma*sigmaMonoEnergy;
+        _evMonoEnergyHist->SetBins(evHistBins, minMonoEnergy, maxMonoEnergy);
+        // Now filling the histograms
+        for (double energy:_evMonoEnergyVec) {_evMonoEnergyHist->Fill(energy);}
 
-			_evEnergyHist->Fit("gaus");	//Fit a gaussian to the distribution
-			TF1 *fit = (TF1*)_evEnergyHist->GetListOfFunctions()->FindObject("gaus");
-			gStyle->SetOptFit(1111);//Set to 1 to show and save the fit with the histogram in the root file generated by the AIDAProcessor
+        // Fitting
+        _evMonoEnergyHist->Fit("gaus");
+        TF1 *mono_fit = (TF1*) _evMonoEnergyHist->GetListOfFunctions()->FindObject("gaus");
+        gStyle->SetOptFit(1111);
+        streamlog_out(MESSAGE) << "\n Mono Fit " << mono_fit->GetParameter(2) <<endl;
+    }
+    
+    if (_flagPixelEcalCol) {
+        // Using the full statistical information to determine the binsize
+        float meanEnergy = TMath::Mean(_evEnergyVec.begin(), _evEnergyVec.end());
+        float sigmaEnergy = TMath::RMS(_evEnergyVec.begin(), _evEnergyVec.end());
+        float meanHits = TMath::Mean(_evHitsVec.begin(), _evHitsVec.end());
+        float sigmaHits = TMath::RMS(_evHitsVec.begin(), _evHitsVec.end());
+        // Now declaring the histograms
+        float minEnergy = meanEnergy - radiusOverSigma*sigmaEnergy;
+        float maxEnergy = meanEnergy + radiusOverSigma*sigmaEnergy;
+        float minHits = meanHits - radiusOverSigma*sigmaHits;
+        float maxHits = meanHits + radiusOverSigma*sigmaHits;
+        _evEnergyHist->SetBins(evHistBins, minEnergy, maxEnergy);
+        _evHitsHist->SetBins(evHistBins, minHits, maxHits);
+        // Now filling the histograms
+        for (double energy:_evEnergyVec) {_evEnergyHist->Fill(energy);}
+        for (int hits:_evHitsVec) {_evHitsHist->Fill(hits);}
 
-			printf("Fitting done\nPlotting results...\n");
-			streamlog_out(MESSAGE) << "\n Fit " << fit->GetParameter(2);
+        
+        _evHitsHist->Fit("gaus");	//Fit a gaussian to the distribution
+        TF1 *fit1 = (TF1*)_evHitsHist->GetListOfFunctions()->FindObject("gaus");
+        gStyle->SetOptFit(1111);//Set to 1 to show and save the fit with the histogram in the root file generated by the AIDAProcessor
+        // _evHitsHist->Fit("gaus","","",fit1->GetParameter(1)-fit1->GetParameter(2),fit1->GetParameter(1)+fit1->GetParameter(2));	//Fit a gaussian to the distribution
+        // TF1 *fit2 = (TF1*)_evHitsHist->GetListOfFunctions()->FindObject("gaus");
+        // gStyle->SetOptFit(1111);//Set to 1 to show and save the fit with the histogram in the root file generated by the AIDAProcessor
+        _evEnergyHist->Fit("gaus");	//Fit a gaussian to the distribution
+        TF1 *fit = (TF1*)_evEnergyHist->GetListOfFunctions()->FindObject("gaus");
+        gStyle->SetOptFit(1111);//Set to 1 to show and save the fit with the histogram in the root file generated by the AIDAProcessor
 
-		for (int i = 0; i < 15; i++)
-		{
-			// Fitting SNR histo
-			printf("Fitting...\n");
+        streamlog_out(MESSAGE) << "\n Pixel Fit " << fit->GetParameter(2) <<endl;
 
-			_hitsInLayer[i]->Fit("gaus");	
-			TF1 *fitLayer1 = (TF1*)_hitsInLayer[i]->GetListOfFunctions()->FindObject("gaus");
-			gStyle->SetOptFit(1111);
-			
-			_energyInLayerSi[i]->Fit("gaus");	
-			TF1 *fitLayer = (TF1*)_energyInLayerSi[i]->GetListOfFunctions()->FindObject("gaus");
-			gStyle->SetOptFit(1111);
-			printf("Fitting done\nPlotting results...\n");
-		}
-			
-	}
+        // Doing the fitting layer-by-layer seems unnecessary,
+        // as the eventual Gaussian distribution comes from the large number of Laudau sampling.
+        // for (int i = 0; i < NUMBER_OF_LAYER; i++) {
+        //     // Fitting SNR histo
+        //     printf("Fitting...\n");
+
+        //     _hitsInLayer[i]->Fit("gaus");	
+        //     TF1 *fitLayer1 = (TF1*)_hitsInLayer[i]->GetListOfFunctions()->FindObject("gaus");
+        //     gStyle->SetOptFit(1111);
+            
+        //     _energyInLayerSi[i]->Fit("gaus");	
+        //     TF1 *fitLayer = (TF1*)_energyInLayerSi[i]->GetListOfFunctions()->FindObject("gaus");
+        //     gStyle->SetOptFit(1111);
+        //     printf("Fitting done\nPlotting results...\n");
+        // }
+    }
+
+    if (_flagDigitEcalCol) {
+        // Using the full statistical information to determine the binsize
+        float meanDigitEnergy = TMath::Mean(_evEnergyVec.begin(), _evEnergyVec.end());
+        float sigmaDigitEnergy = TMath::RMS(_evEnergyVec.begin(), _evEnergyVec.end());
+        float meanDigitHits = TMath::Mean(_evHitsVec.begin(), _evHitsVec.end());
+        float sigmaDigitHits = TMath::RMS(_evHitsVec.begin(), _evHitsVec.end());
+        // Now declaring the histograms
+        float minDigitEnergy = meanDigitEnergy - radiusOverSigma*sigmaDigitEnergy;
+        float maxDigitEnergy = meanDigitEnergy + radiusOverSigma*sigmaDigitEnergy;
+        float minDigitHits = meanDigitHits - radiusOverSigma*sigmaDigitHits;
+        float maxDigitHits = meanDigitHits + radiusOverSigma*sigmaDigitHits;
+        _evDigitEnergyHist->SetBins(evHistBins, minDigitEnergy, maxDigitEnergy);
+        _evDigitHitsHist->SetBins(evHistBins, minDigitHits, maxDigitHits);
+        // Now filling the histograms
+        for (double energy:_evDigitEnergyVec) {_evDigitEnergyHist->Fill(energy);}
+        for (int hits:_evDigitHitsVec) {_evDigitHitsHist->Fill(hits);}
+
+        
+        _evDigitHitsHist->Fit("gaus");	//Fit a gaussian to the distribution
+        TF1 *digit_fit1 = (TF1*)_evDigitHitsHist->GetListOfFunctions()->FindObject("gaus");
+        gStyle->SetOptFit(1111);//Set to 1 to show and save the fit with the histogram in the root file generated by the AIDAProcessor
+        _evDigitEnergyHist->Fit("gaus");	//Fit a gaussian to the distribution
+        TF1 *digit_fit = (TF1*)_evDigitEnergyHist->GetListOfFunctions()->FindObject("gaus");
+        gStyle->SetOptFit(1111);//Set to 1 to show and save the fit with the histogram in the root file generated by the AIDAProcessor
+
+        streamlog_out(MESSAGE) << "\n Digit Fit " << digit_fit->GetParameter(2) <<endl;
+    }
+    streamlog_out(MESSAGE) << "Fitting done\nPlotting results..." <<endl;
+}

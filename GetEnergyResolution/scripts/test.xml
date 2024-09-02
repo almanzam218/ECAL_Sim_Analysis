@@ -42,8 +42,10 @@
   </processor>
 
   <processor name="MyGetEnergyResolutionProcessor" type="GetEnergyResolutionProcessor">  
-    <parameter name="ECALCollectionName" type="string"> PixelSiEcalCollection </parameter>
     <parameter name="MCCollectionName" type="string"> MCParticle </parameter>
+    <parameter name="ECALCollectionName" type="string"> SiEcalCollection </parameter>
+    <parameter name="PixelisedECALCollectionName" type="string"> PixelSiEcalCollection </parameter>
+    <parameter name="DigitisedECALCollectionName" type="string"> EcalCollection </parameter>
   </processor>
 
 
