@@ -61,9 +61,9 @@ void GetMIPProcessor::init()
 {
 	printParameters();
 	AIDAProcessor::tree(this);//Using the AIDAProcessor to save the histograms created in init() in a root file
-    _xHist = new TH1D("xHist","X Distribution", NUMBER_OF_CELLX, 0.5, NUMBER_OF_CELLX +.5);//Histogram of X distribution of hits in ECAL pixel coordinates
-    _yHist = new TH1D("yHist","Y Distribution", NUMBER_OF_CELLY, 0.5, NUMBER_OF_CELLY +.5);//Histogram of Y distribution of hits
-    _zHist = new TH1D("zHist","Z Distribution", NUMBER_OF_LAYER, 0.5, NUMBER_OF_LAYER +.5);//Histogram of Z (Layer) distribution of hits
+    _xHist = new TH1D("xHist","X Distribution; x [cell]; Number of hit", NUMBER_OF_CELLX, 0.5, NUMBER_OF_CELLX +.5);//Histogram of X distribution of hits in ECAL pixel coordinates
+    _yHist = new TH1D("yHist","Y Distribution; y [cell]; Number of hit", NUMBER_OF_CELLY, 0.5, NUMBER_OF_CELLY +.5);//Histogram of Y distribution of hits
+    _zHist = new TH1D("zHist","Z Distribution; z [layer]; Number of hit", NUMBER_OF_LAYER, 0.5, NUMBER_OF_LAYER +.5);//Histogram of Z (Layer) distribution of hits
     _cellEnergyHist = new TH1F("cellEnergyHist","Energy deposited in cells Distribution", 200, FIT_RANGE_MIN, FIT_RANGE_MAX);//Histogram of the energy deposition in all cell for all events
 	
     _xyHist = new TH2D("xyHist","XY view all events", NUMBER_OF_CELLX, 0.5, NUMBER_OF_CELLX +.5, NUMBER_OF_CELLY, 0.5, NUMBER_OF_CELLY +.5);//Front view of the ECAL, XY distribution of hits
@@ -144,7 +144,7 @@ void GetMIPProcessor::ShowPixelECALInfo(EVENT::LCCollection *myCollection) {
     float totalEnergyLayerSi[NUMBER_OF_LAYER];
     int hitsInLayer[NUMBER_OF_LAYER];
     std::fill(std::begin(totalEnergyLayerSi), std::end(totalEnergyLayerSi), 0.0);
-    std::fill(std::begin(hitsInLayer), std::end(hitsInLayer), 0.0);
+    std::fill(std::begin(hitsInLayer), std::end(hitsInLayer), 0);
 
     for (int i = 0; i < number; i++) {
         SimCalorimeterHit *ecalhit = dynamic_cast<SimCalorimeterHit *>(myCollection->getElementAt(i));
