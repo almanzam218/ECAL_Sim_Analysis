@@ -114,13 +114,13 @@ void GetEnergyResolutionProcessor::init() {
         _xyDigitHist = new TH2F("digit_xyHist","XY view all events", NUMBER_OF_CELLX, 0.5, NUMBER_OF_CELLX +.5, NUMBER_OF_CELLY, 0.5, NUMBER_OF_CELLY +.5);
         _zxDigitHist = new TH2F("digit_zxHist","ZX view all events", NUMBER_OF_LAYER, 0.5, NUMBER_OF_LAYER +.5, NUMBER_OF_CELLX, 0.5, NUMBER_OF_CELLX +.5);
         _zyDigitHist = new TH2F("digit_zyHist","ZY view all events", NUMBER_OF_LAYER, 0.5, NUMBER_OF_LAYER +.5, NUMBER_OF_CELLY, 0.5, NUMBER_OF_CELLY +.5);
-        _cellDigitEnergyHist = new TH1F("digit_cellEnergyHist","Energy deposited in cells Distribution; E_{dep} [GeV]; Number of hit", 200, E_RANGE_MIN, E_RANGE_MAX);//Histogram of the energy deposition in all cell for all events
+        _cellDigitEnergyHist = new TH1F("digit_cellEnergyHist","Energy deposited in cells Distribution; E_{dep} [MIP]; Number of hit", 200, E_RANGE_MIN, E_RANGE_MAX);//Histogram of the energy deposition in all cell for all events
         // The histogram will instead be declared and filled at the ending stage
         // Bin ranges will be changed at the final stage
-        _evDigitEnergyHist = new TH1D("digit_evEnergyHist","Energy of shower Distribution; E_{dep} [GeV]", evHistBins, 0, evHistBins);
+        _evDigitEnergyHist = new TH1D("digit_evEnergyHist","Energy of shower Distribution; E_{dep} [MIP]", evHistBins, 0, evHistBins);
         _evDigitHitsHist = new TH1D("digit_evHitsHist","Number of hits Distribution; Hit", evHistBins, 0, evHistBins);
         for (int i = 0; i < NUMBER_OF_LAYER; i++) {
-            _energyInDigitLayerSi[i] = new TH1F(Form("digit_energyInLayerSi_%d",i+1),"Energy deposited in layer; E_{dep} [GeV];",100, 0, 0.05);
+            _energyInDigitLayerSi[i] = new TH1F(Form("digit_energyInLayerSi_%d",i+1),"Energy deposited in layer; E_{dep} [MIP];",100, 0, 0.05);
             _energyInDigitLayerSi[i]->SetTitle(Form("Total energy in layer %d",i+1));
             _hitsInDigitLayer[i] = new TH1F(Form("digit_HitsInLayer_%d",i+1),"Hits in layer; Hit;",100, -0.5, 99.5);
             _hitsInDigitLayer[i]->SetTitle(Form("Total hits in layer %d",i+1));
