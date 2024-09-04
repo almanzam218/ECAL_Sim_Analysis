@@ -41,15 +41,15 @@ GetMIPProcessor::GetMIPProcessor() : Processor("GetMIPProcessor")
 	_description = "";
 
 	// input collections
-	registerInputCollection(LCIO::MCPARTICLE, "MCParticle",
-							"Muon MC collection",
+	registerInputCollection(LCIO::MCPARTICLE, "MCCollectionName",
+							"Primary Particle MC collection",
 							_MCColName,
 							std::string("MCParticle"));
-    registerInputCollection(LCIO::SIMCALORIMETERHIT, "SiEcalCollection",
+    registerInputCollection(LCIO::SIMCALORIMETERHIT, "ECALCollectionName",
                             "Sim ECAL Monolithic Collection",
                             _ECALColName,
                             std::string("SiEcalCollection"));
-	registerInputCollection(LCIO::SIMCALORIMETERHIT, "PixelSiEcalCollection",
+	registerInputCollection(LCIO::SIMCALORIMETERHIT, "PixelisedECALCollectionName",
                             "Sim ECAL Pixelised Collection",
                             _pECALColName,
 							std::string("PixelSiEcalCollection"));//Name of collection after using the Pixelization Processor, giving coordinates of hit in I,J,K starting from 1

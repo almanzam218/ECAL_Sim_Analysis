@@ -42,8 +42,9 @@
   </processor>
 
   <processor name="MyGetMIPProcessor" type="GetMIPProcessor">  
-    <parameter name="ECALCollectionName" type="string"> PixelSiEcalCollection </parameter>
     <parameter name="MCCollectionName" type="string"> MCParticle </parameter>
+    <parameter name="ECALCollectionName" type="string"> SiEcalCollection </parameter>
+    <parameter name="PixelisedECALCollectionName" type="string"> PixelSiEcalCollection </parameter>
   </processor>
 
 
