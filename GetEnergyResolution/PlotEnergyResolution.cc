@@ -11,7 +11,7 @@
 
 
 double GetFitParamsHits(int beamEnergyMeV,int param){
-    TFile f(Form("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/electron/EnergyResolution/20240821_pixelised/ECALe_luxe_v0_QGSP_BERT_e-_%dMeV_0.root",beamEnergyMeV));
+    TFile f(Form("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/electron/EnergyResolution/20240827_v1_pixelised/Pixelization_ECALe_luxe_v1_QGSP_BERT_e-_%dMeV_0.root",beamEnergyMeV));
     TH1F *hitsHist = (TH1F*)f.Get("MyGetEnergyResolutionProcessor/_evHitsHist");
     hitsHist->Fit("gaus");
     TF1 *fit = hitsHist->GetFunction("gaus");
@@ -24,7 +24,7 @@ double GetFitParamsHits(int beamEnergyMeV,int param){
     return fitParams[param];
 }
 double GetFitParamsEnergy(int beamEnergyMeV,int param){
-    TFile f(Form("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/electron/EnergyResolution/20240821_pixelised/ECALe_luxe_v0_QGSP_BERT_e-_%dMeV_0.root",beamEnergyMeV));
+    TFile f(Form("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/electron/EnergyResolution/20240827_v1_pixelised/Pixelization_ECALe_luxe_v1_QGSP_BERT_e-_%dMeV_0.root",beamEnergyMeV));
     TH1F *energyHist = (TH1F*)f.Get("MyGetEnergyResolutionProcessor/_evEnergyHist");
     energyHist->Fit("gaus");
     TF1 *fit = energyHist->GetFunction("gaus");
@@ -45,39 +45,45 @@ void PlotEnergyResolution(){
     TCanvas *c4 = new TCanvas("c4","Hit Linearity",1920,0,1920,1000);
     
 
-    double EnergyResolution[28];
-    double meanEnergy[28];
-    double HitResolution[28];
-    double meanHits[28];
-    double beamEnergy[28];
+    double EnergyResolution[8];
+    double meanEnergy[8];
+    double HitResolution[8];
+    double meanHits[8];
+    double beamEnergy[8];
 
 
     int h=0;
-    for (int i = 0; i < 28; i++)
+    for (int i = 0; i < 7; i++)
     {
-        EnergyResolution[h] = GetFitParamsEnergy(1500+500*i,2)/GetFitParamsEnergy(1500+500*i,1);
-        meanHits[h] = GetFitParamsHits(1500+500*i,1);
-        HitResolution[h] = GetFitParamsHits(1500+500*i,2)/GetFitParamsHits(1500+500*i,1);
-        meanEnergy[h] = GetFitParamsEnergy(1500+500*i,1);
-        beamEnergy[h] = (1.500+0.500*i);// in GeV
+        EnergyResolution[h] = GetFitParamsEnergy(1500+2000*i,2)/GetFitParamsEnergy(1500+2000*i,1);
+        meanHits[h] = GetFitParamsHits(1500+2000*i,1);
+        HitResolution[h] = GetFitParamsHits(1500+2000*i,2)/GetFitParamsHits(1500+2000*i,1);
+        meanEnergy[h] = GetFitParamsEnergy(1500+2000*i,1);
+        beamEnergy[h] = (1.500+2.00*i);// in GeV
         h++;
     }
-    auto gEnergyRes = new TGraph(28,beamEnergy,EnergyResolution);
+        EnergyResolution[7] = GetFitParamsEnergy(15000,2)/GetFitParamsEnergy(15000,1);
+        meanHits[7] = GetFitParamsHits(15000,1);
+        HitResolution[7] = GetFitParamsHits(15000,2)/GetFitParamsHits(15000,1);
+        meanEnergy[7] = GetFitParamsEnergy(15000,1);
+        beamEnergy[7] = (15.0);// in GeV
+    
+    auto gEnergyRes = new TGraph(8,beamEnergy,EnergyResolution);
     gEnergyRes->SetTitle("Energy Resolution");
     gEnergyRes->GetXaxis()->SetTitle("Beam Energy (GeV)");
     gEnergyRes->GetYaxis()->SetTitle("#frac{#sigma}{E}");
     
-    auto gEnergyLin = new TGraph(28,beamEnergy,meanEnergy);
+    auto gEnergyLin = new TGraph(8,beamEnergy,meanEnergy);
     gEnergyLin->SetTitle("Energy Linearity");
     gEnergyLin->GetXaxis()->SetTitle("Beam Energy (GeV)");
     gEnergyLin->GetYaxis()->SetTitle("mean E");
     
-    auto gHitRes = new TGraph(28,beamEnergy,HitResolution);
+    auto gHitRes = new TGraph(8,beamEnergy,HitResolution);
     gHitRes->SetTitle("Hit Resolution");
     gHitRes->GetXaxis()->SetTitle("Beam Energy (GeV)");
     gHitRes->GetYaxis()->SetTitle("#frac{#sigma}{E}");
     
-    auto gHitLin = new TGraph(28,beamEnergy,meanHits);
+    auto gHitLin = new TGraph(8,beamEnergy,meanHits);
     gHitLin->SetTitle("Hit Linearity");
     gStyle->SetStatH(0.1);
     gHitLin->GetXaxis()->SetTitle("Beam Energy (GeV)");
@@ -98,8 +104,8 @@ void PlotEnergyResolution(){
     gEnergyLin->Fit(f2,"","",1.500,15.000);
     gStyle->SetOptFit(1);
 
-    c1->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/electron/EnergyResolution/20240821_pixelised/EnergyResolutionPlot_20240821.png");
-    c2->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/electron/EnergyResolution/20240821_pixelised/EnergyLinearityPlot_20240821.png");
+    c1->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/electron/EnergyResolution/20240827_v1_pixelised/EnergyResolutionPlot_20240827.png");
+    c2->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/electron/EnergyResolution/20240827_v1_pixelised/EnergyLinearityPlot_20240827.png");
 
     c3->cd();
     gHitRes->Draw("A*");
@@ -116,8 +122,8 @@ void PlotEnergyResolution(){
     gHitLin->Fit(f4,"","",1.500,15.000);
     gStyle->SetOptFit(1);
 
-    c3->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/electron/EnergyResolution/20240821_pixelised/HitResolutionPlot_20240821.png");
-    c4->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/electron/EnergyResolution/20240821_pixelised/HitLinearityPlot_20240821.png");
+    c3->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/electron/EnergyResolution/20240827_v1_pixelised/HitResolutionPlot_20240827.png");
+    c4->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/electron/EnergyResolution/20240827_v1_pixelised/HitLinearityPlot_20240827.png");
 
     return;
 }
