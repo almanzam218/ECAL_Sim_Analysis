@@ -1,5 +1,4 @@
 #include "GetMIPProcessor.hh"
-#include "langaus.C"
 
 // ROOT
 #include "TStyle.h"
@@ -45,11 +44,11 @@ GetMIPProcessor::GetMIPProcessor() : Processor("GetMIPProcessor")
 				"Name of the MC collection",
 							_MCColName,
 							std::string("MCParticles"));
-	registerInputCollection(LCIO::SIMCALORIMETERHIT,
+	registerInputCollection(LCIO::CALORIMETERHIT,
 							"ECALCollection",
 							"Name of the Sim ECAL Collection",
 							_ECALColName,
-							std::string("PixelSiEcalCollection"));//Name of collection after using the Pixelization Processor, giving coordinates of hit in I,J,K starting from 1
+							std::string("ECAL"));//Name of collection after using the Pixelization Processor, giving coordinates of hit in I,J,K starting from 1
 }
 
 GetMIPProcessor::~GetMIPProcessor() {}
@@ -104,33 +103,33 @@ void GetMIPProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
  void GetMIPProcessor::ShowECALInfo(EVENT::LCCollection *myCollection)
 {
   int number = myCollection->getNumberOfElements();
-  CellIDDecoder<EVENT::SimCalorimeterHit> cd(myCollection);
+  CellIDDecoder<EVENT::new_ecalhit> cd(myCollection);
 
 	double totalEnergyLayerSi[15] = {0};
 	int hitsInLayer[15] = {0};
   for (int i = 0; i < number; i++)//Loop through the ECAL Hits in one event (after pixelization)
     {
 
-      SimCalorimeterHit *ecalhit = dynamic_cast<SimCalorimeterHit *>(myCollection->getElementAt(i));
-		int x_in_IJK_coordinates = cd(ecalhit)["I"];//Reading the x, y and layer coordinate of one hit in the collection
-    	int y_in_IJK_coordinates = cd(ecalhit)["J"];
-        int z_in_IJK_coordinates = cd(ecalhit)["K"];
+      new_ecalhit *new_ecalhit = dynamic_cast<new_ecalhit *>(myCollection->getElementAt(i));
+		int x_in_IJK_coordinates = cd(new_ecalhit)["I"];//Reading the x, y and layer coordinate of one hit in the collection
+    	int y_in_IJK_coordinates = cd(new_ecalhit)["J"];
+        int z_in_IJK_coordinates = cd(new_ecalhit)["K"];
 		//_coordinateZ=z_in_IJK_coordinates;
  /*     streamlog_out(MESSAGE) << "\n SimCalorimeterHit, :" << i;
-      streamlog_out(MESSAGE) << " cellID-encoded=" << ecalhit->getCellID0();
+      streamlog_out(MESSAGE) << " cellID-encoded=" << new_ecalhit->getCellID0();
       streamlog_out(MESSAGE) << " x_in_IJK_coordinates=" << x_in_IJK_coordinates;
       streamlog_out(MESSAGE) << " y_in_IJK_coordinates=" << y_in_IJK_coordinates;
       streamlog_out(MESSAGE) << " z_in_IJK_coordinates=" << z_in_IJK_coordinates;
-      streamlog_out(MESSAGE) << " energy=" << ecalhit->getEnergy();
+      streamlog_out(MESSAGE) << " energy=" << new_ecalhit->getEnergy();
       streamlog_out(MESSAGE) << " NUMBER=" << number;
 */		
 		
-		totalEnergyLayerSi[z_in_IJK_coordinates-1]=totalEnergyLayerSi[z_in_IJK_coordinates-1]+ecalhit->getEnergy();//Adding the energy of the event separated by layers
+		totalEnergyLayerSi[z_in_IJK_coordinates-1]=totalEnergyLayerSi[z_in_IJK_coordinates-1]+new_ecalhit->getEnergy();//Adding the energy of the event separated by layers
 		hitsInLayer[z_in_IJK_coordinates-1]++;//Counting the hits per layer in one event
 		_xHist->Fill(x_in_IJK_coordinates);//Fill the x, y, z and energy distribution histograms
 		_yHist->Fill(y_in_IJK_coordinates);
 		_zHist->Fill(z_in_IJK_coordinates);
-		_cellEnergyHist->Fill(ecalhit->getEnergy());
+		_cellEnergyHist->Fill(new_ecalhit->getEnergy());
 		_xyHist->Fill(x_in_IJK_coordinates,y_in_IJK_coordinates);
 
     }
