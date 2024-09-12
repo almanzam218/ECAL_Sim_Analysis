@@ -1,4 +1,4 @@
-#include "GetEnergyResolutionProcessor.hh"
+#include "GetPIDParametersTreeProcessor.hh"
 // #include "langaus.C"
 
 // ROOT
@@ -32,9 +32,9 @@ using std::string;
 using std::vector;
 using UTIL::LCRelationNavigator;
 
-GetEnergyResolutionProcessor aGetEnergyResolutionProcessor;
+GetPIDParametersTreeProcessor aGetPIDParametersTreeProcessor;
 
-GetEnergyResolutionProcessor::GetEnergyResolutionProcessor() : Processor("GetEnergyResolutionProcessor") {
+GetPIDParametersTreeProcessor::GetPIDParametersTreeProcessor() : Processor("GetPIDParametersTreeProcessor") {
 
 	// modify processor description
 	_description = "";
@@ -62,9 +62,9 @@ GetEnergyResolutionProcessor::GetEnergyResolutionProcessor() : Processor("GetEne
 							std::string("Not configured in xml file"));
 }
 
-GetEnergyResolutionProcessor::~GetEnergyResolutionProcessor() {}
+GetPIDParametersTreeProcessor::~GetPIDParametersTreeProcessor() {}
 
-void GetEnergyResolutionProcessor::init() {
+void GetPIDParametersTreeProcessor::init() {
 	AIDAProcessor::tree(this);
 	printParameters();
     if (_MCColName!="Not configured in xml file") {_flagMcCol = true;}
@@ -129,7 +129,7 @@ void GetEnergyResolutionProcessor::init() {
 }
 
 
-void GetEnergyResolutionProcessor::ShowMCInfo(EVENT::LCCollection *myCollection) {
+void GetPIDParametersTreeProcessor::ShowMCInfo(EVENT::LCCollection *myCollection) {
     int number = myCollection->getNumberOfElements();
     
     if (runEnergy==-1) {
@@ -153,7 +153,7 @@ void GetEnergyResolutionProcessor::ShowMCInfo(EVENT::LCCollection *myCollection)
     }
 }
 
-void GetEnergyResolutionProcessor::ShowECALInfo(EVENT::LCCollection *myCollection) {
+void GetPIDParametersTreeProcessor::ShowECALInfo(EVENT::LCCollection *myCollection) {
     int number = myCollection->getNumberOfElements();
     streamlog_out(DEBUG) << "TOTAL NUMBER OF HITS: " << number <<endl;
     CellIDDecoder<EVENT::SimCalorimeterHit> cd(myCollection);
@@ -192,7 +192,7 @@ void GetEnergyResolutionProcessor::ShowECALInfo(EVENT::LCCollection *myCollectio
 	}
 }//By this point all histograms are filled for one event, this is repeated for all the events in the collection
 
-void GetEnergyResolutionProcessor::ShowPixelECALInfo(EVENT::LCCollection *myCollection) {
+void GetPIDParametersTreeProcessor::ShowPixelECALInfo(EVENT::LCCollection *myCollection) {
     int number = myCollection->getNumberOfElements();
     streamlog_out(DEBUG) << "TOTAL NUMBER OF HITS: " << number <<endl;
     CellIDDecoder<EVENT::SimCalorimeterHit> cd(myCollection);
@@ -244,7 +244,7 @@ void GetEnergyResolutionProcessor::ShowPixelECALInfo(EVENT::LCCollection *myColl
 	}
 }
 
-void GetEnergyResolutionProcessor::ShowDigitECALInfo(EVENT::LCCollection *myCollection) {
+void GetPIDParametersTreeProcessor::ShowDigitECALInfo(EVENT::LCCollection *myCollection) {
     int number = myCollection->getNumberOfElements();
     streamlog_out(DEBUG) << "TOTAL NUMBER OF HITS: " << number <<endl;
     CellIDDecoder<EVENT::CalorimeterHit> cd(myCollection);
@@ -298,11 +298,11 @@ void GetEnergyResolutionProcessor::ShowDigitECALInfo(EVENT::LCCollection *myColl
 }
 
 
-void GetEnergyResolutionProcessor::processRunHeader(LCRunHeader *run)
+void GetPIDParametersTreeProcessor::processRunHeader(LCRunHeader *run)
 {
 }
 
-void GetEnergyResolutionProcessor::processEvent(LCEvent *evt) {
+void GetPIDParametersTreeProcessor::processEvent(LCEvent *evt) {
     try {
         streamlog_out(DEBUG) << "\n ----------------------------------------- ";
         if (_flagMcCol) {
@@ -327,12 +327,12 @@ void GetEnergyResolutionProcessor::processEvent(LCEvent *evt) {
     }
 }
 
-void GetEnergyResolutionProcessor::check(LCEvent * evt)
+void GetPIDParametersTreeProcessor::check(LCEvent * evt)
 {
     // nothing to check here - could be used to fill checkplots in reconstruction processor
 }
 
-void GetEnergyResolutionProcessor::end() {
+void GetPIDParametersTreeProcessor::end() {
     streamlog_out(MESSAGE) << "Event loop finished. Starting the fit..." <<endl;
     if (_flagMcCol) {
         _runEnergy->SetBinContent(1, runEnergy);
