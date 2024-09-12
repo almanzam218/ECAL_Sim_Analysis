@@ -48,7 +48,7 @@ GetMIPProcessor::GetMIPProcessor() : Processor("GetMIPProcessor")
 							"ECALCollection",
 							"Name of the Sim ECAL Collection",
 							_ECALColName,
-							std::string("ECAL"));//Name of collection after using the Pixelization Processor, giving coordinates of hit in I,J,K starting from 1
+							std::string("EcalCollection"));//Name of collection after using the Pixelization Processor, giving coordinates of hit in I,J,K starting from 1
 }
 
 GetMIPProcessor::~GetMIPProcessor() {}
