@@ -1,0 +1,52 @@
+<marlin>
+
+  <!-- The lcgeo directory where to look for the ILD model -->
+
+<constants>
+    <!-- Output files constants -->
+    <constant name="OutputBaseName" value="/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/electron/EnergyResolution/ECALe_luxe_v0_QGSP_BERT_e-_3000MeV" />
+    <constant name="AIDAFileName" value="${OutputBaseName}" />
+</constants>
+  
+  <!--########  Execute  ######################################## -->
+  
+  <execute>
+    <processor name="MyAIDAProcessor" />
+    <!--processor name="InitDD4hep"/-->
+    <processor name="MyGetEnergyResolutionProcessor"/>
+    <!--processor name="DSTOutput"/-->
+  </execute>
+
+  <!--########  Global  ######################################## -->
+  <global>
+    <parameter name="LCIOInputFiles">
+    /lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/electron/PixelizationLCIO/new_ECALe_luxe_v0_QGSP_BERT_e-_2500MeV_0.slcio
+    </parameter>
+    <!--parameter name="AllowToModifyEvent" value="true" /-->  
+    <parameter name="MaxRecordNumber" value="10001"/>  
+    <parameter name="SkipNEvents" value="0"/>
+    <parameter name="SupressCheck" value="false"/>
+    <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> DEBUG </parameter>
+    <parameter name="RandomSeed" value="1234567890" />
+  </global>
+
+  <!-- Init processors : histograming, logging, geometry ... -->
+  <processor name="MyAIDAProcessor" type="AIDAProcessor">
+    <!--Processor that handles AIDA files. Creates on directory per processor.  Processors only need to create and fill the histograms, clouds and tuples. Needs to be the first ActiveProcessor-->
+    <!-- compression of output file 0: false >0: true (default) -->
+    <parameter name="Compress" type="int" value="1"/>
+    <!-- filename without extension-->
+    <parameter name="FileName" type="string" value="${AIDAFileName}"/>
+    <!-- type of output file xml (default) or root ( only OpenScientist)-->
+    <parameter name="FileType" type="string" value="root "/>
+  </processor>
+
+  <processor name="MyGetEnergyResolutionProcessor" type="GetEnergyResolutionProcessor">  
+    <parameter name="MCCollectionName" type="string"> MCParticle </parameter>
+    <parameter name="ECALCollectionName" type="string"> SiEcalCollection </parameter>
+    <parameter name="PixelisedECALCollectionName" type="string"> PixelSiEcalCollection </parameter>
+    <parameter name="DigitisedECALCollectionName" type="string"> EcalCollection </parameter>
+  </processor>
+
+
+</marlin>
