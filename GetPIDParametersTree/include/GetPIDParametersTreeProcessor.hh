@@ -1,5 +1,5 @@
-#ifndef GetEnergyResolutionProcessor_h
-#define GetEnergyResolutionProcessor_h 1
+#ifndef GetPIDParametersTreeProcessor_h
+#define GetPIDParametersTreeProcessor_h 1
 #include <iomanip>
 #include <EVENT/LCRelation.h>
 #include "marlin/Processor.h"
@@ -45,7 +45,7 @@ using namespace lcio;
 using namespace marlin;
 using namespace std;
 
-class GetEnergyResolutionProcessor : public Processor {
+class GetPIDParametersTreeProcessor : public Processor {
 
 private:
     const static int NUMBER_OF_LAYER = 15;
@@ -58,10 +58,10 @@ private:
     float E_RANGE_MAX = 0.05;//GeV
 
 public:
-  virtual Processor *newProcessor() { return new GetEnergyResolutionProcessor; }
+  virtual Processor *newProcessor() { return new GetPIDParametersTreeProcessor; }
 
-  GetEnergyResolutionProcessor();
-  virtual ~GetEnergyResolutionProcessor();
+  GetPIDParametersTreeProcessor();
+  virtual ~GetPIDParametersTreeProcessor();
 
   /** Called at the begin of the job before anything is read.
    */
