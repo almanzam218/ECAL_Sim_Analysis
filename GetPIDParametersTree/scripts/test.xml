@@ -4,7 +4,7 @@
 
 <constants>
     <!-- Output files constants -->
-    <constant name="OutputBaseName" value="/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/electron/PIDParametersTree/ECALe_luxe_v0_QGSP_BERT_e-_3000MeV" />
+    <constant name="OutputBaseName" value="/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/tests/20240917/_tests" />
     <constant name="AIDAFileName" value="${OutputBaseName}" />
 </constants>
   
@@ -20,10 +20,10 @@
   <!--########  Global  ######################################## -->
   <global>
     <parameter name="LCIOInputFiles">
-    /lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/electron/PixelizationLCIO/new_ECALe_luxe_v0_QGSP_BERT_e-_2500MeV_0.slcio
-    </parameter>
+    /lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/NPOD_samples/20240829_v1/clustering/data/PixelDigiCluster_ECALe_luxe_v1_QGSP_BERT_gamma_10GeV.slcio
+        </parameter>
     <!--parameter name="AllowToModifyEvent" value="true" /-->  
-    <parameter name="MaxRecordNumber" value="10001"/>  
+    <parameter name="MaxRecordNumber" value="11"/>  
     <parameter name="SkipNEvents" value="0"/>
     <parameter name="SupressCheck" value="false"/>
     <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> DEBUG </parameter>
