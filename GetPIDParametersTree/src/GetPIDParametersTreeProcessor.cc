@@ -94,7 +94,7 @@ void get_res(int &nhit, float &sume, float &weight, vector<float> * hit_energy, 
     return;
 }
 
-void hits_layer(float NUMBER_OF_LAYER, vector<float> * hit_energy, vector<int> *hit_slab, TVectorD W_thicknesses, vector<int> *hit_isMasked, bool masked=false, bool normalized=false, string count_type="nhit"){
+void GetPIDParametersTreeProcessor::hits_layer(float hlv[NUMBER_OF_LAYER], vector<float> * hit_energy, vector<int> *hit_slab, TVectorD W_thicknesses, vector<int> *hit_isMasked, bool masked=false, bool normalized=false, string count_type="nhit"){
   float hit_count[NUMBER_OF_LAYER];
   float sume[NUMBER_OF_LAYER];
   float sume_w[NUMBER_OF_LAYER];
@@ -149,7 +149,7 @@ void hits_layer(float NUMBER_OF_LAYER, vector<float> * hit_energy, vector<int> *
   //cout<<"| DEBUG(hits_layer) | "<<"hlv: "<<hlv[0]<<" "<<hlv[1]<<" "<<hlv[2]<<" "<<hlv[3]<<" "<<hlv[4]<<" "<<hlv[5]<<" "<<hlv[6]<<" "<<hlv[7]<<" "<<hlv[8]<<" "<<hlv[9]<<" "<<hlv[10]<<" "<<hlv[11]<<" "<<hlv[12]<<" "<<hlv[13]<<" "<<hlv[14]<<endl;
     
   
-  return 0;
+  return ;
 }
 
 bool is_Shower(float entries, float array[NUMBER_OF_LAYER]) {

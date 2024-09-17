@@ -63,6 +63,7 @@ public:
   GetPIDParametersTreeProcessor();
   virtual ~GetPIDParametersTreeProcessor();
 
+  virtual void hits_layer(float hlv[NUMBER_OF_LAYER], vector<float> * hit_energy, vector<int> *hit_slab, TVectorD W_thicknesses, vector<int> *hit_isMasked, bool masked, bool normalized, string count_type);
   /** Called at the begin of the job before anything is read.
    */
   virtual void init();
