@@ -82,35 +82,9 @@ public:
   // Histogram definitions for ECALHit class
 
     // MC particle
-    TH1* _runEnergy;
     // Monolithic calorimeter hits
-    TH1* _zMonoHist;
-    TH1* _evMonoEnergyHist;
-    TH1* _energyInMonoLayerSi[NUMBER_OF_LAYER];
     // Pixelised calorimeter hits
-    TH1* _xHist;
-    TH1* _yHist;
-    TH1* _zHist;
-    TH2* _xyHist;
-    TH2* _zxHist;
-    TH2* _zyHist;
-    TH1* _cellEnergyHist;
-    TH1* _evEnergyHist;
-    TH1* _evHitsHist;
-    TH1* _energyInLayerSi[NUMBER_OF_LAYER];
-    TH1* _hitsInLayer[NUMBER_OF_LAYER];
     // Digitised calorimeter hits
-    TH1* _xDigitHist;
-    TH1* _yDigitHist;
-    TH1* _zDigitHist;
-    TH2* _xyDigitHist;
-    TH2* _zxDigitHist;
-    TH2* _zyDigitHist;
-    TH1* _cellDigitEnergyHist;
-    TH1* _evDigitEnergyHist;
-    TH1* _evDigitHitsHist;
-    TH1* _energyInDigitLayerSi[NUMBER_OF_LAYER];
-    TH1* _hitsInDigitLayer[NUMBER_OF_LAYER];
     // double _layerFitParams[NUMBER_OF_LAYER][4];
     // double energyRes;
     
@@ -126,19 +100,29 @@ private:
     std::string _pECALColName;
     std::string _dECALColName;
     
-    uint evHistBins = 31;
-    float radiusOverSigma = 2.0;//Fitting range == mean +- radius
-    vector<double> _evMonoEnergyVec;
-    vector<double> _evEnergyVec;
-    vector<int> _evHitsVec;
-    vector<double> _evDigitEnergyVec;
-    vector<int> _evDigitHitsVec;
-    
     bool _flagMcCol = false;
     bool _flagEcalCol = false;
     bool _flagPixelEcalCol = false;
     bool _flagDigitEcalCol = false;
     float runEnergy = -1;
+    Float_t b_ecal_interaction;
+    Float_t b_nhit, b_sume, b_weighte, b_bar_x, b_bar_y, b_bar_z, b_bar_r;
+    Float_t b_mol;
+    Float_t b_MIP_Likeness;
+    Float_t b_hits_max_distance;
+    Float_t b_radius90_layer_0, b_radius90_layer_1, b_radius90_layer_2, b_radius90_layer_3, b_radius90_layer_4, b_radius90_layer_5, b_radius90_layer_6, b_radius90_layer_7, b_radius90_layer_8, b_radius90_layer_9, b_radius90_layer_10, b_radius90_layer_11, b_radius90_layer_12, b_radius90_layer_13, b_radius90_layer_14;
+    Float_t b_bar_x_layer_0, b_bar_x_layer_1, b_bar_x_layer_2, b_bar_x_layer_3, b_bar_x_layer_4, b_bar_x_layer_5, b_bar_x_layer_6, b_bar_x_layer_7, b_bar_x_layer_8, b_bar_x_layer_9, b_bar_x_layer_10, b_bar_x_layer_11, b_bar_x_layer_12, b_bar_x_layer_13, b_bar_x_layer_14;
+    Float_t b_bar_y_layer_0, b_bar_y_layer_1, b_bar_y_layer_2, b_bar_y_layer_3, b_bar_y_layer_4, b_bar_y_layer_5, b_bar_y_layer_6, b_bar_y_layer_7, b_bar_y_layer_8, b_bar_y_layer_9, b_bar_y_layer_10, b_bar_y_layer_11, b_bar_y_layer_12, b_bar_y_layer_13, b_bar_y_layer_14;
+    Float_t b_bar_r_layer_0, b_bar_r_layer_1, b_bar_r_layer_2, b_bar_r_layer_3, b_bar_r_layer_4, b_bar_r_layer_5, b_bar_r_layer_6, b_bar_r_layer_7, b_bar_r_layer_8, b_bar_r_layer_9, b_bar_r_layer_10, b_bar_r_layer_11, b_bar_r_layer_12, b_bar_r_layer_13, b_bar_r_layer_14;
+    Float_t b_shower_nhit_max_layer, b_shower_nhit_start_layer, b_shower_nhit_end_layer, b_shower_nhit_start_10_layer, b_shower_nhit_end_10_layer, b_shower_nhit_average, b_shower_nhit_max;
+    Float_t b_shower_sume_max_layer, b_shower_sume_start_layer, b_shower_sume_end_layer, b_shower_sume_start_10_layer, b_shower_sume_end_10_layer, b_shower_sume_average, b_shower_sume_max;
+    Float_t b_shower_weighte_max_layer, b_shower_weighte_start_layer, b_shower_weighte_end_layer, b_shower_weighte_start_10_layer, b_shower_weighte_end_10_layer, b_shower_weighte_average, b_shower_weighte_max;
+    Float_t b_nhit_layer_0, b_nhit_layer_1, b_nhit_layer_2, b_nhit_layer_3, b_nhit_layer_4, b_nhit_layer_5, b_nhit_layer_6, b_nhit_layer_7, b_nhit_layer_8, b_nhit_layer_9, b_nhit_layer_10, b_nhit_layer_11, b_nhit_layer_12, b_nhit_layer_13, b_nhit_layer_14;
+    Float_t b_nhit_layer_n_0, b_nhit_layer_n_1, b_nhit_layer_n_2, b_nhit_layer_n_3, b_nhit_layer_n_4, b_nhit_layer_n_5, b_nhit_layer_n_6, b_nhit_layer_n_7, b_nhit_layer_n_8, b_nhit_layer_n_9, b_nhit_layer_n_10, b_nhit_layer_n_11, b_nhit_layer_n_12, b_nhit_layer_n_13, b_nhit_layer_n_14;
+    Float_t b_weighte_layer_0, b_weighte_layer_1, b_weighte_layer_2, b_weighte_layer_3, b_weighte_layer_4, b_weighte_layer_5, b_weighte_layer_6, b_weighte_layer_7, b_weighte_layer_8, b_weighte_layer_9, b_weighte_layer_10, b_weighte_layer_11, b_weighte_layer_12, b_weighte_layer_13, b_weighte_layer_14;
+    Float_t b_weighte_layer_n_0, b_weighte_layer_n_1, b_weighte_layer_n_2, b_weighte_layer_n_3, b_weighte_layer_n_4, b_weighte_layer_n_5, b_weighte_layer_n_6, b_weighte_layer_n_7, b_weighte_layer_n_8, b_weighte_layer_n_9, b_weighte_layer_n_10, b_weighte_layer_n_11, b_weighte_layer_n_12, b_weighte_layer_n_13, b_weighte_layer_n_14;    
+    Float_t b_sume_layer_0, b_sume_layer_1, b_sume_layer_2, b_sume_layer_3, b_sume_layer_4, b_sume_layer_5, b_sume_layer_6, b_sume_layer_7, b_sume_layer_8, b_sume_layer_9, b_sume_layer_10, b_sume_layer_11, b_sume_layer_12, b_sume_layer_13, b_sume_layer_14;
+    Float_t b_sume_layer_n_0, b_sume_layer_n_1, b_sume_layer_n_2, b_sume_layer_n_3, b_sume_layer_n_4, b_sume_layer_n_5, b_sume_layer_n_6, b_sume_layer_n_7, b_sume_layer_n_8, b_sume_layer_n_9, b_sume_layer_n_10, b_sume_layer_n_11, b_sume_layer_n_12, b_sume_layer_n_13, b_sume_layer_n_14;
 
 
 };

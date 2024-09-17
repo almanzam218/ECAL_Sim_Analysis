@@ -6,7 +6,7 @@ source ../../init_ilcsoft.sh
 cd /lhome/ific/a/almanzam/testsSim/ExampleProcessor/GetPIDParametersTree/scripts
 export MARLIN_DLL="$MARLIN_DLL:$PWD/../lib/libGetPIDParametersTreeProcessor.so"
 
-declare -i numberEvents=101
+declare -i numberEvents=10
 
 for energy in 10 
 do
