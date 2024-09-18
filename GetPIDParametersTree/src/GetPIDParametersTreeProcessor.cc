@@ -885,7 +885,7 @@ void GetPIDParametersTreeProcessor::ShowPixelECALInfo(EVENT::LCCollection *myCol
     //    totalHits++;
     //hit->push_back(hit_energyf*1.1);
       hit_energyv.push_back(hit_energyf);
-      streamlog_out(MESSAGE) << "TEST "  <<endl;
+      streamlog_out(MESSAGE) << "TEST "  << number <<endl;
       hit_xv.push_back(IJK_I);
       hit_yv.push_back(IJK_J);
       hit_zv.push_back(IJK_K);
@@ -894,84 +894,6 @@ void GetPIDParametersTreeProcessor::ShowPixelECALInfo(EVENT::LCCollection *myCol
         
     }
       //hit_energy->push_back(hit);
-
-}
-
-
-void GetPIDParametersTreeProcessor::ShowDigitECALInfo(EVENT::LCCollection *myCollection) {
-    int number = myCollection->getNumberOfElements();
-    streamlog_out(DEBUG) << "TOTAL NUMBER OF HITS DIGI: " << number <<endl;
-    CellIDDecoder<EVENT::CalorimeterHit> cd(myCollection);
-
-	double totalEnergy = 0;
-    int totalHits = 0;
-    
-    for (int i = 0; i < number; i++) {
-        CalorimeterHit *ecalhit = dynamic_cast<CalorimeterHit *>(myCollection->getElementAt(i));
-        
-        int IJK_I = cd(ecalhit)["I"];
-        int IJK_J = cd(ecalhit)["J"];
-        int IJK_K = cd(ecalhit)["K"];
-        float hit_energyf = ecalhit->getEnergy();
-
-        streamlog_out(DEBUG) << "\n CalorimeterHit, :" << i;
-        streamlog_out(DEBUG) << " cellID-encoded=" << ecalhit->getCellID0();
-        streamlog_out(DEBUG) << " I = " << IJK_I <<" mm,";
-        streamlog_out(DEBUG) << " J = " << IJK_J <<" mm,";
-        streamlog_out(DEBUG) << " K = " << IJK_K <<" layer,";
-        streamlog_out(DEBUG) << " energy = " << hit_energyf <<" GeV.\n";
-		totalEnergy += hit_energyf;
-        totalHits++;
-    }
-    streamlog_out(DEBUG) << "Total energy deposit: " << totalEnergy << " GeV" <<endl;
-    // Instead of filling the histograms now, we store the numbers in vectors first, then decide the binsize later
-	// _evEnergyHist->Fill(totalEnergy);
-	// _evHitsHist->Fill(totalHits);
-}
-
-
-void GetPIDParametersTreeProcessor::processRunHeader(LCRunHeader *run)
-{
-}
-
-void GetPIDParametersTreeProcessor::processEvent(LCEvent *evt) {
-    try {
-        streamlog_out(DEBUG) << "\n ----------------------------------------- ";
-        if (_flagMcCol) {
-            LCCollection *mccol = evt->getCollection(_MCColName);
-            ShowMCInfo(mccol);
-        }
-        if (_flagEcalCol) {
-            LCCollection *ecal = evt->getCollection(_ECALColName);
-            ShowECALInfo(ecal);
-        }
-        if (_flagPixelEcalCol) {
-            LCCollection *pecal = evt->getCollection(_pECALColName);
-            ShowPixelECALInfo(pecal);
-        }
-        if (_flagDigitEcalCol) {
-            LCCollection *decal = evt->getCollection(_dECALColName);
-            ShowDigitECALInfo(decal);
-        }
-    } catch (DataNotAvailableException &e) {
-        streamlog_out(DEBUG) << "Whoops!....\n";
-        streamlog_out(DEBUG) << e.what();
-    }
-}
-
-void GetPIDParametersTreeProcessor::check(LCEvent * evt)
-{
-    // nothing to check here - could be used to fill checkplots in reconstruction processor
-}
-
-void GetPIDParametersTreeProcessor::end() {
-    streamlog_out(MESSAGE) << "Event loop finished. Starting the fit..." <<endl;
-    if (_flagMcCol) {
-    }
-    if (_flagEcalCol) {
-    }
-    
-    if (_flagPixelEcalCol) {
         TVectorD W_thicknesses(NUMBER_OF_LAYER, W);
         
         // Resolution
@@ -1012,6 +934,7 @@ void GetPIDParametersTreeProcessor::end() {
     vector<float> *hit_zt=0;
     vector<int> *hit_isMaskedt=0;
     vector<int> *hit_slabt=0;
+      streamlog_out(MESSAGE) << "TEST IN " <<hit_energyv.size() <<endl;
 /*
     for( int j; j<hit_energyv.size();j++){
       streamlog_out(MESSAGE) << "TEST IN "  <<endl;
@@ -1336,6 +1259,84 @@ void GetPIDParametersTreeProcessor::end() {
         hit_energyt->clear();
         hit_slabt->clear();
 
+
+}
+
+
+void GetPIDParametersTreeProcessor::ShowDigitECALInfo(EVENT::LCCollection *myCollection) {
+    int number = myCollection->getNumberOfElements();
+    streamlog_out(DEBUG) << "TOTAL NUMBER OF HITS DIGI: " << number <<endl;
+    CellIDDecoder<EVENT::CalorimeterHit> cd(myCollection);
+
+	double totalEnergy = 0;
+    int totalHits = 0;
+    
+    for (int i = 0; i < number; i++) {
+        CalorimeterHit *ecalhit = dynamic_cast<CalorimeterHit *>(myCollection->getElementAt(i));
+        
+        int IJK_I = cd(ecalhit)["I"];
+        int IJK_J = cd(ecalhit)["J"];
+        int IJK_K = cd(ecalhit)["K"];
+        float hit_energyf = ecalhit->getEnergy();
+
+        streamlog_out(DEBUG) << "\n CalorimeterHit, :" << i;
+        streamlog_out(DEBUG) << " cellID-encoded=" << ecalhit->getCellID0();
+        streamlog_out(DEBUG) << " I = " << IJK_I <<" mm,";
+        streamlog_out(DEBUG) << " J = " << IJK_J <<" mm,";
+        streamlog_out(DEBUG) << " K = " << IJK_K <<" layer,";
+        streamlog_out(DEBUG) << " energy = " << hit_energyf <<" GeV.\n";
+		totalEnergy += hit_energyf;
+        totalHits++;
+    }
+    streamlog_out(DEBUG) << "Total energy deposit: " << totalEnergy << " GeV" <<endl;
+    // Instead of filling the histograms now, we store the numbers in vectors first, then decide the binsize later
+	// _evEnergyHist->Fill(totalEnergy);
+	// _evHitsHist->Fill(totalHits);
+}
+
+
+void GetPIDParametersTreeProcessor::processRunHeader(LCRunHeader *run)
+{
+}
+
+void GetPIDParametersTreeProcessor::processEvent(LCEvent *evt) {
+    try {
+        streamlog_out(DEBUG) << "\n ----------------------------------------- ";
+        if (_flagMcCol) {
+            LCCollection *mccol = evt->getCollection(_MCColName);
+            ShowMCInfo(mccol);
+        }
+        if (_flagEcalCol) {
+            LCCollection *ecal = evt->getCollection(_ECALColName);
+            ShowECALInfo(ecal);
+        }
+        if (_flagPixelEcalCol) {
+            LCCollection *pecal = evt->getCollection(_pECALColName);
+            ShowPixelECALInfo(pecal);
+        }
+        if (_flagDigitEcalCol) {
+            LCCollection *decal = evt->getCollection(_dECALColName);
+            ShowDigitECALInfo(decal);
+        }
+    } catch (DataNotAvailableException &e) {
+        streamlog_out(DEBUG) << "Whoops!....\n";
+        streamlog_out(DEBUG) << e.what();
+    }
+}
+
+void GetPIDParametersTreeProcessor::check(LCEvent * evt)
+{
+    // nothing to check here - could be used to fill checkplots in reconstruction processor
+}
+
+void GetPIDParametersTreeProcessor::end() {
+    streamlog_out(MESSAGE) << "Event loop finished. Starting the fit..." <<endl;
+    if (_flagMcCol) {
+    }
+    if (_flagEcalCol) {
+    }
+    
+    if (_flagPixelEcalCol) {
         
         
     
