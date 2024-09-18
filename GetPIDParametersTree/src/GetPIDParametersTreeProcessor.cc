@@ -771,7 +771,7 @@ void GetPIDParametersTreeProcessor::ShowMCInfo(EVENT::LCCollection *myCollection
 
 void GetPIDParametersTreeProcessor::ShowECALInfo(EVENT::LCCollection *myCollection) {
     int number = myCollection->getNumberOfElements();
-    streamlog_out(DEBUG) << "TOTAL NUMBER OF HITS: " << number <<endl;
+    streamlog_out(DEBUG) << "TOTAL NUMBER OF HITS ECAL: " << number <<endl;
     CellIDDecoder<EVENT::SimCalorimeterHit> cd(myCollection);
     
 	double totalEnergy = 0;
@@ -801,7 +801,7 @@ void GetPIDParametersTreeProcessor::ShowPixelECALInfo(EVENT::LCCollection *myCol
     
     TVectorD W_thicknesses(NUMBER_OF_LAYER, W);
     int number = myCollection->getNumberOfElements();
-    streamlog_out(DEBUG) << "TOTAL NUMBER OF HITS: " << number <<endl;
+    streamlog_out(DEBUG) << "TOTAL NUMBER OF HITS PIXEL: " << number <<endl;
     CellIDDecoder<EVENT::SimCalorimeterHit> cd(myCollection);
     
 	double totalEnergy = 0;
@@ -1173,7 +1173,7 @@ void GetPIDParametersTreeProcessor::ShowPixelECALInfo(EVENT::LCCollection *myCol
 
 void GetPIDParametersTreeProcessor::ShowDigitECALInfo(EVENT::LCCollection *myCollection) {
     int number = myCollection->getNumberOfElements();
-    streamlog_out(DEBUG) << "TOTAL NUMBER OF HITS: " << number <<endl;
+    streamlog_out(DEBUG) << "TOTAL NUMBER OF HITS DIGI: " << number <<endl;
     CellIDDecoder<EVENT::CalorimeterHit> cd(myCollection);
 
 	double totalEnergy = 0;
