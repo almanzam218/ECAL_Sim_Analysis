@@ -99,7 +99,7 @@ private:
     virtual void ShowDigitECALInfo(LCCollection *col);
   virtual void get_res(int &nhit, float &sume, float &weight, vector<float>  hit_energy, vector<int> hit_slab, TVectorD W_thicknesses, vector<int> hit_isMasked, bool &masked);
  
-  virtual void hits_layer(float hlv[NUMBER_OF_LAYER], vector<float> * hit_energy, vector<int> *hit_slab, TVectorD W_thicknesses, vector<int> *hit_isMasked, bool masked, bool normalized, string count_type);
+  virtual void hits_layer(float hlv[NUMBER_OF_LAYER], vector<float>  hit_energy, vector<int> hit_slab, TVectorD W_thicknesses, vector<int> hit_isMasked, bool masked, bool normalized, string count_type);
 
   virtual bool is_Shower(float entries, float array[NUMBER_OF_LAYER]);
 
@@ -109,7 +109,7 @@ private:
 
   virtual void is_interaction(float &ecal_int, int nhit_e);
 
-  virtual float hits_max_distance(vector<int> *hit_slab, vector<float> * hit_x, vector<float> * hit_y,vector<int> * hit_isMasked, bool masked); 
+  virtual float hits_max_distance(vector<int> hit_slab, vector<float>  hit_x, vector<float>  hit_y,vector<int>  hit_isMasked, bool masked); 
   
   struct hitpair
 {
@@ -119,14 +119,14 @@ private:
 
   static bool CompareHitsR(const hitpair hit1, const hitpair hit2);
 
-  virtual float moliere(vector<float> * hit_energy, vector<int> *hit_slab, TVectorD W_thicknesses, vector<float> * hit_x, vector<float> * hit_y, vector<float> * hit_z,vector<int> * hit_isMasked, bool masked, float containment, bool is_shower);
+  virtual float moliere(vector<float>  hit_energy, vector<int> hit_slab, TVectorD W_thicknesses, vector<float>  hit_x, vector<float>  hit_y, vector<float>  hit_z,vector<int>  hit_isMasked, bool masked, float containment, bool is_shower);
 
-  virtual void radius_layer(float mol_per_layer[NUMBER_OF_LAYER], vector<float> * hit_energy, vector<int> *hit_slab, TVectorD W_thicknesses,vector<float> * hit_x, vector<float> * hit_y, vector<float> * hit_z,vector<int> * hit_isMasked, bool masked, float containment, bool is_shower); 
+  virtual void radius_layer(float mol_per_layer[NUMBER_OF_LAYER], vector<float>  hit_energy, vector<int> hit_slab, TVectorD W_thicknesses,vector<float>  hit_x, vector<float>  hit_y, vector<float>  hit_z,vector<int>  hit_isMasked, bool masked, float containment, bool is_shower); 
 
 
-  virtual void barycenter(vector<float> * hit_energy, vector<int> *hit_slab, TVectorD W_thicknesses,vector<float> * hit_x, vector<float> * hit_y, vector<float> * hit_z, float bar_xyzr[4],vector<int> * hit_isMasked, bool masked, bool is_shower);
+  virtual void barycenter(vector<float>  hit_energy, vector<int> hit_slab, TVectorD W_thicknesses,vector<float>  hit_x, vector<float>  hit_y, vector<float>  hit_z, float bar_xyzr[4],vector<int>  hit_isMasked, bool masked, bool is_shower);
 
-  virtual void bary_layer(float blv[NUMBER_OF_LAYER][3], vector<float> * hit_energy, vector<int> *hit_slab,TVectorD W_thicknesses, vector<float> * hit_x, vector<float> * hit_y,vector<float> * hit_z, vector<int> * hit_isMasked, bool masked, bool is_shower);
+  virtual void bary_layer(float blv[NUMBER_OF_LAYER][3], vector<float>  hit_energy, vector<int> hit_slab,TVectorD W_thicknesses, vector<float>  hit_x, vector<float>  hit_y,vector<float>  hit_z, vector<int>  hit_isMasked, bool masked, bool is_shower);
  
  
   virtual void graph_setup_add(TGraph *g, string title, Color_t color);

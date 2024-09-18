@@ -81,7 +81,7 @@ void GetPIDParametersTreeProcessor::get_res(int &nhit, float &sume, float &weigh
         //cout<<W_thicknesses.Min()<<endl;
         // First option: use the minimum of the used
         // Second option: use the paper as reference 0.4X0, X0=3.5mm
-        // It was weight_masked += hit_energy->at(j) * W_thicknesses[hit_slab->at(j)]/(0.4*3.5);
+        // It was weight_masked += hit_energy.at(j) * W_thicknesses[hit_slab.at(j)]/(0.4*3.5);
         // New version ?
 
         for (int j = 0; j < hit_energy.size(); j++) {
@@ -94,7 +94,7 @@ void GetPIDParametersTreeProcessor::get_res(int &nhit, float &sume, float &weigh
     return;
 }
 
-void GetPIDParametersTreeProcessor::hits_layer(float hlv[NUMBER_OF_LAYER], vector<float> * hit_energy, vector<int> *hit_slab, TVectorD W_thicknesses, vector<int> *hit_isMasked, bool masked=false, bool normalized=false, string count_type="nhit"){
+void GetPIDParametersTreeProcessor::hits_layer(float hlv[NUMBER_OF_LAYER], vector<float>  hit_energy, vector<int> hit_slab, TVectorD W_thicknesses, vector<int> hit_isMasked, bool masked=false, bool normalized=false, string count_type="nhit"){
   float hit_count[NUMBER_OF_LAYER];
   float sume[NUMBER_OF_LAYER];
   float sume_w[NUMBER_OF_LAYER];
@@ -111,28 +111,28 @@ void GetPIDParametersTreeProcessor::hits_layer(float hlv[NUMBER_OF_LAYER], vecto
     sume_w[ilayer] = 0. ;
   }
   
-  if(hit_energy->size() > 0){
-    for (int j = 0; j < hit_energy->size(); j++) {
-      if( masked && hit_isMasked->at(j) == 1 ) continue;
-      sume_total += hit_energy->at(j);
-      sume_w_total += hit_energy->at(j) * W_thicknesses[hit_slab->at(j)]/(3.5);
+  if(hit_energy.size() > 0){
+    for (int j = 0; j < hit_energy.size(); j++) {
+      if( masked && hit_isMasked.at(j) == 1 ) continue;
+      sume_total += hit_energy.at(j);
+      sume_w_total += hit_energy.at(j) * W_thicknesses[hit_slab.at(j)]/(3.5);
       //cout<<"|DEBUG(hit_layer)| sume total: "<<sume_total<<", sume_w_total: "<<sume_w_total<<endl;
-      //cout<<"layer and thickness"<<hit_slab->at(j)<<" "<<W_thicknesses[hit_slab->at(j)]<<endl;
+      //cout<<"layer and thickness"<<hit_slab.at(j)<<" "<<W_thicknesses[hit_slab.at(j)]<<endl;
     }
   }
   
   for (int ilayer=0; ilayer < NUMBER_OF_LAYER; ilayer++) {
-    if(hit_slab->size() > 0){
-      for( int j = 0; j < hit_energy->size(); j++ ) {
-	if( masked && hit_isMasked->at(j) == 1 ) continue;
-	if( hit_slab->at(j) == ilayer ) {
+    if(hit_slab.size() > 0){
+      for( int j = 0; j < hit_energy.size(); j++ ) {
+	if( masked && hit_isMasked.at(j) == 1 ) continue;
+	if( hit_slab.at(j) == ilayer ) {
 	  hit_count[ilayer] += 1;
-	  sume[ilayer] += hit_energy->at(j);
-	  sume_w[ilayer] += hit_energy->at(j) * W_thicknesses[hit_slab->at(j)]/(3.5);
+	  sume[ilayer] += hit_energy.at(j);
+	  sume_w[ilayer] += hit_energy.at(j) * W_thicknesses[hit_slab.at(j)]/(3.5);
 	}
       }
       if(normalized == true) {
-	if(count_type == "nhit") weight = 1./hit_energy->size();
+	if(count_type == "nhit") weight = 1./hit_energy.size();
 	if(count_type == "sume") weight = 1./sume_total;
 	if(count_type == "weight") weight = 1./sume_w_total;
       }  
@@ -145,7 +145,7 @@ void GetPIDParametersTreeProcessor::hits_layer(float hlv[NUMBER_OF_LAYER], vecto
   
   }
   //cout<<"| DEBUG(hits_layer) | "<<"Mode: "<<count_type<<", normalized: "<<normalized<<endl;
-  //cout<<"| DEBUG(hits_layer) | "<<"Hit energy size: "<<hit_energy->size()<<". Hit slab size: "<<hit_slab->size()<<endl;
+  //cout<<"| DEBUG(hits_layer) | "<<"Hit energy size: "<<hit_energy.size()<<". Hit slab size: "<<hit_slab.size()<<endl;
   //cout<<"| DEBUG(hits_layer) | "<<"hlv: "<<hlv[0]<<" "<<hlv[1]<<" "<<hlv[2]<<" "<<hlv[3]<<" "<<hlv[4]<<" "<<hlv[5]<<" "<<hlv[6]<<" "<<hlv[7]<<" "<<hlv[8]<<" "<<hlv[9]<<" "<<hlv[10]<<" "<<hlv[11]<<" "<<hlv[12]<<" "<<hlv[13]<<" "<<hlv[14]<<endl;
     
   
@@ -246,20 +246,20 @@ void GetPIDParametersTreeProcessor::is_interaction(float &ecal_int, int nhit_e) 
 
 
 
-float GetPIDParametersTreeProcessor::hits_max_distance(vector<int> *hit_slab, vector<float> * hit_x, vector<float> * hit_y, vector<int> * hit_isMasked, bool masked=false) {
+float GetPIDParametersTreeProcessor::hits_max_distance(vector<int> hit_slab, vector<float>  hit_x, vector<float> hit_y, vector<int>  hit_isMasked, bool masked=false) {
   float max_distance = 0.;
-  if(hit_slab->size() > 1){
-    for (int i = 0; i < hit_slab->size(); i++){
-      if (masked && hit_isMasked->at(i) == 1) continue;
-      int layer1 = hit_slab->at(i);
-      float hit1_x = hit_x->at(i);
-      float hit1_y = hit_y->at(i);
-      for (int j = i+1; j < hit_slab->size()-1; j++){
-	if (masked && hit_isMasked->at(j) == 1) continue;
-        int layer2 = hit_slab->at(j);
+  if(hit_slab.size() > 1){
+    for (int i = 0; i < hit_slab.size(); i++){
+      if (masked && hit_isMasked.at(i) == 1) continue;
+      int layer1 = hit_slab.at(i);
+      float hit1_x = hit_x.at(i);
+      float hit1_y = hit_y.at(i);
+      for (int j = i+1; j < hit_slab.size()-1; j++){
+	if (masked && hit_isMasked.at(j) == 1) continue;
+        int layer2 = hit_slab.at(j);
 	if(layer2 != layer1) continue;
-        float hit2_x = hit_x->at(j);
-        float hit2_y = hit_y->at(j);
+        float hit2_x = hit_x.at(j);
+        float hit2_y = hit_y.at(j);
         float distance = pow(pow(hit2_x-hit1_x,2)+pow(hit2_y-hit1_y,2),0.5);
         if(distance>max_distance) max_distance = distance;
       }
@@ -276,20 +276,20 @@ float GetPIDParametersTreeProcessor::hits_max_distance(vector<int> *hit_slab, ve
 
 bool GetPIDParametersTreeProcessor::CompareHitsR(const hitpair hit1, const hitpair hit2) { return hit1.hit_rs < hit2.hit_rs; }
 
-float GetPIDParametersTreeProcessor::moliere(vector<float> * hit_energy, vector<int> *hit_slab, TVectorD W_thicknesses, vector<float> * hit_x, vector<float> * hit_y, vector<float> * hit_z,vector<int> * hit_isMasked, bool masked=false, float containment = 0.90, bool is_shower=false) {
+float GetPIDParametersTreeProcessor::moliere(vector<float>  hit_energy, vector<int> hit_slab, TVectorD W_thicknesses, vector<float>  hit_x, vector<float>  hit_y, vector<float>  hit_z,vector<int>  hit_isMasked, bool masked=false, float containment = 0.90, bool is_shower=false) {
   float mol_rad = 0.;
   float weighte = 0.;
   float wx = 0.; float wy = 0.; float wz = 0.;
   float r = 0.;
 
-  if((hit_energy->size() > 0) and (is_shower==true)){
+  if((hit_energy.size() > 0) and (is_shower==true)){
     vector<hitpair> hits_vector;
 
-    for (int j = 0; j < hit_energy->size(); j++){
-      if (masked && hit_isMasked->at(j) == 1) continue;
-      weighte += hit_energy->at(j) * W_thicknesses[hit_slab->at(j)]/(3.5);
-      wx += hit_x->at(j) * hit_energy->at(j) * W_thicknesses[hit_slab->at(j)]/(3.5);
-      wy += hit_y->at(j) * hit_energy->at(j) * W_thicknesses[hit_slab->at(j)]/(3.5);
+    for (int j = 0; j < hit_energy.size(); j++){
+      if (masked && hit_isMasked.at(j) == 1) continue;
+      weighte += hit_energy.at(j) * W_thicknesses[hit_slab.at(j)]/(3.5);
+      wx += hit_x.at(j) * hit_energy.at(j) * W_thicknesses[hit_slab.at(j)]/(3.5);
+      wy += hit_y.at(j) * hit_energy.at(j) * W_thicknesses[hit_slab.at(j)]/(3.5);
     }
 
     float bary_x = wx / weighte;
@@ -299,10 +299,10 @@ float GetPIDParametersTreeProcessor::moliere(vector<float> * hit_energy, vector<
       bary_y = 0.;
     }
 
-    for (int j = 0; j < hit_energy->size(); j++){
-      if (masked && hit_isMasked->at(j) == 1) continue;
-      r = pow(pow((hit_x->at(j) - bary_x) , 2) + pow((hit_y->at(j) - bary_y), 2), 0.5);
-      hits_vector.push_back({static_cast<float>(r),static_cast<float>(hit_energy->at(j) * W_thicknesses[hit_slab->at(j)]/(3.5))});
+    for (int j = 0; j < hit_energy.size(); j++){
+      if (masked && hit_isMasked.at(j) == 1) continue;
+      r = pow(pow((hit_x.at(j) - bary_x) , 2) + pow((hit_y.at(j) - bary_y), 2), 0.5);
+      hits_vector.push_back({static_cast<float>(r),static_cast<float>(hit_energy.at(j) * W_thicknesses[hit_slab.at(j)]/(3.5))});
     }
 
     float mol_e = 0.;
@@ -324,9 +324,9 @@ float GetPIDParametersTreeProcessor::moliere(vector<float> * hit_energy, vector<
   return mol_rad;
 }
 
-void GetPIDParametersTreeProcessor::radius_layer(float mol_per_layer[NUMBER_OF_LAYER], vector<float> * hit_energy, vector<int> *hit_slab, TVectorD W_thicknesses,vector<float> * hit_x, vector<float> * hit_y, vector<float> * hit_z,vector<int> * hit_isMasked, bool masked=false, float containment = 0.90, bool is_shower=false)  {
+void GetPIDParametersTreeProcessor::radius_layer(float mol_per_layer[NUMBER_OF_LAYER], vector<float>  hit_energy, vector<int> hit_slab, TVectorD W_thicknesses,vector<float>  hit_x, vector<float>  hit_y, vector<float>  hit_z,vector<int>  hit_isMasked, bool masked=false, float containment = 0.90, bool is_shower=false)  {
 
-  if((hit_energy->size() > 0) and (is_shower==true)){
+  if((hit_energy.size() > 0) and (is_shower==true)){
 
     for(int ilayer = 0; ilayer < NUMBER_OF_LAYER; ilayer++){
       float mol_rad = 0.;
@@ -341,12 +341,12 @@ void GetPIDParametersTreeProcessor::radius_layer(float mol_per_layer[NUMBER_OF_L
       };
       vector<hitcontent> hits_vector;
 
-      for (int j = 0; j < hit_energy->size(); j++){
-        if (masked && hit_isMasked->at(j) == 1) continue;
-        if(hit_slab->at(j) == ilayer) {
-          weighte += hit_energy->at(j) * W_thicknesses[hit_slab->at(j)]/(3.5);
-          wx += hit_x->at(j) * hit_energy->at(j) * W_thicknesses[hit_slab->at(j)]/(3.5);
-          wy += hit_y->at(j) * hit_energy->at(j) * W_thicknesses[hit_slab->at(j)]/(3.5);
+      for (int j = 0; j < hit_energy.size(); j++){
+        if (masked && hit_isMasked.at(j) == 1) continue;
+        if(hit_slab.at(j) == ilayer) {
+          weighte += hit_energy.at(j) * W_thicknesses[hit_slab.at(j)]/(3.5);
+          wx += hit_x.at(j) * hit_energy.at(j) * W_thicknesses[hit_slab.at(j)]/(3.5);
+          wy += hit_y.at(j) * hit_energy.at(j) * W_thicknesses[hit_slab.at(j)]/(3.5);
           nhit_layer += 1;
         }
       }
@@ -358,11 +358,11 @@ void GetPIDParametersTreeProcessor::radius_layer(float mol_per_layer[NUMBER_OF_L
         bary_y = 0.;
       }
 
-      for (int j = 0; j < hit_energy->size(); j++){
-        if (masked && hit_isMasked->at(j) == 1) continue;
-        if (hit_slab->at(j) == ilayer) {
-          r = pow(pow((hit_x->at(j) - bary_x) , 2) + pow((hit_y->at(j) - bary_y), 2), 0.5);
-          hits_vector.push_back({static_cast<float>(r),static_cast<float>(hit_energy->at(j) * W_thicknesses[hit_slab->at(j)]/(3.5))});
+      for (int j = 0; j < hit_energy.size(); j++){
+        if (masked && hit_isMasked.at(j) == 1) continue;
+        if (hit_slab.at(j) == ilayer) {
+          r = pow(pow((hit_x.at(j) - bary_x) , 2) + pow((hit_y.at(j) - bary_y), 2), 0.5);
+          hits_vector.push_back({static_cast<float>(r),static_cast<float>(hit_energy.at(j) * W_thicknesses[hit_slab.at(j)]/(3.5))});
         }
       }
       float mol_e = 0.;
@@ -395,21 +395,21 @@ void GetPIDParametersTreeProcessor::radius_layer(float mol_per_layer[NUMBER_OF_L
   return;
 }
 
-void GetPIDParametersTreeProcessor::barycenter(vector<float> * hit_energy, vector<int> *hit_slab, TVectorD W_thicknesses,vector<float> * hit_x, vector<float> * hit_y, vector<float> * hit_z, float bar_xyzr[4],vector<int> * hit_isMasked, bool masked=false, bool is_shower=false) {
+void GetPIDParametersTreeProcessor::barycenter(vector<float>  hit_energy, vector<int> hit_slab, TVectorD W_thicknesses,vector<float>  hit_x, vector<float>  hit_y, vector<float>  hit_z, float bar_xyzr[4],vector<int>  hit_isMasked, bool masked=false, bool is_shower=false) {
 
   float sume = 0.;
   float wx = 0.; float wy = 0.; float wz = 0.;
   float bary_x = 0., bary_y = 0., bary_z = 0.;
   // Removing shower condition
-  //if((hit_energy->size() > 0) and (is_shower == true)){
-  if(hit_energy->size() > 0){
-    for (int j = 0; j < hit_energy->size(); j++){
-      if (masked && hit_isMasked->at(j) == 1) continue;
+  //if((hit_energy.size() > 0) and (is_shower == true)){
+  if(hit_energy.size() > 0){
+    for (int j = 0; j < hit_energy.size(); j++){
+      if (masked && hit_isMasked.at(j) == 1) continue;
       //cout<<"DBG "<<j<<endl;                                                                                                                                                                            
-      sume += hit_energy->at(j) * W_thicknesses[hit_slab->at(j)]/(3.5);
-      wx += hit_x->at(j) * hit_energy->at(j) * W_thicknesses[hit_slab->at(j)]/(3.5);
-      wy += hit_y->at(j) * hit_energy->at(j) * W_thicknesses[hit_slab->at(j)]/(3.5);
-      wz += hit_z->at(j) * hit_energy->at(j) * W_thicknesses[hit_slab->at(j)]/(3.5);
+      sume += hit_energy.at(j) * W_thicknesses[hit_slab.at(j)]/(3.5);
+      wx += hit_x.at(j) * hit_energy.at(j) * W_thicknesses[hit_slab.at(j)]/(3.5);
+      wy += hit_y.at(j) * hit_energy.at(j) * W_thicknesses[hit_slab.at(j)]/(3.5);
+      wz += hit_z.at(j) * hit_energy.at(j) * W_thicknesses[hit_slab.at(j)]/(3.5);
     }
 
     bary_x = wx / sume;
@@ -431,7 +431,7 @@ void GetPIDParametersTreeProcessor::barycenter(vector<float> * hit_energy, vecto
   return;
 }
 
-void GetPIDParametersTreeProcessor::bary_layer(float blv[NUMBER_OF_LAYER][3], vector<float> * hit_energy, vector<int> *hit_slab,TVectorD W_thicknesses, vector<float> * hit_x, vector<float> * hit_y,vector<float> * hit_z, vector<int> * hit_isMasked, bool masked=false, bool is_shower=false) {
+void GetPIDParametersTreeProcessor::bary_layer(float blv[NUMBER_OF_LAYER][3], vector<float>  hit_energy, vector<int> hit_slab,TVectorD W_thicknesses, vector<float>  hit_x, vector<float>  hit_y,vector<float>  hit_z, vector<int>  hit_isMasked, bool masked=false, bool is_shower=false) {
 
   float sume_w[NUMBER_OF_LAYER];
   float wx[NUMBER_OF_LAYER]; float wy[NUMBER_OF_LAYER];
@@ -448,16 +448,16 @@ void GetPIDParametersTreeProcessor::bary_layer(float blv[NUMBER_OF_LAYER][3], ve
     blv[ilayer][2] = 0.;
   }
   // Removing the shower condition
-  // if((hit_energy->size() > 0) and (is_shower == true)){
-  if(hit_energy->size() > 0){
+  // if((hit_energy.size() > 0) and (is_shower == true)){
+  if(hit_energy.size() > 0){
     for (int ilayer=0; ilayer < NUMBER_OF_LAYER; ilayer++) {
-      if(hit_slab->size() > 0){
-        for (int j = 0; j < hit_energy->size(); j++) {
-          if (masked && hit_isMasked->at(j) == 1) continue;
-          if (hit_slab->at(j) == 0) {
-            sume_w[ilayer] += hit_energy->at(j) * W_thicknesses[hit_slab->at(j)]/(3.5);
-            wx[ilayer] += hit_x->at(j) * hit_energy->at(j) * W_thicknesses[hit_slab->at(j)]/(3.5);
-            wy[ilayer] += hit_y->at(j) * hit_energy->at(j) * W_thicknesses[hit_slab->at(j)]/(3.5);
+      if(hit_slab.size() > 0){
+        for (int j = 0; j < hit_energy.size(); j++) {
+          if (masked && hit_isMasked.at(j) == 1) continue;
+          if (hit_slab.at(j) == 0) {
+            sume_w[ilayer] += hit_energy.at(j) * W_thicknesses[hit_slab.at(j)]/(3.5);
+            wx[ilayer] += hit_x.at(j) * hit_energy.at(j) * W_thicknesses[hit_slab.at(j)]/(3.5);
+            wy[ilayer] += hit_y.at(j) * hit_energy.at(j) * W_thicknesses[hit_slab.at(j)]/(3.5);
           }
         }
         bary_x[ilayer] = wx[ilayer] / sume_w[ilayer];
@@ -928,59 +928,30 @@ void GetPIDParametersTreeProcessor::ShowPixelECALInfo(EVENT::LCCollection *myCol
                 radius90_layer_array[i] = 0.;
             }
 
-    vector<float> *hit_energyt=0;
-    vector<float> *hit_xt=0;
-    vector<float> *hit_yt=0;
-    vector<float> *hit_zt=0;
-    vector<int> *hit_isMaskedt=0;
-    vector<int> *hit_slabt=0;
       streamlog_out(MESSAGE) << "TEST IN " <<hit_energyv.size() <<endl;
-/*
-    for( int j; j<hit_energyv.size();j++){
-      streamlog_out(MESSAGE) << "TEST IN "  <<endl;
-
-      hit_energyt.push_back(1);
-      streamlog_out(MESSAGE) << "TEST "  <<endl;
-      hit_xt->push_back(1);
-      hit_yt->push_back(1);
-      hit_zt->push_back(1);
-      hit_isMaskedt->push_back(1);
-      hit_slabt->push_back(1);
-    }
-    
-    for( int j; j<hit_energyv.size();j++){
-      hit_energyt->push_back(hit_energyv.at(j));
-      streamlog_out(MESSAGE) << "TEST "  <<endl;
-      hit_xt->push_back(hit_xv.at(j));
-      hit_yt->push_back(hit_yv.at(j));
-      hit_zt->push_back(hit_zv.at(j));
-      hit_isMaskedt->push_back(hit_isMaskedv.at(j));
-      hit_slabt->push_back(hit_slabv.at(j));
-    }
-    */
       streamlog_out(MESSAGE) << "TEST "  <<endl;
         
         get_res(nhit,	sume, weighte, hit_energyv, hit_slabv, W_thicknesses, hit_isMaskedv, masked);
       streamlog_out(MESSAGE) << "TEST "  <<endl;
         
         // Fill barycenter
-        barycenter(hit_energyt, hit_slabt, W_thicknesses, hit_xt, hit_yt, hit_zt, bar_xyzr, hit_isMaskedt, masked);
+        barycenter(hit_energyv, hit_slabv, W_thicknesses, hit_xv, hit_yv, hit_zv, bar_xyzr, hit_isMaskedv, masked);
         
         // Fill shower profile 
         // Nhit
-        hits_layer(nhit_layer_array, hit_energyt, hit_slabt, W_thicknesses, hit_isMaskedt, masked, false, "nhit");
-        hits_layer(nhit_layer_n_array, hit_energyt, hit_slabt, W_thicknesses, hit_isMaskedt, masked, true, "nhit");
+        hits_layer(nhit_layer_array, hit_energyv, hit_slabv, W_thicknesses, hit_isMaskedv, masked, false, "nhit");
+        hits_layer(nhit_layer_n_array, hit_energyv, hit_slabv, W_thicknesses, hit_isMaskedv, masked, true, "nhit");
         
         // Fill MIP-Likeness
         float MIP_Likeness_value = MIP_Likeness(nhit_layer_array);
 
         // Sume
-            hits_layer(sume_layer_array, hit_energyt, hit_slabt, W_thicknesses, hit_isMaskedt, masked, false, "sume");
-            hits_layer(sume_layer_n_array, hit_energyt, hit_slabt, W_thicknesses, hit_isMaskedt, masked, true, "sume");
+            hits_layer(sume_layer_array, hit_energyv, hit_slabv, W_thicknesses, hit_isMaskedv, masked, false, "sume");
+            hits_layer(sume_layer_n_array, hit_energyv, hit_slabv, W_thicknesses, hit_isMaskedv, masked, true, "sume");
 
         // Weighted energy
-            hits_layer(weighte_layer_array, hit_energyt, hit_slabt, W_thicknesses, hit_isMaskedt, masked, false, "weight");
-            hits_layer(weighte_layer_n_array, hit_energyt, hit_slabt, W_thicknesses, hit_isMaskedt, masked, true, "weight");
+            hits_layer(weighte_layer_array, hit_energyv, hit_slabv, W_thicknesses, hit_isMaskedv, masked, false, "weight");
+            hits_layer(weighte_layer_n_array, hit_energyv, hit_slabv, W_thicknesses, hit_isMaskedv, masked, true, "weight");
 
         bool shower_bool = is_Shower(sume, sume_layer_array);
 
@@ -1039,14 +1010,14 @@ void GetPIDParametersTreeProcessor::ShowPixelECALInfo(EVENT::LCCollection *myCol
         //shower weight general parameters finish	  
 
         // Fill Moliere radii histograms 
-            mol_value = moliere(hit_energyt, hit_slabt, W_thicknesses, hit_xt, hit_yt, hit_zt, hit_isMaskedt, masked, 0.9, shower_bool);
-            radius_layer(radius90_layer_array, hit_energyt, hit_slabt, W_thicknesses, hit_xt, hit_yt, hit_zt, hit_isMaskedt, masked, 0.9, shower_bool);
+            mol_value = moliere(hit_energyv, hit_slabv, W_thicknesses, hit_xv, hit_yv, hit_zv, hit_isMaskedv, masked, 0.9, shower_bool);
+            radius_layer(radius90_layer_array, hit_energyv, hit_slabv, W_thicknesses, hit_xv, hit_yv, hit_zv, hit_isMaskedv, masked, 0.9, shower_bool);
                 
         // Barycenter x and y
-        bary_layer(bar_layer_array, hit_energyt, hit_slabt, W_thicknesses, hit_xt, hit_yt, hit_zt, hit_isMaskedt, masked);
+        bary_layer(bar_layer_array, hit_energyv, hit_slabv, W_thicknesses, hit_xv, hit_yv, hit_zv, hit_isMaskedv, masked);
         
         // Hits max distance in the same layer
-        float hits_max_distance_value = hits_max_distance(hit_slabt, hit_xt, hit_yt, hit_isMaskedt, masked);
+        float hits_max_distance_value = hits_max_distance(hit_slabv, hit_xv, hit_yv, hit_isMaskedv, masked);
         
         // Filling the tree
         b_nhit = nhit;
@@ -1252,12 +1223,6 @@ void GetPIDParametersTreeProcessor::ShowPixelECALInfo(EVENT::LCCollection *myCol
         hit_isMaskedv.clear();
         hit_energyv.clear();
         hit_slabv.clear();
-        hit_xt->clear();
-        hit_yt->clear();
-        hit_zt->clear();
-        hit_isMaskedt->clear();
-        hit_energyt->clear();
-        hit_slabt->clear();
 
 
 }
