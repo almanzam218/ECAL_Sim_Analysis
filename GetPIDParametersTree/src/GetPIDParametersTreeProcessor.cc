@@ -1216,7 +1216,6 @@ void GetPIDParametersTreeProcessor::ShowPixelECALInfo(EVENT::LCCollection *myCol
             b_bar_r_layer_14 = bar_layer_array[14][2];
 
         outtree->Fill();
-        outtree->Write();
         hit_xv.clear();
         hit_yv.clear();
         hit_zv.clear();
@@ -1303,6 +1302,7 @@ void GetPIDParametersTreeProcessor::end() {
     
     if (_flagPixelEcalCol) {
         
+        //outtree->Write();
         
     
     // Instead of filling the histograms now, we store the numbers in vectors first, then decide the binsize later
