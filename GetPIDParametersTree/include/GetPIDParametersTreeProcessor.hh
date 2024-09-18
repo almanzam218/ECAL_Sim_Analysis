@@ -97,7 +97,7 @@ private:
   virtual void ShowECALInfo(LCCollection *col);
     virtual void ShowPixelECALInfo(LCCollection *col);
     virtual void ShowDigitECALInfo(LCCollection *col);
-  virtual void get_res(int &nhit, float &sume, float &weight, vector<float> * hit_energy, vector<int> *hit_slab, TVectorD W_thicknesses, vector<int> *hit_isMasked, bool &masked);
+  virtual void get_res(int &nhit, float &sume, float &weight, vector<float>  hit_energy, vector<int> hit_slab, TVectorD W_thicknesses, vector<int> hit_isMasked, bool &masked);
  
   virtual void hits_layer(float hlv[NUMBER_OF_LAYER], vector<float> * hit_energy, vector<int> *hit_slab, TVectorD W_thicknesses, vector<int> *hit_isMasked, bool masked, bool normalized, string count_type);
 

@@ -76,19 +76,19 @@ GetPIDParametersTreeProcessor::GetPIDParametersTreeProcessor() : Processor("GetP
 
 GetPIDParametersTreeProcessor::~GetPIDParametersTreeProcessor() {}
 
-void GetPIDParametersTreeProcessor::get_res(int &nhit, float &sume, float &weight, vector<float>  *hit_energy, vector<int> *hit_slab, TVectorD W_thicknesses, vector<int> *hit_isMasked, bool &masked) {
-    if(hit_energy->size() > 0){    
+void GetPIDParametersTreeProcessor::get_res(int &nhit, float &sume, float &weight, vector<float>  hit_energy, vector<int> hit_slab, TVectorD W_thicknesses, vector<int> hit_isMasked, bool &masked) {
+    if(hit_energy.size() > 0){    
         //cout<<W_thicknesses.Min()<<endl;
         // First option: use the minimum of the used
         // Second option: use the paper as reference 0.4X0, X0=3.5mm
         // It was weight_masked += hit_energy->at(j) * W_thicknesses[hit_slab->at(j)]/(0.4*3.5);
         // New version ?
 
-        for (int j = 0; j < hit_energy->size(); j++) {
-            if( masked && hit_isMasked->at(j) == 1 ) continue;
+        for (int j = 0; j < hit_energy.size(); j++) {
+            if( masked && hit_isMasked.at(j) == 1 ) continue;
                 nhit += 1;
-                sume += hit_energy->at(j);
-                weight += hit_energy->at(j) * W_thicknesses[hit_slab->at(j)]/(3.5);
+                sume += hit_energy.at(j);
+                weight += hit_energy.at(j) * W_thicknesses[hit_slab.at(j)]/(3.5);
         }
     }
     return;
@@ -1012,9 +1012,21 @@ void GetPIDParametersTreeProcessor::end() {
     vector<float> *hit_zt=0;
     vector<int> *hit_isMaskedt=0;
     vector<int> *hit_slabt=0;
+/*
+    for( int j; j<hit_energyv.size();j++){
+      streamlog_out(MESSAGE) << "TEST IN "  <<endl;
+
+      hit_energyt.push_back(1);
+      streamlog_out(MESSAGE) << "TEST "  <<endl;
+      hit_xt->push_back(1);
+      hit_yt->push_back(1);
+      hit_zt->push_back(1);
+      hit_isMaskedt->push_back(1);
+      hit_slabt->push_back(1);
+    }
     
     for( int j; j<hit_energyv.size();j++){
-      hit_energyt->push_back(&hit_energyv.at(j));
+      hit_energyt->push_back(hit_energyv.at(j));
       streamlog_out(MESSAGE) << "TEST "  <<endl;
       hit_xt->push_back(hit_xv.at(j));
       hit_yt->push_back(hit_yv.at(j));
@@ -1022,9 +1034,10 @@ void GetPIDParametersTreeProcessor::end() {
       hit_isMaskedt->push_back(hit_isMaskedv.at(j));
       hit_slabt->push_back(hit_slabv.at(j));
     }
+    */
       streamlog_out(MESSAGE) << "TEST "  <<endl;
         
-        get_res(nhit,	sume, weighte, hit_energyt, hit_slabt, W_thicknesses, hit_isMaskedt, masked);
+        get_res(nhit,	sume, weighte, hit_energyv, hit_slabv, W_thicknesses, hit_isMaskedv, masked);
       streamlog_out(MESSAGE) << "TEST "  <<endl;
         
         // Fill barycenter
@@ -1310,6 +1323,12 @@ void GetPIDParametersTreeProcessor::end() {
 
         outtree->Fill();
         outtree->Write();
+        hit_xv.clear();
+        hit_yv.clear();
+        hit_zv.clear();
+        hit_isMaskedv.clear();
+        hit_energyv.clear();
+        hit_slabv.clear();
         hit_xt->clear();
         hit_yt->clear();
         hit_zt->clear();
