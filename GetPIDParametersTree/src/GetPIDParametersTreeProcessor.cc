@@ -76,7 +76,7 @@ GetPIDParametersTreeProcessor::GetPIDParametersTreeProcessor() : Processor("GetP
 
 GetPIDParametersTreeProcessor::~GetPIDParametersTreeProcessor() {}
 
-void get_res(int &nhit, float &sume, float &weight, vector<float> * hit_energy, vector<int> *hit_slab, TVectorD W_thicknesses, vector<int> *hit_isMasked, bool &masked) {
+void GetPIDParametersTreeProcessor::get_res(int &nhit, float &sume, float &weight, vector<float> * hit_energy, vector<int> *hit_slab, TVectorD W_thicknesses, vector<int> *hit_isMasked, bool &masked) {
     if(hit_energy->size() > 0){    
         //cout<<W_thicknesses.Min()<<endl;
         // First option: use the minimum of the used
@@ -152,7 +152,7 @@ void GetPIDParametersTreeProcessor::hits_layer(float hlv[NUMBER_OF_LAYER], vecto
   return ;
 }
 
-bool is_Shower(float entries, float array[NUMBER_OF_LAYER]) {
+bool GetPIDParametersTreeProcessor::is_Shower(float entries, float array[NUMBER_OF_LAYER]) {
   float threshold = 3.;
   float shower_maxvalue = 0.;
   bool isShower = false;
@@ -179,8 +179,7 @@ bool is_Shower(float entries, float array[NUMBER_OF_LAYER]) {
 
 }
 
-void shower_variables(float entries, float array[NUMBER_OF_LAYER], float array_n[NUMBER_OF_LAYER], float &shower_maxvalue, float &shower_maxvalue_n, int &ilayermax,
-                      int &ilayerstart, int &ilayerstart_10, int &ilayerend, int &ilayerend_10, string count_type = "nhit", bool is_shower=false) {
+void GetPIDParametersTreeProcessor::shower_variables(float entries, float array[NUMBER_OF_LAYER], float array_n[NUMBER_OF_LAYER], float &shower_maxvalue, float &shower_maxvalue_n, int &ilayermax,int &ilayerstart, int &ilayerstart_10, int &ilayerend, int &ilayerend_10, string count_type = "nhit", bool is_shower=false) {
 
   float percentage = 0.1;
   float threshold = 3.;
@@ -226,10 +225,10 @@ void shower_variables(float entries, float array[NUMBER_OF_LAYER], float array_n
     }
 
   }
-  return 0;
+  return;
 }
 
-float MIP_Likeness(float nhits_layer[NUMBER_OF_LAYER]) {
+float GetPIDParametersTreeProcessor::MIP_Likeness(float nhits_layer[NUMBER_OF_LAYER]) {
   float score = 0.;
   for(int i=0; i<NUMBER_OF_LAYER; i++) {
     if(nhits_layer[i] == 0) score -= 1.;
@@ -239,15 +238,15 @@ float MIP_Likeness(float nhits_layer[NUMBER_OF_LAYER]) {
   return score;
 }
 
-void is_interaction(float &ecal_int, int nhit_e) {
+void GetPIDParametersTreeProcessor::is_interaction(float &ecal_int, int nhit_e) {
   ecal_int = 0.;
   if(nhit_e > 0) ecal_int = 1.;
-  return 0;
+  return;
 }
 
 
-float hits_max_distance(vector<int> *hit_slab, vector<float> * hit_x, vector<float> * hit_y,
-			vector<int> * hit_isMasked, bool masked=false) {
+
+float GetPIDParametersTreeProcessor::hits_max_distance(vector<int> *hit_slab, vector<float> * hit_x, vector<float> * hit_y, vector<int> * hit_isMasked, bool masked=false) {
   float max_distance = 0.;
   if(hit_slab->size() > 1){
     for (int i = 0; i < hit_slab->size(); i++){
@@ -269,17 +268,15 @@ float hits_max_distance(vector<int> *hit_slab, vector<float> * hit_x, vector<flo
   return max_distance;
 }
 
-struct hitpair
+/*struct GetPIDParametersTreeProcessor::hitpair
 {
   float hit_rs;
   float hit_es;
-};
+};*/
 
-bool CompareHitsR(const hitpair hit1, const hitpair hit2) { return hit1.hit_rs < hit2.hit_rs; }
+bool GetPIDParametersTreeProcessor::CompareHitsR(const hitpair hit1, const hitpair hit2) { return hit1.hit_rs < hit2.hit_rs; }
 
-float moliere(vector<float> * hit_energy, vector<int> *hit_slab, TVectorD W_thicknesses,
-		   vector<float> * hit_x, vector<float> * hit_y, vector<float> * hit_z,
-		   vector<int> * hit_isMasked, bool masked=false, float containment = 0.90, bool is_shower=false) {
+float GetPIDParametersTreeProcessor::moliere(vector<float> * hit_energy, vector<int> *hit_slab, TVectorD W_thicknesses, vector<float> * hit_x, vector<float> * hit_y, vector<float> * hit_z,vector<int> * hit_isMasked, bool masked=false, float containment = 0.90, bool is_shower=false) {
   float mol_rad = 0.;
   float weighte = 0.;
   float wx = 0.; float wy = 0.; float wz = 0.;
@@ -327,9 +324,7 @@ float moliere(vector<float> * hit_energy, vector<int> *hit_slab, TVectorD W_thic
   return mol_rad;
 }
 
-void radius_layer(float mol_per_layer[NUMBER_OF_LAYER], vector<float> * hit_energy, vector<int> *hit_slab, TVectorD W_thicknesses,
-                  vector<float> * hit_x, vector<float> * hit_y, vector<float> * hit_z,
-                  vector<int> * hit_isMasked, bool masked=false, float containment = 0.90, bool is_shower=false) {
+void GetPIDParametersTreeProcessor::radius_layer(float mol_per_layer[NUMBER_OF_LAYER], vector<float> * hit_energy, vector<int> *hit_slab, TVectorD W_thicknesses,vector<float> * hit_x, vector<float> * hit_y, vector<float> * hit_z,vector<int> * hit_isMasked, bool masked=false, float containment = 0.90, bool is_shower=false)  {
 
   if((hit_energy->size() > 0) and (is_shower==true)){
 
@@ -397,12 +392,10 @@ void radius_layer(float mol_per_layer[NUMBER_OF_LAYER], vector<float> * hit_ener
   for(int iout = 0; iout < NUMBER_OF_LAYER; iout++) cout<<mol_per_layer[iout]<<" ";
   cout<<endl;
   */
-  return 0;
+  return;
 }
 
-void barycenter(vector<float> * hit_energy, vector<int> *hit_slab, TVectorD W_thicknesses,
-                vector<float> * hit_x, vector<float> * hit_y, vector<float> * hit_z, float bar_xyzr[4],
-                vector<int> * hit_isMasked, bool masked=false, bool is_shower=false) {
+void GetPIDParametersTreeProcessor::barycenter(vector<float> * hit_energy, vector<int> *hit_slab, TVectorD W_thicknesses,vector<float> * hit_x, vector<float> * hit_y, vector<float> * hit_z, float bar_xyzr[4],vector<int> * hit_isMasked, bool masked=false, bool is_shower=false) {
 
   float sume = 0.;
   float wx = 0.; float wy = 0.; float wz = 0.;
@@ -435,12 +428,10 @@ void barycenter(vector<float> * hit_energy, vector<int> *hit_slab, TVectorD W_th
   bar_xyzr[2] = bary_z;
   bar_xyzr[3] = pow(pow(bary_x,2)+pow(bary_y,2),0.5);
 
-  return 0;
+  return;
 }
 
-void bary_layer(float blv[NUMBER_OF_LAYER][3], vector<float> * hit_energy, vector<int> *hit_slab,
-                TVectorD W_thicknesses, vector<float> * hit_x, vector<float> * hit_y,
-                vector<float> * hit_z, vector<int> * hit_isMasked, bool masked=false, bool is_shower=false) {
+void GetPIDParametersTreeProcessor::bary_layer(float blv[NUMBER_OF_LAYER][3], vector<float> * hit_energy, vector<int> *hit_slab,TVectorD W_thicknesses, vector<float> * hit_x, vector<float> * hit_y,vector<float> * hit_z, vector<int> * hit_isMasked, bool masked=false, bool is_shower=false) {
 
   float sume_w[NUMBER_OF_LAYER];
   float wx[NUMBER_OF_LAYER]; float wy[NUMBER_OF_LAYER];
@@ -482,10 +473,10 @@ void bary_layer(float blv[NUMBER_OF_LAYER][3], vector<float> * hit_energy, vecto
     }
   }
 
-  return 0;
+  return;
 }
 
-void graph_setup_add(TGraph *g, string title, Color_t color){
+void GetPIDParametersTreeProcessor::graph_setup_add(TGraph *g, string title, Color_t color){
     g->SetTitle(title.c_str());
     g->SetLineColor(color);
     g->SetLineWidth(3);
@@ -496,10 +487,11 @@ void graph_setup_add(TGraph *g, string title, Color_t color){
 
 void GetPIDParametersTreeProcessor::init() {
 	AIDAProcessor::tree(this);
-    double W[NUMBER_OF_LAYER] = {4.2, 4.2, 4.2, 4.2, 4.2, 4.2, 4.2, 4.2, 5.6, 5.6, 5.6, 5.6, 5.6, 5.6, 5.6}; 
-    TVectorD W_thicknesses(NUMBER_OF_LAYER, W);
     //Si: 650 650 650 650 500 500 500 500 500 500 320 320 320 320 320
-    
+  
+    TVectorD W_thicknesses(NUMBER_OF_LAYER, W);
+   
+   
     TTree *outtree = new TTree("ntp","NTuples");
 
     // branches definitions
@@ -720,7 +712,7 @@ void GetPIDParametersTreeProcessor::init() {
     outtree->Branch("sume_layer_n_13",&b_sume_layer_n_13,"b_sume_layer_n_13/F");
     outtree->Branch("sume_layer_n_14",&b_sume_layer_n_14,"b_sume_layer_n_14/F");
     // Resolution histos
-    string part_string = particle;
+    string part_string = "e";//particle;
 
 	printParameters();
     if (_MCColName!="Not configured in xml file") {_flagMcCol = true;}
@@ -806,6 +798,8 @@ void GetPIDParametersTreeProcessor::ShowECALInfo(EVENT::LCCollection *myCollecti
 }//By this point all histograms are filled for one event, this is repeated for all the events in the collection
 
 void GetPIDParametersTreeProcessor::ShowPixelECALInfo(EVENT::LCCollection *myCollection) {
+    
+    TVectorD W_thicknesses(NUMBER_OF_LAYER, W);
     int number = myCollection->getNumberOfElements();
     streamlog_out(DEBUG) << "TOTAL NUMBER OF HITS: " << number <<endl;
     CellIDDecoder<EVENT::SimCalorimeterHit> cd(myCollection);
@@ -834,13 +828,13 @@ void GetPIDParametersTreeProcessor::ShowPixelECALInfo(EVENT::LCCollection *myCol
         streamlog_out(DEBUG) << " J = " << IJK_J <<" mm,";
         streamlog_out(DEBUG) << " K = " << IJK_K <<" layer,";
         streamlog_out(DEBUG) << " energy = " << hit_energy <<" GeV.\n";
-		totalEnergy += hit_energy;
-        totalHits++;
+		//totalEnergy += hit_energy;
+    //    totalHits++;
         
-        hit_energy.push_back(hit_energyf);
-        hit_x.push_back(IJK_I);
-        hit_y.push_back(IJK_I);
-        hit_z.push_back(IJK_I);
+        hit_energy->push_back(hit_energyf);
+        hit_x->push_back(IJK_I);
+        hit_y->push_back(IJK_I);
+        hit_z->push_back(IJK_I);
     }
         
         // Resolution
@@ -913,8 +907,7 @@ void GetPIDParametersTreeProcessor::ShowPixelECALInfo(EVENT::LCCollection *myCol
         
         float nhit_shower_averagevalue = nhit/NUMBER_OF_LAYER;
 
-        shower_variables(nhit, nhit_layer_array, nhit_layer_n_array, nhit_shower_maxvalue, nhit_shower_maxvalue_n, nhit_ilayermax,
-                nhit_ilayerstart, nhit_ilayerstart_10, nhit_ilayerend, nhit_ilayerend_10, "nhit", shower_bool);
+        shower_variables(nhit, nhit_layer_array, nhit_layer_n_array, nhit_shower_maxvalue, nhit_shower_maxvalue_n, nhit_ilayermax,nhit_ilayerstart, nhit_ilayerstart_10, nhit_ilayerend, nhit_ilayerend_10, "nhit", shower_bool);
         //cout<<"nhit shower variables: maxvalue, maxvalue_n,ilayermax, ilayerstart, ilayerstart(10%), ilayerend, ilayerend(10%)"<<endl;
         //cout<<"nhit shower variables: "<<nhit<<" "<<nhit_shower_maxvalue<<" "<<nhit_shower_maxvalue_n<<" "<<nhit_ilayermax<<" "<<
         //  nhit_ilayerstart<<" "<<nhit_ilayerstart_10<<" "<<nhit_ilayerend<<" "<<nhit_ilayerend_10<<endl;
@@ -1169,14 +1162,14 @@ void GetPIDParametersTreeProcessor::ShowPixelECALInfo(EVENT::LCCollection *myCol
         hit_slab->clear();
         
         
-    }
+    
     streamlog_out(DEBUG) << "Total energy deposit: " << totalEnergy << " GeV" <<endl;
     // Instead of filling the histograms now, we store the numbers in vectors first, then decide the binsize later
 	// _evEnergyHist->Fill(totalEnergy);
 	// _evHitsHist->Fill(totalHits);
-	for (int i = 0; i < NUMBER_OF_LAYER; i++) {
-	}
+
 }
+
 
 void GetPIDParametersTreeProcessor::ShowDigitECALInfo(EVENT::LCCollection *myCollection) {
     int number = myCollection->getNumberOfElements();
