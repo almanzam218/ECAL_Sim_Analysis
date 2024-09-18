@@ -66,6 +66,37 @@ public:
   GetPIDParametersTreeProcessor();
   virtual ~GetPIDParametersTreeProcessor();
 
+  /** Called at the begin of the job before anything is read.
+   */
+  virtual void init();
+
+  /** Called for every run.
+   */
+  virtual void processRunHeader(LCRunHeader *run);
+
+  /** Called for every event - the working horse.
+   */
+  virtual void processEvent(LCEvent *evt);
+
+  virtual void check(LCEvent *evt);
+
+  virtual void end();
+
+  // Histogram definitions for ECALHit class
+
+    // MC particle
+    // Monolithic calorimeter hits
+    // Pixelised calorimeter hits
+    // Digitised calorimeter hits
+    // double _layerFitParams[NUMBER_OF_LAYER][4];
+    // double energyRes;
+    
+
+private:
+  virtual void ShowMCInfo(LCCollection *col);
+  virtual void ShowECALInfo(LCCollection *col);
+    virtual void ShowPixelECALInfo(LCCollection *col);
+    virtual void ShowDigitECALInfo(LCCollection *col);
   virtual void get_res(int &nhit, float &sume, float &weight, vector<float> * hit_energy, vector<int> *hit_slab, TVectorD W_thicknesses, vector<int> *hit_isMasked, bool &masked);
  
   virtual void hits_layer(float hlv[NUMBER_OF_LAYER], vector<float> * hit_energy, vector<int> *hit_slab, TVectorD W_thicknesses, vector<int> *hit_isMasked, bool masked, bool normalized, string count_type);
@@ -99,37 +130,6 @@ public:
  
  
   virtual void graph_setup_add(TGraph *g, string title, Color_t color);
-  /** Called at the begin of the job before anything is read.
-   */
-  virtual void init();
-
-  /** Called for every run.
-   */
-  virtual void processRunHeader(LCRunHeader *run);
-
-  /** Called for every event - the working horse.
-   */
-  virtual void processEvent(LCEvent *evt);
-
-  virtual void check(LCEvent *evt);
-
-  virtual void end();
-
-  // Histogram definitions for ECALHit class
-
-    // MC particle
-    // Monolithic calorimeter hits
-    // Pixelised calorimeter hits
-    // Digitised calorimeter hits
-    // double _layerFitParams[NUMBER_OF_LAYER][4];
-    // double energyRes;
-    
-
-private:
-  virtual void ShowMCInfo(LCCollection *col);
-  virtual void ShowECALInfo(LCCollection *col);
-    virtual void ShowPixelECALInfo(LCCollection *col);
-    virtual void ShowDigitECALInfo(LCCollection *col);
 
   std::string _MCColName;
   std::string _ECALColName;
@@ -138,7 +138,7 @@ private:
     
     
 
-    bool masked = false;
+    bool masked = true;
     TTree *outtree;
     bool _flagMcCol = false;
     bool _flagEcalCol = false;
@@ -163,14 +163,13 @@ private:
     Float_t b_weighte_layer_n_0, b_weighte_layer_n_1, b_weighte_layer_n_2, b_weighte_layer_n_3, b_weighte_layer_n_4, b_weighte_layer_n_5, b_weighte_layer_n_6, b_weighte_layer_n_7, b_weighte_layer_n_8, b_weighte_layer_n_9, b_weighte_layer_n_10, b_weighte_layer_n_11, b_weighte_layer_n_12, b_weighte_layer_n_13, b_weighte_layer_n_14;    
     Float_t b_sume_layer_0, b_sume_layer_1, b_sume_layer_2, b_sume_layer_3, b_sume_layer_4, b_sume_layer_5, b_sume_layer_6, b_sume_layer_7, b_sume_layer_8, b_sume_layer_9, b_sume_layer_10, b_sume_layer_11, b_sume_layer_12, b_sume_layer_13, b_sume_layer_14;
     Float_t b_sume_layer_n_0, b_sume_layer_n_1, b_sume_layer_n_2, b_sume_layer_n_3, b_sume_layer_n_4, b_sume_layer_n_5, b_sume_layer_n_6, b_sume_layer_n_7, b_sume_layer_n_8, b_sume_layer_n_9, b_sume_layer_n_10, b_sume_layer_n_11, b_sume_layer_n_12, b_sume_layer_n_13, b_sume_layer_n_14;
-    vector<float> hit_energy;
-    vector<float> hit_x;
-    vector<float> hit_y;
-    vector<float> hit_z;
-    vector<int> hit_isMasked;
-    vector<int> hit_slab;
-
-
+    std::vector<float> hit_energyv;
+    std::vector<float> hit_xv;
+    std::vector<float> hit_yv;
+    std::vector<float> hit_zv;
+    std::vector<int> hit_isMaskedv;
+    std::vector<int> hit_slabv;
+    std::vector<float> hit;
 };
 
 #endif

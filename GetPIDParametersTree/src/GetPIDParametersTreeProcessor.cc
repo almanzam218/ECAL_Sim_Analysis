@@ -76,7 +76,7 @@ GetPIDParametersTreeProcessor::GetPIDParametersTreeProcessor() : Processor("GetP
 
 GetPIDParametersTreeProcessor::~GetPIDParametersTreeProcessor() {}
 
-void GetPIDParametersTreeProcessor::get_res(int &nhit, float &sume, float &weight, vector<float> * hit_energy, vector<int> *hit_slab, TVectorD W_thicknesses, vector<int> *hit_isMasked, bool &masked) {
+void GetPIDParametersTreeProcessor::get_res(int &nhit, float &sume, float &weight, vector<float>  *hit_energy, vector<int> *hit_slab, TVectorD W_thicknesses, vector<int> *hit_isMasked, bool &masked) {
     if(hit_energy->size() > 0){    
         //cout<<W_thicknesses.Min()<<endl;
         // First option: use the minimum of the used
@@ -490,10 +490,67 @@ void GetPIDParametersTreeProcessor::init() {
     //Si: 650 650 650 650 500 500 500 500 500 500 320 320 320 320 320
   
    
+        b_nhit = 0;
+        b_sume = 0;
+        b_weighte = 0;
+        b_bar_x = 0;
+        b_bar_y = 0;
+        b_bar_z = 0;
+        b_bar_r = 0;
+        b_mol = 0;
+        b_MIP_Likeness = 0;
+        b_hits_max_distance = 0;
+
+        b_radius90_layer_0 = 0;
+            b_radius90_layer_1 = 0;
+            b_radius90_layer_2 = 0;
+            b_radius90_layer_3 = 0;
+            b_radius90_layer_4 = 0;
+            b_radius90_layer_5 = 0;
+            b_radius90_layer_6 = 0;
+            b_radius90_layer_7 = 0;
+            b_radius90_layer_8 = 0;
+            b_radius90_layer_9 = 0;
+            b_radius90_layer_10 = 0;
+            b_radius90_layer_11 = 0;
+            b_radius90_layer_12 = 0;
+            b_radius90_layer_13 = 0;
+            b_radius90_layer_14 = 0;
+
+        b_nhit_layer_0 = 0;
+        b_nhit_layer_1 = 0;
+        b_nhit_layer_2 = 0;
+        b_nhit_layer_3 = 0;
+        b_nhit_layer_4 = 0;
+        b_nhit_layer_5 = 0;
+        b_nhit_layer_6 = 0;
+        b_nhit_layer_7 = 0;
+        b_nhit_layer_8 = 0;
+        b_nhit_layer_9 = 0;
+        b_nhit_layer_10 = 0;
+        b_nhit_layer_11 = 0;
+        b_nhit_layer_12 = 0;
+        b_nhit_layer_13 = 0;
+        b_nhit_layer_14 = 0;
+
+        b_nhit_layer_n_0 = 0;
+        b_nhit_layer_n_1 = 0;
+        b_nhit_layer_n_2 = 0;
+        b_nhit_layer_n_3 = 0;
+        b_nhit_layer_n_4 = 0;
+        b_nhit_layer_n_5 = 0;
+        b_nhit_layer_n_6 = 0;
+        b_nhit_layer_n_7 = 0;
+        b_nhit_layer_n_8 = 0;
+        b_nhit_layer_n_9 = 0;
+        b_nhit_layer_n_10 = 0;
+        b_nhit_layer_n_11 = 0;
+        b_nhit_layer_n_12 = 0;
+        b_nhit_layer_n_13 =0;
+        b_nhit_layer_n_14 = 0;
+
    
-    
-   
-    TTree *outtree = new TTree("ntp","NTuples");
+    outtree = new TTree("ntp","NTuples");
 
     // branches definitions
     // We will save both the branches and the histos
@@ -714,7 +771,6 @@ void GetPIDParametersTreeProcessor::init() {
     outtree->Branch("sume_layer_n_14",&b_sume_layer_n_14,"b_sume_layer_n_14/F");
     // Resolution histos
     string part_string = "e";//particle;
-
 	printParameters();
     if (_MCColName!="Not configured in xml file") {_flagMcCol = true;}
     if (_ECALColName!="Not configured in xml file") {_flagEcalCol = true;}
@@ -776,27 +832,20 @@ void GetPIDParametersTreeProcessor::ShowECALInfo(EVENT::LCCollection *myCollecti
     CellIDDecoder<EVENT::SimCalorimeterHit> cd(myCollection);
     
 	double totalEnergy = 0;
-     /*   hit_x->clear();
-        hit_y->clear();
-        hit_z->clear();
-        hit_isMasked->clear();
-        hit_energy->clear();
-        hit_slab->clear();
-*/
     for (int i = 0; i < number; i++) {
         SimCalorimeterHit *ecalhit = dynamic_cast<SimCalorimeterHit *>(myCollection->getElementAt(i));
 
         int xyz_x = cd(ecalhit)["x"];
         int xyz_y = cd(ecalhit)["y"];
         int xyz_z = cd(ecalhit)["layer"];
-        float hit_energy = ecalhit->getEnergy();
+        float hit_energyf = ecalhit->getEnergy();
 
         streamlog_out(DEBUG) << "\n SimCalorimeterHit, :" << i;
         streamlog_out(DEBUG) << " cellID-encoded=" << ecalhit->getCellID0();
         streamlog_out(DEBUG) << " x = " << xyz_x <<" mm,";
         streamlog_out(DEBUG) << " y = " << xyz_y <<" mm,";
         streamlog_out(DEBUG) << " z = " << xyz_z <<" layer,";
-        streamlog_out(DEBUG) << " energy = " << hit_energy <<"GeV.\n";
+        streamlog_out(DEBUG) << " energy = " << hit_energyf <<"GeV.\n";
 //        hit_energy->push_back(hit_energyf);
       streamlog_out(MESSAGE) << "TEST "  <<endl;
         //hit_x->push_back(xyz_x);
@@ -804,7 +853,7 @@ void GetPIDParametersTreeProcessor::ShowECALInfo(EVENT::LCCollection *myCollecti
         //hit_z->push_back(xyz_z);
         //hit_isMasked->push_back(0);
         //hit_slab->push_back(0);
-        totalEnergy += hit_energy;
+        totalEnergy += hit_energyf;
     }
     // return totalEnergyLayerSi;
 }//By this point all histograms are filled for one event, this is repeated for all the events in the collection
@@ -821,9 +870,9 @@ void GetPIDParametersTreeProcessor::ShowPixelECALInfo(EVENT::LCCollection *myCol
     for (int i = 0; i < number; i++) {
         SimCalorimeterHit *ecalhit = dynamic_cast<SimCalorimeterHit *>(myCollection->getElementAt(i));
         
-        float IJK_I = cd(ecalhit)["I"];
-        float IJK_J = cd(ecalhit)["J"];
-        float IJK_K = cd(ecalhit)["K"];
+        int IJK_I = cd(ecalhit)["I"];
+        int IJK_J = cd(ecalhit)["J"];
+        int IJK_K = cd(ecalhit)["K"];
         float hit_energyf = ecalhit->getEnergy();
 
         streamlog_out(DEBUG) << "\n SimCalorimeterHit, :" << i;
@@ -834,15 +883,17 @@ void GetPIDParametersTreeProcessor::ShowPixelECALInfo(EVENT::LCCollection *myCol
         streamlog_out(DEBUG) << " energy = " << hit_energyf <<" GeV.\n"<<endl;
 		//totalEnergy += hit_energy;
     //    totalHits++;
-        
-        hit_energy.push_back(hit_energyf);
+    //hit->push_back(hit_energyf*1.1);
+      hit_energyv.push_back(hit_energyf);
       streamlog_out(MESSAGE) << "TEST "  <<endl;
-        hit_x.push_back(IJK_I);
-        hit_y.push_back(IJK_I);
-        hit_z.push_back(IJK_I);
-        hit_isMasked.push_back(0);
-        hit_slab.push_back(0);
+      hit_xv.push_back(IJK_I);
+      hit_yv.push_back(IJK_J);
+      hit_zv.push_back(IJK_K);
+      hit_isMaskedv.push_back(0);
+      hit_slabv.push_back(0);
+        
     }
+      //hit_energy->push_back(hit);
 
 }
 
@@ -921,7 +972,7 @@ void GetPIDParametersTreeProcessor::end() {
     }
     
     if (_flagPixelEcalCol) {
-    TVectorD W_thicknesses(NUMBER_OF_LAYER, W);
+        TVectorD W_thicknesses(NUMBER_OF_LAYER, W);
         
         // Resolution
         int nhit = 0;     
@@ -954,28 +1005,46 @@ void GetPIDParametersTreeProcessor::end() {
                 bar_layer_array[i][2] = 0.;
                 radius90_layer_array[i] = 0.;
             }
-                
+
+    vector<float> *hit_energyt=0;
+    vector<float> *hit_xt=0;
+    vector<float> *hit_yt=0;
+    vector<float> *hit_zt=0;
+    vector<int> *hit_isMaskedt=0;
+    vector<int> *hit_slabt=0;
+    
+    for( int j; j<hit_energyv.size();j++){
+      hit_energyt->push_back(&hit_energyv.at(j));
+      streamlog_out(MESSAGE) << "TEST "  <<endl;
+      hit_xt->push_back(hit_xv.at(j));
+      hit_yt->push_back(hit_yv.at(j));
+      hit_zt->push_back(hit_zv.at(j));
+      hit_isMaskedt->push_back(hit_isMaskedv.at(j));
+      hit_slabt->push_back(hit_slabv.at(j));
+    }
+      streamlog_out(MESSAGE) << "TEST "  <<endl;
         
-        get_res(nhit,	sume, weighte, hit_energy, hit_slab, W_thicknesses, hit_isMasked, masked);
+        get_res(nhit,	sume, weighte, hit_energyt, hit_slabt, W_thicknesses, hit_isMaskedt, masked);
+      streamlog_out(MESSAGE) << "TEST "  <<endl;
         
         // Fill barycenter
-        barycenter(hit_energy, hit_slab, W_thicknesses, hit_x, hit_y, hit_z, bar_xyzr, hit_isMasked, masked);
+        barycenter(hit_energyt, hit_slabt, W_thicknesses, hit_xt, hit_yt, hit_zt, bar_xyzr, hit_isMaskedt, masked);
         
         // Fill shower profile 
         // Nhit
-        hits_layer(nhit_layer_array, hit_energy, hit_slab, W_thicknesses, hit_isMasked, masked, false, "nhit");
-        hits_layer(nhit_layer_n_array, hit_energy, hit_slab, W_thicknesses, hit_isMasked, masked, true, "nhit");
+        hits_layer(nhit_layer_array, hit_energyt, hit_slabt, W_thicknesses, hit_isMaskedt, masked, false, "nhit");
+        hits_layer(nhit_layer_n_array, hit_energyt, hit_slabt, W_thicknesses, hit_isMaskedt, masked, true, "nhit");
         
         // Fill MIP-Likeness
         float MIP_Likeness_value = MIP_Likeness(nhit_layer_array);
 
         // Sume
-            hits_layer(sume_layer_array, hit_energy, hit_slab, W_thicknesses, hit_isMasked, masked, false, "sume");
-            hits_layer(sume_layer_n_array, hit_energy, hit_slab, W_thicknesses, hit_isMasked, masked, true, "sume");
+            hits_layer(sume_layer_array, hit_energyt, hit_slabt, W_thicknesses, hit_isMaskedt, masked, false, "sume");
+            hits_layer(sume_layer_n_array, hit_energyt, hit_slabt, W_thicknesses, hit_isMaskedt, masked, true, "sume");
 
         // Weighted energy
-            hits_layer(weighte_layer_array, hit_energy, hit_slab, W_thicknesses, hit_isMasked, masked, false, "weight");
-            hits_layer(weighte_layer_n_array, hit_energy, hit_slab, W_thicknesses, hit_isMasked, masked, true, "weight");
+            hits_layer(weighte_layer_array, hit_energyt, hit_slabt, W_thicknesses, hit_isMaskedt, masked, false, "weight");
+            hits_layer(weighte_layer_n_array, hit_energyt, hit_slabt, W_thicknesses, hit_isMaskedt, masked, true, "weight");
 
         bool shower_bool = is_Shower(sume, sume_layer_array);
 
@@ -1011,8 +1080,7 @@ void GetPIDParametersTreeProcessor::end() {
 
             float sume_shower_averagevalue = sume/NUMBER_OF_LAYER;
 
-            shower_variables(sume, sume_layer_array, sume_layer_n_array, sume_shower_maxvalue, sume_shower_maxvalue_n, sume_ilayermax,
-                            sume_ilayerstart, sume_ilayerstart_10, sume_ilayerend, sume_ilayerend_10, "sume", shower_bool);
+            shower_variables(sume, sume_layer_array, sume_layer_n_array, sume_shower_maxvalue, sume_shower_maxvalue_n, sume_ilayermax,sume_ilayerstart, sume_ilayerstart_10, sume_ilayerend, sume_ilayerend_10, "sume", shower_bool);
             
             //shower sume general parameters finish
 
@@ -1027,8 +1095,7 @@ void GetPIDParametersTreeProcessor::end() {
 
         float weighte_shower_averagevalue = weighte/NUMBER_OF_LAYER;
 
-        shower_variables(weighte, weighte_layer_array, weighte_layer_n_array, weighte_shower_maxvalue, weighte_shower_maxvalue_n, weighte_ilayermax,
-                            weighte_ilayerstart, weighte_ilayerstart_10, weighte_ilayerend, weighte_ilayerend_10, "weight", shower_bool);
+        shower_variables(weighte, weighte_layer_array, weighte_layer_n_array, weighte_shower_maxvalue, weighte_shower_maxvalue_n, weighte_ilayermax,weighte_ilayerstart, weighte_ilayerstart_10, weighte_ilayerend, weighte_ilayerend_10, "weight", shower_bool);
         //cout<<"weight shower variables: maxvalue, maxvalue_n,ilayermax, ilayerstart, ilayerstart(10%), ilayerend, ilayerend(10%)"<<endl;
         //cout<<"weight shower variables: "<<weight<<" "<<weighte_shower_maxvalue<<" "<<weighte_shower_maxvalue_n<<" "<<weighte_ilayermax<<" "<<
             //  weighte_ilayerstart<<" "<<weighte_ilayerstart_10<<" "<<weighte_ilayerend<<" "<<weighte_ilayerend_10<<endl;
@@ -1036,14 +1103,14 @@ void GetPIDParametersTreeProcessor::end() {
         //shower weight general parameters finish	  
 
         // Fill Moliere radii histograms 
-            mol_value = moliere(hit_energy, hit_slab, W_thicknesses, hit_x, hit_y, hit_z, hit_isMasked, masked, 0.9, shower_bool);
-            radius_layer(radius90_layer_array, hit_energy, hit_slab, W_thicknesses, hit_x, hit_y, hit_z, hit_isMasked, masked, 0.9, shower_bool);
+            mol_value = moliere(hit_energyt, hit_slabt, W_thicknesses, hit_xt, hit_yt, hit_zt, hit_isMaskedt, masked, 0.9, shower_bool);
+            radius_layer(radius90_layer_array, hit_energyt, hit_slabt, W_thicknesses, hit_xt, hit_yt, hit_zt, hit_isMaskedt, masked, 0.9, shower_bool);
                 
         // Barycenter x and y
-        bary_layer(bar_layer_array, hit_energy, hit_slab, W_thicknesses, hit_x, hit_y, hit_z, hit_isMasked, masked);
+        bary_layer(bar_layer_array, hit_energyt, hit_slabt, W_thicknesses, hit_xt, hit_yt, hit_zt, hit_isMaskedt, masked);
         
         // Hits max distance in the same layer
-        float hits_max_distance_value = hits_max_distance(hit_slab, hit_x, hit_y, hit_isMasked, masked);
+        float hits_max_distance_value = hits_max_distance(hit_slabt, hit_xt, hit_yt, hit_isMaskedt, masked);
         
         // Filling the tree
         b_nhit = nhit;
@@ -1242,6 +1309,14 @@ void GetPIDParametersTreeProcessor::end() {
             b_bar_r_layer_14 = bar_layer_array[14][2];
 
         outtree->Fill();
+        outtree->Write();
+        hit_xt->clear();
+        hit_yt->clear();
+        hit_zt->clear();
+        hit_isMaskedt->clear();
+        hit_energyt->clear();
+        hit_slabt->clear();
+
         
         
     
