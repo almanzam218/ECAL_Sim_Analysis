@@ -57,7 +57,7 @@ private:
     float FIT_INIT_SIG = 0.01e-3;//GeV
     float E_RANGE_MIN = 0;
     float E_RANGE_MAX = 0.05;//GeV
-    double W[NUMBER_OF_LAYER] = {4.2, 4.2, 4.2, 4.2, 4.2, 4.2, 4.2, 4.2, 5.6, 5.6, 5.6, 5.6, 5.6, 5.6, 5.6};     
+    double W[NUMBER_OF_LAYER] = {4.2, 4.2, 4.2, 4.2, 4.2, 4.2, 4.2, 4.2, 4.2, 4.2, 4.2, 4.2, 4.2, 4.2, 4.2};     
     
 
 public:
@@ -138,7 +138,7 @@ private:
     
     
 
-    bool masked = true;
+    bool masked = false;
     TTree *outtree;
     bool _flagMcCol = false;
     bool _flagEcalCol = false;

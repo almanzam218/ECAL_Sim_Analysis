@@ -884,15 +884,49 @@ void GetPIDParametersTreeProcessor::ShowPixelECALInfo(EVENT::LCCollection *myCol
 		//totalEnergy += hit_energy;
     //    totalHits++;
     //hit->push_back(hit_energyf*1.1);
-      hit_energyv.push_back(hit_energyf);
-      streamlog_out(MESSAGE) << "TEST "  << number <<endl;
-      hit_xv.push_back(IJK_I);
-      hit_yv.push_back(IJK_J);
-      hit_zv.push_back(IJK_K);
-      hit_isMaskedv.push_back(0);
-      hit_slabv.push_back(0);
         
     }
+
+}
+
+
+void GetPIDParametersTreeProcessor::ShowDigitECALInfo(EVENT::LCCollection *myCollection) {
+    int number = myCollection->getNumberOfElements();
+    streamlog_out(DEBUG) << "TOTAL NUMBER OF HITS DIGI: " << number <<endl;
+    CellIDDecoder<EVENT::CalorimeterHit> cd(myCollection);
+
+	double totalEnergy = 0;
+    int totalHits = 0;
+    int slab = 0;
+    for (int i = 0; i < number; i++) {
+        CalorimeterHit *ecalhit = dynamic_cast<CalorimeterHit *>(myCollection->getElementAt(i));
+        
+        int IJK_I = cd(ecalhit)["I"];
+        int IJK_J = cd(ecalhit)["J"];
+        int IJK_K = cd(ecalhit)["K"];
+        float hit_energyf = ecalhit->getEnergy();
+        float hit_position[3]={ecalhit->getPosition()[0],ecalhit->getPosition()[1],ecalhit->getPosition()[2]};//x, y, z in millimiters
+        slab = IJK_K -1;
+        streamlog_out(DEBUG) << "\n CalorimeterHit, :" << i;
+        streamlog_out(DEBUG) << " cellID-encoded=" << ecalhit->getCellID0();
+        streamlog_out(DEBUG) << " I = " << IJK_I <<" cell,";
+        streamlog_out(DEBUG) << " J = " << IJK_J <<" cell,";
+        streamlog_out(DEBUG) << " K = " << IJK_K <<" layer,";
+        streamlog_out(DEBUG) << " X = " << hit_positio[0] <<" mm,";
+        streamlog_out(DEBUG) << " Y = " << hit_position[1] <<" mm,";
+        streamlog_out(DEBUG) << " Z = " << hit_position[2] <<" mm,";
+        streamlog_out(DEBUG) << " energy = " << hit_energyf <<" GeV.\n";
+		totalEnergy += hit_energyf;
+      hit_energyv.push_back(hit_energyf);
+      streamlog_out(MESSAGE) << "TEST "  << number <<endl;
+      hit_xv.push_back(hit_position[0]);
+      hit_yv.push_back(hit_position[1]);
+      hit_zv.push_back(hit_position[2]);
+      hit_isMaskedv.push_back(0);
+      hit_slabv.push_back(slab);
+        totalHits++;
+    }
+    streamlog_out(DEBUG) << "Total energy deposit: " << totalEnergy << " GeV" <<endl;
       //hit_energy->push_back(hit);
         TVectorD W_thicknesses(NUMBER_OF_LAYER, W);
         
@@ -1223,36 +1257,6 @@ void GetPIDParametersTreeProcessor::ShowPixelECALInfo(EVENT::LCCollection *myCol
         hit_energyv.clear();
         hit_slabv.clear();
 
-
-}
-
-
-void GetPIDParametersTreeProcessor::ShowDigitECALInfo(EVENT::LCCollection *myCollection) {
-    int number = myCollection->getNumberOfElements();
-    streamlog_out(DEBUG) << "TOTAL NUMBER OF HITS DIGI: " << number <<endl;
-    CellIDDecoder<EVENT::CalorimeterHit> cd(myCollection);
-
-	double totalEnergy = 0;
-    int totalHits = 0;
-    
-    for (int i = 0; i < number; i++) {
-        CalorimeterHit *ecalhit = dynamic_cast<CalorimeterHit *>(myCollection->getElementAt(i));
-        
-        int IJK_I = cd(ecalhit)["I"];
-        int IJK_J = cd(ecalhit)["J"];
-        int IJK_K = cd(ecalhit)["K"];
-        float hit_energyf = ecalhit->getEnergy();
-
-        streamlog_out(DEBUG) << "\n CalorimeterHit, :" << i;
-        streamlog_out(DEBUG) << " cellID-encoded=" << ecalhit->getCellID0();
-        streamlog_out(DEBUG) << " I = " << IJK_I <<" mm,";
-        streamlog_out(DEBUG) << " J = " << IJK_J <<" mm,";
-        streamlog_out(DEBUG) << " K = " << IJK_K <<" layer,";
-        streamlog_out(DEBUG) << " energy = " << hit_energyf <<" GeV.\n";
-		totalEnergy += hit_energyf;
-        totalHits++;
-    }
-    streamlog_out(DEBUG) << "Total energy deposit: " << totalEnergy << " GeV" <<endl;
     // Instead of filling the histograms now, we store the numbers in vectors first, then decide the binsize later
 	// _evEnergyHist->Fill(totalEnergy);
 	// _evHitsHist->Fill(totalHits);
