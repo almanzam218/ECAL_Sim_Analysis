@@ -4,6 +4,9 @@
 
 <constants>
     <!-- Output files constants -->
+    <constant name="particle" value="neutron"/>  
+    <constant name="LCIOInputPath" value="/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/NPOD_samples/20240829_v1/clustering/data/"/>  
+    <!-- constant name="LCIOInputPath" value="/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/NPOD_samples/20240827_v1/PID/clustering/data/"/-->  
     <constant name="OutputBaseName" value="/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/tests/20240917/_tests" />
     <constant name="AIDAFileName" value="${OutputBaseName}" />
 </constants>
@@ -20,11 +23,11 @@
   <!--########  Global  ######################################## -->
   <global>
     <parameter name="LCIOInputFiles">
-    /lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/NPOD_samples/20240829_v1/clustering/data/PixelDigiCluster_ECALe_luxe_v1_QGSP_BERT_gamma_10GeV.slcio
-        </parameter>
+      ${LCIOInputPath}PixelDigiCluster_ECALe_luxe_v1_QGSP_BERT_${particle}_5GeV.slcio
+    </parameter>
     <!--parameter name="AllowToModifyEvent" value="true" /-->  
-    <parameter name="MaxRecordNumber" value="11"/>  
-    <parameter name="SkipNEvents" value="0"/>
+    <parameter name="MaxRecordNumber" value="5000"/>   
+    <!-- <parameter name="SkipNEvents" value="0"/> -->
     <parameter name="SupressCheck" value="false"/>
     <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> DEBUG </parameter>
     <parameter name="RandomSeed" value="1234567890" />

@@ -140,6 +140,7 @@ private:
 
     bool masked = false;
     TTree *outtree;
+    TH3S *_3DShower;
     bool _flagMcCol = false;
     bool _flagEcalCol = false;
     bool _flagPixelEcalCol = false;

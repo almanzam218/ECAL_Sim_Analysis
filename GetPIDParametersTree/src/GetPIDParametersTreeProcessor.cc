@@ -487,6 +487,7 @@ void GetPIDParametersTreeProcessor::graph_setup_add(TGraph *g, string title, Col
 
 void GetPIDParametersTreeProcessor::init() {
 	AIDAProcessor::tree(this);
+  _3DShower = new TH3S("neutronshower","neutron shower", 32, -0.5,31.5,32,-0.5,31.5,15,-0.5,14.5);
     //Si: 650 650 650 650 500 500 500 500 500 500 320 320 320 320 320
   
    
@@ -904,6 +905,7 @@ void GetPIDParametersTreeProcessor::ShowDigitECALInfo(EVENT::LCCollection *myCol
         int IJK_I = cd(ecalhit)["I"];
         int IJK_J = cd(ecalhit)["J"];
         int IJK_K = cd(ecalhit)["K"];
+        _3DShower->Fill(IJK_I,IJK_J,IJK_K);
         float hit_energyf = ecalhit->getEnergy();
         float hit_position[3]={ecalhit->getPosition()[0],ecalhit->getPosition()[1],ecalhit->getPosition()[2]};//x, y, z in millimiters
         slab = IJK_K -1;
@@ -912,7 +914,7 @@ void GetPIDParametersTreeProcessor::ShowDigitECALInfo(EVENT::LCCollection *myCol
         streamlog_out(DEBUG) << " I = " << IJK_I <<" cell,";
         streamlog_out(DEBUG) << " J = " << IJK_J <<" cell,";
         streamlog_out(DEBUG) << " K = " << IJK_K <<" layer,";
-        streamlog_out(DEBUG) << " X = " << hit_positio[0] <<" mm,";
+        streamlog_out(DEBUG) << " X = " << hit_position[0] <<" mm,";
         streamlog_out(DEBUG) << " Y = " << hit_position[1] <<" mm,";
         streamlog_out(DEBUG) << " Z = " << hit_position[2] <<" mm,";
         streamlog_out(DEBUG) << " energy = " << hit_energyf <<" GeV.\n";
