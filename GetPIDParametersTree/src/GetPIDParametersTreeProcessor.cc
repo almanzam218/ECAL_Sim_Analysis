@@ -487,7 +487,6 @@ void GetPIDParametersTreeProcessor::graph_setup_add(TGraph *g, string title, Col
 
 void GetPIDParametersTreeProcessor::init() {
 	AIDAProcessor::tree(this);
-  _3DShower = new TH3S("neutronshower","neutron shower", 32, -0.5,31.5,32,-0.5,31.5,15,-0.5,14.5);
     //Si: 650 650 650 650 500 500 500 500 500 500 320 320 320 320 320
   
    
@@ -899,13 +898,13 @@ void GetPIDParametersTreeProcessor::ShowDigitECALInfo(EVENT::LCCollection *myCol
 	double totalEnergy = 0;
     int totalHits = 0;
     int slab = 0;
+    int test=0;
     for (int i = 0; i < number; i++) {
         CalorimeterHit *ecalhit = dynamic_cast<CalorimeterHit *>(myCollection->getElementAt(i));
         
         int IJK_I = cd(ecalhit)["I"];
         int IJK_J = cd(ecalhit)["J"];
         int IJK_K = cd(ecalhit)["K"];
-        _3DShower->Fill(IJK_I,IJK_J,IJK_K);
         float hit_energyf = ecalhit->getEnergy();
         float hit_position[3]={ecalhit->getPosition()[0],ecalhit->getPosition()[1],ecalhit->getPosition()[2]};//x, y, z in millimiters
         slab = IJK_K -1;
@@ -929,6 +928,7 @@ void GetPIDParametersTreeProcessor::ShowDigitECALInfo(EVENT::LCCollection *myCol
         totalHits++;
     }
     streamlog_out(DEBUG) << "Total energy deposit: " << totalEnergy << " GeV" <<endl;
+    
       //hit_energy->push_back(hit);
         TVectorD W_thicknesses(NUMBER_OF_LAYER, W);
         

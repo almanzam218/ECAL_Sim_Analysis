@@ -4,8 +4,8 @@
 
 <constants>
     <!-- Output files constants -->
-    <constant name="particle" value="neutron"/>  
-    <constant name="LCIOInputPath" value="/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/NPOD_samples/20240829_v1/clustering/data/"/>  
+    <constant name="particle" value="gamma"/>  
+    <constant name="LCIOInputPath" value="/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/NPOD_samples/20240827_v1/PID/clustering/data/"/>  
     <!-- constant name="LCIOInputPath" value="/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/NPOD_samples/20240827_v1/PID/clustering/data/"/-->  
     <constant name="OutputBaseName" value="/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/tests/20240917/_tests" />
     <constant name="AIDAFileName" value="${OutputBaseName}" />
@@ -23,11 +23,15 @@
   <!--########  Global  ######################################## -->
   <global>
     <parameter name="LCIOInputFiles">
-      ${LCIOInputPath}PixelDigiCluster_ECALe_luxe_v1_QGSP_BERT_${particle}_5GeV.slcio
+      ${LCIOInputPath}PixelDigiCluster_ECALe_luxe_v1_QGSP_BERT_${particle}_0.5to10GeV_0.slcio
+      ${LCIOInputPath}PixelDigiCluster_ECALe_luxe_v1_QGSP_BERT_${particle}_0.5to10GeV_1.slcio
+      ${LCIOInputPath}PixelDigiCluster_ECALe_luxe_v1_QGSP_BERT_${particle}_0.5to10GeV_2.slcio
+      ${LCIOInputPath}PixelDigiCluster_ECALe_luxe_v1_QGSP_BERT_${particle}_0.5to10GeV_3.slcio
+      ${LCIOInputPath}PixelDigiCluster_ECALe_luxe_v1_QGSP_BERT_${particle}_0.5to10GeV_4.slcio
     </parameter>
     <!--parameter name="AllowToModifyEvent" value="true" /-->  
-    <parameter name="MaxRecordNumber" value="5000"/>   
-    <!-- <parameter name="SkipNEvents" value="0"/> -->
+    <!--parameter name="MaxRecordNumber" value="22"/-->   
+    <!--parameter name="SkipNEvents" value="21"/-->
     <parameter name="SupressCheck" value="false"/>
     <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> DEBUG </parameter>
     <parameter name="RandomSeed" value="1234567890" />
