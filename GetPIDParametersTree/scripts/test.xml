@@ -4,7 +4,7 @@
 
 <constants>
     <!-- Output files constants -->
-    <constant name="particle" value="gamma"/>  
+    <constant name="particle" value="pi-"/>  
     <constant name="LCIOInputPath" value="/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/NPOD_samples/20240827_v1/PID/clustering/data/"/>  
     <!-- constant name="LCIOInputPath" value="/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/NPOD_samples/20240827_v1/PID/clustering/data/"/-->  
     <constant name="OutputBaseName" value="/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/tests/20240917/_tests" />
