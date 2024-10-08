@@ -153,7 +153,8 @@ void GetPIDParametersTreeProcessor::hits_layer(float hlv[NUMBER_OF_LAYER], vecto
 }
 
 bool GetPIDParametersTreeProcessor::is_Shower(float entries, float array[NUMBER_OF_LAYER]) {
-  float threshold = 3.;
+  float threshold = 1.;
+  float threshold_max = 3.;
   float shower_maxvalue = 0.;
   bool isShower = false;
 
@@ -169,7 +170,7 @@ bool GetPIDParametersTreeProcessor::is_Shower(float entries, float array[NUMBER_
       float thislayer = array[ilayer];
       float nextlayer = array[ilayer+1];
       float nextnextlayer = array[ilayer+2];
-      if((thislayer > threshold) and (nextlayer > thislayer) and (nextnextlayer > nextlayer) and (shower_maxvalue > 5.)){
+      if((thislayer > threshold) and (nextlayer > thislayer) and (nextnextlayer > nextlayer) and (shower_maxvalue > threshold_max)){
         isShower = true;
         break;
       }
@@ -486,7 +487,7 @@ void GetPIDParametersTreeProcessor::graph_setup_add(TGraph *g, string title, Col
 
 
 void GetPIDParametersTreeProcessor::init() {
-	AIDAProcessor::tree(this);
+	//AIDAProcessor::tree(this);
     //Si: 650 650 650 650 500 500 500 500 500 500 320 320 320 320 320
   
    
@@ -549,7 +550,9 @@ void GetPIDParametersTreeProcessor::init() {
         b_nhit_layer_n_13 =0;
         b_nhit_layer_n_14 = 0;
 
-   
+
+    //TFile f("PIDParams_PixelDigiCluster_ECALe_luxe_v1_QGSP_BERT_${particleName}_0.5to10GeV_test.root");
+    //f.cd("MyGetPIDParametersTreeProcessor");
     outtree = new TTree("ntp","NTuples");
 
     // branches definitions
@@ -1258,6 +1261,7 @@ void GetPIDParametersTreeProcessor::ShowDigitECALInfo(EVENT::LCCollection *myCol
         hit_isMaskedv.clear();
         hit_energyv.clear();
         hit_slabv.clear();
+	AIDAProcessor::tree(this);
 
     // Instead of filling the histograms now, we store the numbers in vectors first, then decide the binsize later
 	// _evEnergyHist->Fill(totalEnergy);
