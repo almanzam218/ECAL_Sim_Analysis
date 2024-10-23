@@ -136,8 +136,11 @@ private:
     std::string _pECALColName;
     std::string _dECALColName;
     
-    
-
+   TCanvas *c1;
+   TH2D *xyHist; 
+   TH2D *xzHist; 
+   TH2D *yzHist; 
+   TH3D *_3DHist;
     bool masked = false;
     TTree *outtree;
     bool _flagMcCol = false;

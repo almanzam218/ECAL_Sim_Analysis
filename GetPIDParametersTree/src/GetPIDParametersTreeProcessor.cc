@@ -487,6 +487,11 @@ void GetPIDParametersTreeProcessor::graph_setup_add(TGraph *g, string title, Col
 
 
 void GetPIDParametersTreeProcessor::init() {
+  c1 = new TCanvas("c1","c1");
+  xyHist = new TH2D("_xyHist","XY view all events",64,0.5,64.5,32, 0.5, 32.5);
+  xzHist = new TH2D("_xzHist","XZ view all events",64,0.5,64.5,15, 0.5, 15.5);
+  yzHist = new TH2D("_yzHist","YZ view all events",32,0.5,32.5,15, 0.5, 15.5);
+  _3DHist = new TH3D("_3DHist","3D view all events",15,0.5,15.5,64,0.5,64.5,32, 32.5, 0.5);
 	//AIDAProcessor::tree(this);
     //Si: 650 650 650 650 500 500 500 500 500 500 320 320 320 320 320
   
@@ -923,6 +928,10 @@ void GetPIDParametersTreeProcessor::ShowDigitECALInfo(EVENT::LCCollection *myCol
 		totalEnergy += hit_energyf;
       hit_energyv.push_back(hit_energyf);
       streamlog_out(MESSAGE) << "TEST "  << number <<endl;
+      xyHist->Fill(IJK_I,IJK_J);
+      xzHist->Fill(IJK_I,IJK_K);
+      yzHist->Fill(IJK_J,IJK_K);
+      _3DHist->Fill(IJK_K,IJK_I,IJK_J);
       hit_xv.push_back(hit_position[0]);
       hit_yv.push_back(hit_position[1]);
       hit_zv.push_back(hit_position[2]);
@@ -1323,5 +1332,11 @@ void GetPIDParametersTreeProcessor::end() {
 
     if (_flagDigitEcalCol) {
     }
+        c1->cd();
+        _3DHist->Draw("BOX");
+        c1->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20240827_v1/histogramsIncluded/3dpi-box.png");
+        c1->cd();
+        _3DHist->Draw("ISO");
+        c1->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20240827_v1/histogramsIncluded/3dpi-iso.png");
     streamlog_out(MESSAGE) << "Fitting done\nPlotting results..." <<endl;
 }
