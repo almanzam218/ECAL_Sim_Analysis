@@ -130,10 +130,22 @@ void PlotHistogramsMainVariables(){
     TCanvas *c5 = new TCanvas("c5","Sum energy layer 5",1920,0,1920,1000);
     TCanvas *c6 = new TCanvas("c6","Moliere radius",1920,0,1920,1000);
 
+
     c1->cd();
+    MIP_LikenessHist->SetLineColor(1);
+    gStyle->SetOptStat(0);
+    MIP_LikenessHistn->SetLineColor(2);
+    MIP_LikenessHistp->SetLineColor(3);
     MIP_LikenessHist->Draw();
     MIP_LikenessHistn->Draw("SAME");
     MIP_LikenessHistp->Draw("SAME");
+    
+    auto* legend = new TLegend(0.2,0.7,0.35,0.85);
+    //legend->SetHeader("The Legend Title","C"); // option "C" allows to center the header
+    legend->AddEntry(MIP_LikenessHist,"#gamma","l");
+    legend->AddEntry(MIP_LikenessHistn,"neutron","l");
+    legend->AddEntry(MIP_LikenessHistp,"pi-","l");
+    legend->Draw();
     c1->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20240827_v1/histogramsIncluded/MIP_Likeness.png");
     c1->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20240827_v1/histogramsIncluded/MIP_Likeness.C");
 
