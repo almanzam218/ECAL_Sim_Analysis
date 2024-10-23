@@ -10,7 +10,7 @@ declare -i numberEvents=2
  #--global.MaxRecordNumber=${numberEvents}
 for energy in 10 
 do
-    particleName="pi-"
+    particleName="neutron"
     AIDAFilePath="/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20240827_v1/histogramsIncluded/"
     AIDAFileName="PIDParams_PixelDigiCluster_ECALe_luxe_v1_QGSP_BERT_${particleName}_0.5to10GeV"
 
