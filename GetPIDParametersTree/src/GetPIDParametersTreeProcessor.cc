@@ -256,9 +256,9 @@ float GetPIDParametersTreeProcessor::hits_max_distance(vector<int> hit_slab, vec
       float hit1_x = hit_x.at(i);
       float hit1_y = hit_y.at(i);
       for (int j = i+1; j < hit_slab.size()-1; j++){
-	if (masked && hit_isMasked.at(j) == 1) continue;
+        if (masked && hit_isMasked.at(j) == 1) continue;
         int layer2 = hit_slab.at(j);
-	if(layer2 != layer1) continue;
+        if(layer2 != layer1) continue;
         float hit2_x = hit_x.at(j);
         float hit2_y = hit_y.at(j);
         float distance = pow(pow(hit2_x-hit1_x,2)+pow(hit2_y-hit1_y,2),0.5);
