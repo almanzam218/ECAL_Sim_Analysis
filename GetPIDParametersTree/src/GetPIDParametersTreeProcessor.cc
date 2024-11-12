@@ -487,7 +487,9 @@ void GetPIDParametersTreeProcessor::graph_setup_add(TGraph *g, string title, Col
 
 
 void GetPIDParametersTreeProcessor::init() {
-   
+
+  eventsToDisplay=1; 
+  eventsDisplayed=0;
   MIP_LikenessHist = new TH1F("MIP_Likeness","MIP Likeness",100,0,1);
   bar_zHist = new TH1F("bar_z","barycenter z", 100, 0, 200);
   nhitsHist = new TH1D("nhits","Total hits", 210, -0.5, 209.5);
@@ -910,7 +912,7 @@ void GetPIDParametersTreeProcessor::ShowDigitECALInfo(EVENT::LCCollection *myCol
     int number = myCollection->getNumberOfElements();
     streamlog_out(DEBUG) << "TOTAL NUMBER OF HITS DIGI: " << number <<endl;
     CellIDDecoder<EVENT::CalorimeterHit> cd(myCollection);
-
+  _3DHist->Clear();
 	double totalEnergy = 0;
     int totalHits = 0;
     int slab = 0;
@@ -1270,6 +1272,13 @@ void GetPIDParametersTreeProcessor::ShowDigitECALInfo(EVENT::LCCollection *myCol
             b_bar_r_layer_12 = bar_layer_array[12][2];
             b_bar_r_layer_13 = bar_layer_array[13][2];
             b_bar_r_layer_14 = bar_layer_array[14][2];
+
+        if(MIP_Likeness_value>0.90&&MIP_Likeness_value<0.94&&eventsDisplayed<eventsToDisplay){
+          eventsDisplayed++;
+        }
+        else{
+          _3DHist->Clear();
+        }
 
         outtree->Fill();
         hit_xv.clear();

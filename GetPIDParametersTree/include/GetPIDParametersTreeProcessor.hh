@@ -147,6 +147,8 @@ private:
    TH2D *xzHist; 
    TH2D *yzHist; 
    TH3D *_3DHist;
+   int eventsToDisplay;
+   int eventsDisplayed;
     bool masked = false;
     TTree *outtree;
     bool _flagMcCol = false;
