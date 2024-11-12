@@ -136,13 +136,13 @@ private:
     std::string _pECALColName;
     std::string _dECALColName;
     
+   int eventsToDisplay;
+   int eventsDisplayed=0;
 
    TH2D *xyHist; 
    TH2D *xzHist; 
    TH2D *yzHist; 
    TH3D *_3DHist;
-   int eventsToDisplay;
-   int eventsDisplayed;
     bool masked = false;
     TTree *outtree;
     bool _flagMcCol = false;
@@ -175,6 +175,9 @@ private:
     std::vector<int> hit_isMaskedv;
     std::vector<int> hit_slabv;
     std::vector<float> hit;
+    std::vector<int> hit_xpadv;
+    std::vector<int> hit_ypadv;
+    
 };
 
 #endif

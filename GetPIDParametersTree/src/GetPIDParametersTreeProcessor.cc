@@ -488,8 +488,8 @@ void GetPIDParametersTreeProcessor::graph_setup_add(TGraph *g, string title, Col
 
 void GetPIDParametersTreeProcessor::init() {
 
-  eventsToDisplay=1; 
-  eventsDisplayed=0;
+  //eventsToDisplay=1; 
+  //eventsDisplayed=0;
 
 //  c1 = new TCanvas("c1","c1");
   xyHist = new TH2D("_xyHist","XY view all events",64,0.5,64.5,32, 0.5, 32.5);
@@ -906,7 +906,6 @@ void GetPIDParametersTreeProcessor::ShowDigitECALInfo(EVENT::LCCollection *myCol
     int number = myCollection->getNumberOfElements();
     streamlog_out(DEBUG) << "TOTAL NUMBER OF HITS DIGI: " << number <<endl;
     CellIDDecoder<EVENT::CalorimeterHit> cd(myCollection);
-  _3DHist->Clear();
 	double totalEnergy = 0;
     int totalHits = 0;
     int slab = 0;
@@ -935,12 +934,14 @@ void GetPIDParametersTreeProcessor::ShowDigitECALInfo(EVENT::LCCollection *myCol
       xyHist->Fill(IJK_I,IJK_J);
       xzHist->Fill(IJK_I,IJK_K);
       yzHist->Fill(IJK_J,IJK_K);
-      _3DHist->Fill(IJK_K,IJK_I,IJK_J);
+      //_3DHist->Fill(IJK_K,IJK_I,IJK_J);
       hit_xv.push_back(hit_position[0]);
       hit_yv.push_back(hit_position[1]);
       hit_zv.push_back(hit_position[2]);
       hit_isMaskedv.push_back(0);
       hit_slabv.push_back(slab);
+      hit_xpadv.push_back(IJK_I);
+      hit_ypadv.push_back(IJK_J);
         totalHits++;
     }
     streamlog_out(DEBUG) << "Total energy deposit: " << totalEnergy << " GeV" <<endl;
@@ -1267,14 +1268,16 @@ void GetPIDParametersTreeProcessor::ShowDigitECALInfo(EVENT::LCCollection *myCol
             b_bar_r_layer_13 = bar_layer_array[13][2];
             b_bar_r_layer_14 = bar_layer_array[14][2];
 
-        if(MIP_Likeness_value>0.90&&MIP_Likeness_value<0.94&&eventsDisplayed<eventsToDisplay){
-          eventsDisplayed++;
+        if(b_MIP_Likeness>0.90&&b_MIP_Likeness<0.94&&eventsDisplayed==0){
+          for(int i=0; i<hit_xpadv.size();i++)
+          {
+            _3DHist->Fill(hit_slabv.at(i),hit_xpadv.at(i),hit_ypadv.at(i));
+          }
+          eventsDisplayed=1;
         }
-        else{
-          _3DHist->Clear();
-        }
-
         outtree->Fill();
+        hit_xpadv.clear();
+        hit_ypadv.clear();
         hit_xv.clear();
         hit_yv.clear();
         hit_zv.clear();
