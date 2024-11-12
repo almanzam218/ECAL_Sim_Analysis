@@ -490,12 +490,6 @@ void GetPIDParametersTreeProcessor::init() {
 
   eventsToDisplay=1; 
   eventsDisplayed=0;
-  MIP_LikenessHist = new TH1F("MIP_Likeness","MIP Likeness",100,0,1);
-  bar_zHist = new TH1F("bar_z","barycenter z", 100, 0, 200);
-  nhitsHist = new TH1D("nhits","Total hits", 210, -0.5, 209.5);
-  hits_max_distanceHist = new TH1F("hits_max_distance","Hits Maximum Distance", 200 ,0 , 350);
-  sume_layer_5Hist = new TH1F("sume_layer","Sum energy layer 5", 200, 0, 900);
-  molHist = new TH1F("mol","Moliere radius",100,0, 150);
 
 //  c1 = new TCanvas("c1","c1");
   xyHist = new TH2D("_xyHist","XY view all events",64,0.5,64.5,32, 0.5, 32.5);

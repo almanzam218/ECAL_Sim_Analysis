@@ -136,12 +136,6 @@ private:
     std::string _pECALColName;
     std::string _dECALColName;
     
-   TH1F *MIP_LikenessHist;
-   TH1F *bar_zHist;
-   TH1D *nhitsHist;
-   TH1F *hits_max_distanceHist;
-   TH1F *sume_layer_5Hist;
-   TH1F *molHist;
 
    TH2D *xyHist; 
    TH2D *xzHist; 
