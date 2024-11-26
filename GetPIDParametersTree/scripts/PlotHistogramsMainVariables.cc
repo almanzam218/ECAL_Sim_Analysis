@@ -12,7 +12,7 @@ void PlotHistogramsMainVariables(){
 
  
 ////GAMMA
-   TFile fgamma("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20240827_v1/histogramsIncluded/PIDParams_PixelDigiCluster_ECALe_luxe_v1_QGSP_BERT_gamma_0.5to10GeV.root");
+   TFile fgamma("/lhome/ific/a/almanzam/Simulations/Simplified_ECAL_PID/analysis/ECAL_Sim/ML4PID/PSOforECALPID/data/PID_0.5_to_3_GeV_gamma_neutron_pi_LUXE/PIDParams_PixelDigiCluster_ECALe_luxe_v1_QGSP_BERT_gamma_Lin_0.5-3GeV_50-54_ecal.root");
    TTree *tgamma = (TTree*)fgamma.Get("ntp");
    Float_t MIP_Likeness, bar_z, hits_max_distance, sume_layer_5, mol,nhits;
 
@@ -33,7 +33,7 @@ void PlotHistogramsMainVariables(){
 
     MIP_LikenessHist = new TH1F("MIP_Likeness","MIP Likeness",50,0,1);
     bar_zHist = new TH1F("bar_z","barycenter z", 100, 0, 250);
-    nhitsHist = new TH1D("nhits","Total hits", 210, -0.5, 209.5);
+    nhitsHist = new TH1D("nhits","Total hits", 110, -0.5, 109.5);
     hits_max_distanceHist = new TH1F("hits_max_distance","Hits Maximum Distance", 100 ,0 , 350);
     sume_layer_5Hist = new TH1F("sume_layer","Sum energy layer 5", 100, 0, 900);
     molHist = new TH1F("mol","Moliere radius",100,0, 190);
@@ -48,7 +48,7 @@ void PlotHistogramsMainVariables(){
         molHist->Fill(mol);   
     }
 ///NEUTRON
-   TFile fneutron("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20240827_v1/histogramsIncluded/PIDParams_PixelDigiCluster_ECALe_luxe_v1_QGSP_BERT_neutron_0.5to10GeV.root");
+   TFile fneutron("/lhome/ific/a/almanzam/Simulations/Simplified_ECAL_PID/analysis/ECAL_Sim/ML4PID/PSOforECALPID/data/PID_0.5_to_3_GeV_gamma_neutron_pi_LUXE/PIDParams_PixelDigiCluster_ECALe_luxe_v1_QGSP_BERT_neutron_Lin_0.5-3GeV_50-54_ecal.root");
    TTree *tneutron = (TTree*)fneutron.Get("ntp");
    Float_t MIP_Likenessn, bar_zn, hits_max_distancen, sume_layer_5n, moln,nhitsn;
 
@@ -69,7 +69,7 @@ void PlotHistogramsMainVariables(){
 
     MIP_LikenessHistn = new TH1F("MIP_Likenessn","MIP Likeness",50,0,1);
     bar_zHistn = new TH1F("bar_zn","barycenter z", 100, 0, 250);
-    nhitsHistn = new TH1D("nhitsn","Total hits", 210, -0.5, 209.5);
+    nhitsHistn = new TH1D("nhitsn","Total hits", 110, -0.5, 109.5);
     hits_max_distanceHistn = new TH1F("hits_max_distancen","Hits Maximum Distance", 100 ,0 , 350);
     sume_layer_5Histn = new TH1F("sume_layern","Sum energy layer 5", 100, 0, 900);
     molHistn = new TH1F("moln","Moliere radius",100,0, 190);
@@ -87,7 +87,7 @@ void PlotHistogramsMainVariables(){
 
 
 ///PI-
-   TFile fpi("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20240827_v1/histogramsIncluded/PIDParams_PixelDigiCluster_ECALe_luxe_v1_QGSP_BERT_pi-_0.5to10GeV.root");
+   TFile fpi("/lhome/ific/a/almanzam/Simulations/Simplified_ECAL_PID/analysis/ECAL_Sim/ML4PID/PSOforECALPID/data/PID_0.5_to_3_GeV_gamma_neutron_pi_LUXE/PIDParams_PixelDigiCluster_ECALe_luxe_v1_QGSP_BERT_pi-_Lin_0.5-3GeV_50-54_ecal.root");
    TTree *tpi = (TTree*)fpi.Get("ntp");
    Float_t MIP_Likenessp, bar_zp, hits_max_distancep, sume_layer_5p, molp,nhitsp;
 
@@ -108,7 +108,7 @@ void PlotHistogramsMainVariables(){
 
     MIP_LikenessHistp = new TH1F("MIP_Likenessp","MIP Likeness",50,0,1);
     bar_zHistp = new TH1F("bar_zp","barycenter z", 100, 0, 250);
-    nhitsHistp = new TH1D("nhitsp","Total hits", 210, -0.5, 209.5);
+    nhitsHistp = new TH1D("nhitsp","Total hits", 110, -0.5, 109.5);
     hits_max_distanceHistp = new TH1F("hits_max_distancep","Hits Maximum Distance", 100 ,0 , 350);
     sume_layer_5Histp = new TH1F("sume_layerp","Sum energy layer 5", 100, 0, 900);
     molHistp = new TH1F("molp","Moliere radius",100,0, 190);
@@ -136,9 +136,9 @@ void PlotHistogramsMainVariables(){
     gStyle->SetOptStat(0);
     MIP_LikenessHistn->SetLineColor(2);
     MIP_LikenessHistp->SetLineColor(3);
-    MIP_LikenessHist->Draw();
+    MIP_LikenessHistp->Draw();
+    MIP_LikenessHist->Draw("SAME");
     MIP_LikenessHistn->Draw("SAME");
-    MIP_LikenessHistp->Draw("SAME");
     
     auto* legend = new TLegend(0.2,0.7,0.35,0.85);
     //legend->SetHeader("The Legend Title","C"); // option "C" allows to center the header
@@ -146,26 +146,26 @@ void PlotHistogramsMainVariables(){
     legend->AddEntry(MIP_LikenessHistn,"neutron","l");
     legend->AddEntry(MIP_LikenessHistp,"pi-","l");
     legend->Draw();
-    c1->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20240827_v1/histogramsIncluded/MIP_Likeness.png");
-    c1->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20240827_v1/histogramsIncluded/MIP_Likeness.C");
+    c1->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20241106_v1/histogramsIncluded/MIP_Likeness.png");
+    c1->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20241106_v1/histogramsIncluded/MIP_Likeness.C");
     
     c2->cd()->SetLogy();
     bar_zHist->SetLineColor(1);
     gStyle->SetOptStat(0);
     bar_zHistn->SetLineColor(2);
     bar_zHistp->SetLineColor(3);
-    bar_zHistn->Draw();
+    bar_zHistp->Draw();
+    bar_zHistn->Draw("SAME");
     bar_zHist->Draw("SAME");
-    bar_zHistp->Draw("SAME");
     
-    auto* legendn = new TLegend(0.15,0.7,0.3,0.85);
+    auto* legendn = new TLegend(0.80,0.75,0.95,0.9);
     //legend->SetHeader("The Legend Title","C"); // option "C" allows to center the header
     legendn->AddEntry(bar_zHist,"#gamma","l");
     legendn->AddEntry(bar_zHistn,"neutron","l");
     legendn->AddEntry(bar_zHistp,"pi-","l");
     legendn->Draw();
-    c2->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20240827_v1/histogramsIncluded/bar_z.png");
-    c2->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20240827_v1/histogramsIncluded/bar_z.C");
+    c2->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20241106_v1/histogramsIncluded/bar_z.png");
+    c2->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20241106_v1/histogramsIncluded/bar_z.C");
     
   
     c3->cd()->SetLogy();
@@ -173,18 +173,18 @@ void PlotHistogramsMainVariables(){
     gStyle->SetOptStat(0);
     nhitsHistn->SetLineColor(2);
     nhitsHistp->SetLineColor(3);
-    nhitsHistn->Draw();
+    nhitsHistp->Draw();
+    nhitsHistn->Draw("SAME");
     nhitsHist->Draw("SAME");
-    nhitsHistp->Draw("SAME");
     
-    auto* legendn1 = new TLegend(0.2,0.7,0.35,0.85);
+    auto* legendn1 = new TLegend(0.3,0.7,0.45,0.85);
     //legend->SetHeader("The Legend Title","C"); // option "C" allows to center the header
     legendn1->AddEntry(nhitsHist,"#gamma","l");
     legendn1->AddEntry(nhitsHistn,"neutron","l");
     legendn1->AddEntry(nhitsHistp,"pi-","l");
     legendn1->Draw();
-    c3->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20240827_v1/histogramsIncluded/nhits.png");
-    c3->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20240827_v1/histogramsIncluded/nhits.C");
+    c3->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20241106_v1/histogramsIncluded/nhits.png");
+    c3->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20241106_v1/histogramsIncluded/nhits.C");
 
     c4->cd()->SetLogy();
     hits_max_distanceHist->SetLineColor(1);
@@ -195,14 +195,14 @@ void PlotHistogramsMainVariables(){
     hits_max_distanceHist->Draw("SAME");
     hits_max_distanceHistp->Draw("SAME");
     
-    auto* legendn2 = new TLegend(0.2,0.7,0.35,0.85);
+    auto* legendn2 = new TLegend(0.7,0.7,0.85,0.85);
     //legend->SetHeader("The Legend Title","C"); // option "C" allows to center the header
     legendn2->AddEntry(hits_max_distanceHist,"#gamma","l");
     legendn2->AddEntry(hits_max_distanceHistn,"neutron","l");
     legendn2->AddEntry(hits_max_distanceHistp,"pi-","l");
     legendn2->Draw();
-    c4->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20240827_v1/histogramsIncluded/hits_max_distance.png");
-    c4->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20240827_v1/histogramsIncluded/hits_max_distance.C");
+    c4->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20241106_v1/histogramsIncluded/hits_max_distance.png");
+    c4->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20241106_v1/histogramsIncluded/hits_max_distance.C");
     
     
     c5->cd()->SetLogy();
@@ -220,8 +220,8 @@ void PlotHistogramsMainVariables(){
     legendn5->AddEntry(sume_layer_5Histn,"neutron","l");
     legendn5->AddEntry(sume_layer_5Histp,"pi-","l");
     legendn5->Draw();
-    c5->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20240827_v1/histogramsIncluded/sume_layer_5.png");
-    c5->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20240827_v1/histogramsIncluded/sume_layer_5.C");
+    c5->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20241106_v1/histogramsIncluded/sume_layer_5.png");
+    c5->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20241106_v1/histogramsIncluded/sume_layer_5.C");
     
     c6->cd()->SetLogy();
     molHist->SetLineColor(1);
@@ -238,8 +238,8 @@ void PlotHistogramsMainVariables(){
     legendn6->AddEntry(molHistn,"neutron","l");
     legendn6->AddEntry(molHistp,"pi-","l");
     legendn6->Draw();
-    c6->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20240827_v1/histogramsIncluded/mol.png");
-    c6->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20240827_v1/histogramsIncluded/mol.C");
+    c6->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20241106_v1/histogramsIncluded/mol.png");
+    c6->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20241106_v1/histogramsIncluded/mol.C");
     //c1->Clear();
     //c1->Close();
     fgamma.Close();
