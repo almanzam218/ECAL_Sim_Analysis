@@ -12,7 +12,7 @@ void PlotHistogramsMainVariables(){
 
  
 ////GAMMA
-   TFile fgamma("/lhome/ific/a/almanzam/Simulations/Simplified_ECAL_PID/analysis/ECAL_Sim/ML4PID/PSOforECALPID/data/PID_0.5_to_3_GeV_gamma_neutron_pi_LUXE/PIDParams_PixelDigiCluster_ECALe_luxe_v1_QGSP_BERT_gamma_Lin_0.5-3GeV_50-54_ecal.root");
+   TFile fgamma("/lhome/ific/a/almanzam/Simulations/Simplified_ECAL_PID/analysis/ECAL_Sim/ML4PID/PSOforECALPID/data/PID_0.5_to_3_GeV_gamma_neutron_pi_LUXE_b/PIDParams_PixelDigiCluster_ECALe_luxe_v1_QGSP_BERT_HP_gamma_Lin_0.5-3GeV_70-74_ecal.root");
    TTree *tgamma = (TTree*)fgamma.Get("ntp");
    Float_t MIP_Likeness, bar_z, hits_max_distance, sume_layer_5, mol,nhits;
 
@@ -40,15 +40,17 @@ void PlotHistogramsMainVariables(){
         
     for(int i=0;i<tgamma->GetEntries();i++){
         tgamma->GetEntry(i);
-        MIP_LikenessHist->Fill(MIP_Likeness);
-        bar_zHist->Fill(bar_z);
-        nhitsHist->Fill(nhits);
-        hits_max_distanceHist->Fill(hits_max_distance);
-        sume_layer_5Hist->Fill(sume_layer_5);
-        molHist->Fill(mol);   
+        if(nhits>10){
+            MIP_LikenessHist->Fill(MIP_Likeness);
+            bar_zHist->Fill(bar_z);
+            nhitsHist->Fill(nhits);
+            hits_max_distanceHist->Fill(hits_max_distance);
+            sume_layer_5Hist->Fill(sume_layer_5);
+            molHist->Fill(mol);   
+        }
     }
-///NEUTRON
-   TFile fneutron("/lhome/ific/a/almanzam/Simulations/Simplified_ECAL_PID/analysis/ECAL_Sim/ML4PID/PSOforECALPID/data/PID_0.5_to_3_GeV_gamma_neutron_pi_LUXE/PIDParams_PixelDigiCluster_ECALe_luxe_v1_QGSP_BERT_neutron_Lin_0.5-3GeV_50-54_ecal.root");
+///neutron
+   TFile fneutron("/lhome/ific/a/almanzam/Simulations/Simplified_ECAL_PID/analysis/ECAL_Sim/ML4PID/PSOforECALPID/data/PID_0.5_to_3_GeV_gamma_neutron_pi_LUXE_b/PIDParams_PixelDigiCluster_ECALe_luxe_v1_QGSP_BERT_HP_neutron_Lin_0.5-3GeV_70-74_ecal.root");
    TTree *tneutron = (TTree*)fneutron.Get("ntp");
    Float_t MIP_Likenessn, bar_zn, hits_max_distancen, sume_layer_5n, moln,nhitsn;
 
@@ -76,18 +78,20 @@ void PlotHistogramsMainVariables(){
         
     for(int i=0;i<tneutron->GetEntries();i++){
         tneutron->GetEntry(i);
-        MIP_LikenessHistn->Fill(MIP_Likenessn);
-        bar_zHistn->Fill(bar_zn);
-        nhitsHistn->Fill(nhitsn);
-        hits_max_distanceHistn->Fill(hits_max_distancen);
-        sume_layer_5Histn->Fill(sume_layer_5n);
-        molHistn->Fill(moln);   
+        if(nhitsn>10){
+            MIP_LikenessHistn->Fill(MIP_Likenessn);
+            bar_zHistn->Fill(bar_zn);
+            nhitsHistn->Fill(nhitsn);
+            hits_max_distanceHistn->Fill(hits_max_distancen);
+            sume_layer_5Histn->Fill(sume_layer_5n);
+            molHistn->Fill(moln);   
+        }
     }
 
 
 
 ///PI-
-   TFile fpi("/lhome/ific/a/almanzam/Simulations/Simplified_ECAL_PID/analysis/ECAL_Sim/ML4PID/PSOforECALPID/data/PID_0.5_to_3_GeV_gamma_neutron_pi_LUXE/PIDParams_PixelDigiCluster_ECALe_luxe_v1_QGSP_BERT_pi-_Lin_0.5-3GeV_50-54_ecal.root");
+   TFile fpi("/lhome/ific/a/almanzam/Simulations/Simplified_ECAL_PID/analysis/ECAL_Sim/ML4PID/PSOforECALPID/data/PID_0.5_to_3_GeV_gamma_neutron_pi_LUXE_b/PIDParams_PixelDigiCluster_ECALe_luxe_v1_QGSP_BERT_HP_pi-_Lin_0.5-3GeV_70-74_ecal.root");
    TTree *tpi = (TTree*)fpi.Get("ntp");
    Float_t MIP_Likenessp, bar_zp, hits_max_distancep, sume_layer_5p, molp,nhitsp;
 
@@ -115,12 +119,14 @@ void PlotHistogramsMainVariables(){
         
     for(int i=0;i<tpi->GetEntries();i++){
         tpi->GetEntry(i);
-        MIP_LikenessHistp->Fill(MIP_Likenessp);
-        bar_zHistp->Fill(bar_zp);
-        nhitsHistp->Fill(nhitsp);
-        hits_max_distanceHistp->Fill(hits_max_distancep);
-        sume_layer_5Histp->Fill(sume_layer_5p);
-        molHistp->Fill(molp);   
+        if(nhitsp>10){
+            MIP_LikenessHistp->Fill(MIP_Likenessp);
+            bar_zHistp->Fill(bar_zp);
+            nhitsHistp->Fill(nhitsp);
+            hits_max_distanceHistp->Fill(hits_max_distancep);
+            sume_layer_5Histp->Fill(sume_layer_5p);
+            molHistp->Fill(molp);   
+        }
     }
 
     TCanvas *c1 = new TCanvas("c1","MIP Likeness",1920,0,1920,1000);
@@ -133,11 +139,11 @@ void PlotHistogramsMainVariables(){
 
     c1->cd();
     MIP_LikenessHist->SetLineColor(1);
-    gStyle->SetOptStat(0);
+    gStyle->SetOptStat(1);
     MIP_LikenessHistn->SetLineColor(2);
     MIP_LikenessHistp->SetLineColor(3);
-    MIP_LikenessHistp->Draw();
-    MIP_LikenessHist->Draw("SAME");
+    MIP_LikenessHist->Draw();
+    MIP_LikenessHistp->Draw("SAME");
     MIP_LikenessHistn->Draw("SAME");
     
     auto* legend = new TLegend(0.2,0.7,0.35,0.85);
@@ -146,8 +152,8 @@ void PlotHistogramsMainVariables(){
     legend->AddEntry(MIP_LikenessHistn,"neutron","l");
     legend->AddEntry(MIP_LikenessHistp,"pi-","l");
     legend->Draw();
-    c1->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20241106_v1/histogramsIncluded/MIP_Likeness.png");
-    c1->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20241106_v1/histogramsIncluded/MIP_Likeness.C");
+    c1->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20250423_v1/histogramsIncluded/MIP_Likeness.png");
+    c1->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20250423_v1/histogramsIncluded/MIP_Likeness.C");
     
     c2->cd()->SetLogy();
     bar_zHist->SetLineColor(1);
@@ -164,8 +170,8 @@ void PlotHistogramsMainVariables(){
     legendn->AddEntry(bar_zHistn,"neutron","l");
     legendn->AddEntry(bar_zHistp,"pi-","l");
     legendn->Draw();
-    c2->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20241106_v1/histogramsIncluded/bar_z.png");
-    c2->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20241106_v1/histogramsIncluded/bar_z.C");
+    c2->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20250423_v1/histogramsIncluded/bar_z.png");
+    c2->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20250423_v1/histogramsIncluded/bar_z.C");
     
   
     c3->cd()->SetLogy();
@@ -183,8 +189,8 @@ void PlotHistogramsMainVariables(){
     legendn1->AddEntry(nhitsHistn,"neutron","l");
     legendn1->AddEntry(nhitsHistp,"pi-","l");
     legendn1->Draw();
-    c3->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20241106_v1/histogramsIncluded/nhits.png");
-    c3->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20241106_v1/histogramsIncluded/nhits.C");
+    c3->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20250423_v1/histogramsIncluded/nhits.png");
+    c3->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20250423_v1/histogramsIncluded/nhits.C");
 
     c4->cd()->SetLogy();
     hits_max_distanceHist->SetLineColor(1);
@@ -201,8 +207,8 @@ void PlotHistogramsMainVariables(){
     legendn2->AddEntry(hits_max_distanceHistn,"neutron","l");
     legendn2->AddEntry(hits_max_distanceHistp,"pi-","l");
     legendn2->Draw();
-    c4->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20241106_v1/histogramsIncluded/hits_max_distance.png");
-    c4->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20241106_v1/histogramsIncluded/hits_max_distance.C");
+    c4->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20250423_v1/histogramsIncluded/hits_max_distance.png");
+    c4->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20250423_v1/histogramsIncluded/hits_max_distance.C");
     
     
     c5->cd()->SetLogy();
@@ -220,8 +226,8 @@ void PlotHistogramsMainVariables(){
     legendn5->AddEntry(sume_layer_5Histn,"neutron","l");
     legendn5->AddEntry(sume_layer_5Histp,"pi-","l");
     legendn5->Draw();
-    c5->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20241106_v1/histogramsIncluded/sume_layer_5.png");
-    c5->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20241106_v1/histogramsIncluded/sume_layer_5.C");
+    c5->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20250423_v1/histogramsIncluded/sume_layer_5.png");
+    c5->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20250423_v1/histogramsIncluded/sume_layer_5.C");
     
     c6->cd()->SetLogy();
     molHist->SetLineColor(1);
@@ -238,8 +244,8 @@ void PlotHistogramsMainVariables(){
     legendn6->AddEntry(molHistn,"neutron","l");
     legendn6->AddEntry(molHistp,"pi-","l");
     legendn6->Draw();
-    c6->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20241106_v1/histogramsIncluded/mol.png");
-    c6->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20241106_v1/histogramsIncluded/mol.C");
+    c6->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20250423_v1/histogramsIncluded/mol.png");
+    c6->Print("/lustre/ific.uv.es/prj/gl/abehep.flc/LUXE/ECALe_SimAnalysis/PIDParametersTrees/20250423_v1/histogramsIncluded/mol.C");
     //c1->Clear();
     //c1->Close();
     fgamma.Close();

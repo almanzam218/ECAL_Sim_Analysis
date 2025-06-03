@@ -1267,14 +1267,14 @@ void GetPIDParametersTreeProcessor::ShowDigitECALInfo(EVENT::LCCollection *myCol
             b_bar_r_layer_12 = bar_layer_array[12][2];
             b_bar_r_layer_13 = bar_layer_array[13][2];
             b_bar_r_layer_14 = bar_layer_array[14][2];
-
+/*
         if(b_MIP_Likeness>0.90&&b_MIP_Likeness<0.94&&eventsDisplayed==0){
           for(int i=0; i<hit_xpadv.size();i++)
           {
             _3DHist->Fill(hit_slabv.at(i),hit_xpadv.at(i),hit_ypadv.at(i));
           }
           eventsDisplayed=1;
-        }
+        }*/
         outtree->Fill();
         hit_xpadv.clear();
         hit_ypadv.clear();

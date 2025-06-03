@@ -1,9 +1,17 @@
 ########################################################
 # cmake file for building Marlin example Package
 # @author Jan Engels, Desy IT
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6 FATAL_ERROR)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.12 FATAL_ERROR)
 ########################################################
 
+# fix for lcio: all c++ sources need to be compiled with -Wno-long-long
+SET( ENV{CXXFLAGS} "-Wno-long-long $ENV{CXXFLAGS}" )
+
+# require proper c and c++
+# -pedantic cannot be set globally because it cannot be removed for certain
+# source files only: grep pedantic src/CMakeLists.txt
+#SET( ENV{CXXFLAGS} "-Wall -ansi $ENV{CXXFLAGS}" ) # FIXME -pedantic
+SET( ENV{CFLAGS} "-w -ansi -pedantic $ENV{CFLAGS}" ) # -w suppress all warning messages
 
 # project name
 PROJECT( GetPIDParametersTreeProcessor )
@@ -18,15 +26,19 @@ SET( ${PROJECT_NAME}_VERSION_PATCH 0 )
 
 ### DEPENDENCIES ############################################################
 
-FIND_PACKAGE( ILCUTIL REQUIRED COMPONENTS ILCSOFT_CMAKE_MODULES )
+FIND_PACKAGE( ILCUTIL COMPONENTS ILCSOFT_CMAKE_MODULES REQUIRED )
 
 # load default settings from ILCSOFT_CMAKE_MODULES
 INCLUDE( ilcsoft_default_settings )
 
+#FIND_PACKAGE( Boost REQUIRED )
+#include_directories( SYSTEM ${Boost_INCLUDE_DIRS} )
 
 FIND_PACKAGE( Marlin 1.0 REQUIRED ) # minimum required Marlin version
+FIND_PACKAGE( MarlinUtil REQUIRED )
 FIND_PACKAGE( ROOT REQUIRED )
 FIND_PACKAGE( LCIO REQUIRED )
+FIND_PACKAGE( GSL REQUIRED )
 
 FIND_PACKAGE ( FastJet )
 IF ( NOT ${FastJet_VERSION} VERSION_LESS 3 )
@@ -38,9 +50,9 @@ ENDIF()
 INCLUDE_DIRECTORIES( SYSTEM ${FastJet_INCLUDE_DIRS} )
 LINK_LIBRARIES( ${FastJet_LIBRARIES} ${FastJet_COMPONENT_LIBRARIES} )
 
-FOREACH( pkg Marlin LCIO ROOT )
+FOREACH( pkg Marlin MarlinUtil LCIO ROOT GSL )
     IF( ${pkg}_FOUND )
-        INCLUDE_DIRECTORIES( ${${pkg}_INCLUDE_DIRS} )
+        INCLUDE_DIRECTORIES( BEFORE SYSTEM ${${pkg}_INCLUDE_DIRS} )
         LINK_LIBRARIES( ${${pkg}_LIBRARIES} )
         ADD_DEFINITIONS ( ${${pkg}_DEFINITIONS} )
     ENDIF()
@@ -65,11 +77,6 @@ ENDFOREACH()
 #    MESSAGE( STATUS "AIDA -- not found" )
 #ENDIF()
 
-FIND_PACKAGE( aidaTT )
-ADD_DEFINITIONS( "-D AIDATT_USE_DD4HEP -DUSE_GBL -DUSE_LCIO" )
-INCLUDE_DIRECTORIES( SYSTEM ${aidaTT_INCLUDE_DIRS} )
-LINK_LIBRARIES( ${aidaTT_LIBRARIES} )
-ADD_DEFINITIONS( ${aidaTT_DEFINITIONS} )
 
 
 ### DOCUMENTATION ###########################################################
@@ -85,9 +92,9 @@ ENDIF()
 ### LIBRARY #################################################################
 
 # definitions to pass to the compiler
-ADD_DEFINITIONS( "-Wall -ansi -pedantic -std=gnu++11" )
 #ADD_DEFINITIONS( "-Wall -ansi -pedantic -std=c++0x ${CMAKE_CXX_FLAGS} -g -ftest-coverage -fprofile-arcs" )
 #ADD_DEFINITIONS( "-Wall -ansi -pedantic")
+ADD_DEFINITIONS( "-Wall -ansi -pedantic -std=c++20" )
 ADD_DEFINITIONS( "-Wno-long-long" )
 
 # include directories
@@ -97,6 +104,9 @@ INCLUDE_DIRECTORIES( ./include )
 # add library
 AUX_SOURCE_DIRECTORY( ./src library_sources )
 ADD_SHARED_LIBRARY( ${PROJECT_NAME} ${library_sources} )
+
+# library install directory
+SET( CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}/../" )
 INSTALL_SHARED_LIBRARY( ${PROJECT_NAME} DESTINATION lib )
 
 # display some variables and write them to cache
